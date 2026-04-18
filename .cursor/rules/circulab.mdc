@@ -14,7 +14,6 @@ alwaysApply: true
 - **Supabase** for the database.
 
 ## Structure
-
 - `src/pages/` — routes and endpoints.
 - `src/layouts/` — base layouts.
 - `src/components/` — reusable Astro components.
@@ -23,11 +22,12 @@ alwaysApply: true
 - `src/config/` — shared configuration (e.g. auth).
 
 ## Conventions
-
+- Check the documentation in the `src/pages/docs` folder before starting a new feature.
+- Do not start a new feature without my approval.
 - Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
 - Keep styles aligned with tokens in `src/css/base/variables.css`
 - Keep changes scoped to the request: avoid broad refactors or unrelated files.
+- Do not use inline styles.
 
 ## Configuration
-
 - `SITE` and domains in `astro.config.mjs` come from environment variables; avoid hardcoding production URLs in code unless necessary.
