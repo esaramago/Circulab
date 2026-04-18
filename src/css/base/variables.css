@@ -1,0 +1,44 @@
+:root {
+
+  --spacing-xs: 0.5rem;
+  --spacing-s: 1rem;
+  --spacing-m: 2rem;
+  --spacing-l: 3rem;
+  --spacing-xl: 4rem;
+
+  --border-radius-xs: 0.3rem;
+  --border-radius-s: 0.5rem;
+  --border-radius-m: 0.8rem;
+  --border-radius-l: 1.2rem;
+  --border-radius-full: 50%;
+
+  --color-neutral-10: #e3e3e3;
+  --color-neutral-30: #a0a0a0;
+  --color-neutral-40: #777;
+  --color-neutral-50: #666;
+  --color-neutral-60: #444;
+  --color-neutral-70: #333;
+  --color-neutral-80: #1e1f20;
+  --color-neutral-90: #131314;
+
+  --color-primary-50: #008ae1;
+  --color-primary-60: #007acc;
+
+  --color-error-50: #aa0003;
+  --color-error-90: #530000;
+
+  --color-success-50: #00a000;
+  --color-success-90: #004600;
+
+  --default-color: var(--color-neutral-10);
+  --default-color-light: var(--color-neutral-30);
+  --border-color: var(--color-neutral-60);
+
+  --color-background: var(--color-neutral-90);
+  --color-background-light: var(--color-neutral-80);
+
+  --input-height: 3rem;
+  --input-padding: 1rem;
+  --input-border-radius: var(--border-radius-m);
+
+}

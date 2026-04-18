@@ -1,0 +1,33 @@
+---
+description: Circulab project context and conventions (Astro SSR)
+alwaysApply: true
+---
+
+# Circulab
+
+## Stack
+
+- **Astro** 6 with `output: 'server'` and **@astrojs/node** adapter in `standalone` mode.
+- **Node** >= 22.12.0 (see `package.json`).
+- UI: **@awesome.me/webawesome** for components.
+- **PNPM** for package management.
+- **Supabase** for the database.
+
+## Structure
+
+- `src/pages/` — routes and endpoints.
+- `src/layouts/` — base layouts.
+- `src/components/` — reusable Astro components.
+- `src/css/` — global CSS (`main.css` imports layers: base, components, utils).
+- `src/middleware.ts` — cross-cutting logic (auth, redirects).
+- `src/config/` — shared configuration (e.g. auth).
+
+## Conventions
+
+- Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
+- Keep styles aligned with tokens in `src/css/base/variables.css`
+- Keep changes scoped to the request: avoid broad refactors or unrelated files.
+
+## Configuration
+
+- `SITE` and domains in `astro.config.mjs` come from environment variables; avoid hardcoding production URLs in code unless necessary.

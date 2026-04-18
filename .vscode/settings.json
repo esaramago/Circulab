@@ -1,0 +1,15 @@
+{
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "search.exclude": {
+      "node_modules": true,
+      "dist": true,
+      "build": true,
+      "package-lock.json": true,
+      ".vscode": true
+    }
+    
+}

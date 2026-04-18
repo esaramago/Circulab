@@ -1,0 +1,40 @@
+.l-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.l-grid--xs {
+  gap: 0.5rem;
+}
+.l-grid--s {
+  gap: 1rem;
+}
+.l-grid--l {
+  gap: 3rem;
+}
+
+.l-grid--align-center {
+  align-items: center;
+}
+.l-grid--space-between {
+  justify-content: space-between;
+}
+.l-grid--end {
+  justify-content: end;
+  align-items: end;
+}
+
+.l-grid--row {
+  flex-direction: row;
+}
+
+.l-grid__full {
+  flex: 1;
+}
+
+.l-grid--break-mobile {
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}

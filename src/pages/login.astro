@@ -1,0 +1,70 @@
+---
+import Layout from '@/layouts/Layout.astro'
+//import { Input, Button, Alert } from 'webcoreui/astro'
+//import Logo from '@/img/logo.svg'
+
+import { SESSION_COOKIE } from '@/config/auth'
+
+let errorMessage = ''
+
+const EMAIL = import.meta.env.ADMIN_EMAIL || ''
+const PASSWORD = import.meta.env.ADMIN_PASSWORD || ''
+
+const { user } = Astro.locals
+if (user) {
+  return Astro.redirect('/dashboard')
+}
+
+if (Astro.request.method === 'POST') {
+
+  const data = await Astro.request.formData()
+  
+  const email = data.get('user_email') as string
+  const password = data.get('user_password') as string
+  
+
+  try {
+    
+    // TODO: get session from database
+    const session = { secret: '1234567890' }
+
+    Astro.cookies.set(SESSION_COOKIE, session.secret, {
+      path: '/',
+      httpOnly: true, // import.meta.env.ENV === 'production'
+      sameSite: 'lax',
+      secure: false, // false para desenvolvimento
+      maxAge: 60 * 60 * 24 * 30 // 30 days
+    })
+
+    return Astro.redirect('/dashboard')
+  } catch (error) {
+    console.error('Login error:', error)
+    errorMessage = (error as Error).message
+  }
+}
+---
+
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/alert/alert.js'
+</script>
+
+<Layout title="Login">
+  <div class="wrapper">
+    <div class="container l-grid l-grid--s">
+      <h1>Astro Appwrite Starter</h1>
+      <p>
+        This is a testing environment.
+        Use <code>user@astroappwritestarter.com</code> and <code>password123!</code> to login.
+      </p>
+      {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
+      <form method="post" class="l-grid l-grid--s">
+        <wa-input id="user_email" type="email" name="user_email" required placeholder="Email" value={EMAIL} />
+        <wa-input id="user_password" type="password" name="user_password" required placeholder="Password" value={PASSWORD} />
+        <wa-button variant="primary" type="submit">Login</wa-button>
+      </form>
+    </div>
+  </div>
+
+</Layout>

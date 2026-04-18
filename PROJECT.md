@@ -12,15 +12,17 @@ Each pin includes information such as images, address, coordinates, title, notes
 
 ## **Technology**
 
-* Astro, with Vue or Svelte. Astro actions for requests.  
-* Web Awesome for components  
+* Astro, with Vue or Svelte. Astro actions for requests.
+* Web Awesome for components
+* Vanilla CSS for global styling. No Tailwind.
 * Supabase for the database.  
-* Leaflet or MapLibre GL for the map  
-* It will be a PWA
+* Leaflet or MapLibre GL for the map
+* PNPM for package management.
+* It is a Progressive Web App
 
 ## **Users**
 
-There will be a users table.
+There is a users table.
 
 Users can have 3 roles:
 

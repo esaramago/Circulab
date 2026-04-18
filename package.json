@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^10.0.5",
+    "@awesome.me/webawesome": "^3.5.0",
     "astro": "^6.1.7"
   }
 }

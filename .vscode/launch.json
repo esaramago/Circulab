@@ -2,10 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
       "name": "Development server",
+      "type": "node-terminal",
       "request": "launch",
-      "type": "node-terminal"
+      "cwd": "${workspaceFolder}",
+      "command": "./node_modules/.bin/astro dev",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(http://.+)",
+        "uriFormat": "%s"
+      }
     }
   ]
 }

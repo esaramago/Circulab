@@ -1,0 +1,48 @@
+
+body,
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--color-background);
+  color: var(--default-color);
+  line-height: 1.4;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  box-sizing: border-box;
+  min-height: var(--input-height);
+  color: inherit;
+}
+input,
+textarea {
+  width: 100%;
+  &::placeholder {
+    color: var(--default-color-light);
+  }
+}
+
+
+code[contenteditable]:focus {
+  outline: none;
+}
+
+a,
+button {
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+}
