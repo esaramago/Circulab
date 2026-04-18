@@ -23,11 +23,13 @@ alwaysApply: true
 
 ## Conventions
 - Check the documentation in the `src/pages/docs` folder before starting a new feature.
+- Documentation in `src/pages/docs` should be in English.
 - Do not start a new feature without my approval.
 - Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
 - Keep styles aligned with tokens in `src/css/base/variables.css`
 - Keep changes scoped to the request: avoid broad refactors or unrelated files.
 - Do not use inline styles.
+- Code comments should be in English.
 
 ## Configuration
 - `SITE` and domains in `astro.config.mjs` come from environment variables; avoid hardcoding production URLs in code unless necessary.
