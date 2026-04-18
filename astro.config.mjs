@@ -14,4 +14,8 @@ export default defineConfig({
       {hostname: import.meta.env.SITE}
     ]
   },
+  i18n: {
+    locales: ["en", "pt-pt"],
+    defaultLocale: "pt-pt",
+  }
 })

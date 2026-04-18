@@ -1,0 +1,9 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { getMessages } from '@/i18n'
+const t = getMessages(Astro.currentLocale)
+---
+
+<Layout title={t.shared.title}>
+  <p>{t.shared.description}</p>
+</Layout>

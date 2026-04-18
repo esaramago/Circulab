@@ -1,3 +1,28 @@
+---
+import { getMessages } from '@/i18n'
+import Grid from '@/components/ui/Grid.astro'
+
+const t = getMessages(Astro.currentLocale)
+---
+
 <header>
-  <h1>Circulab</h1>
+  
+
+  <Grid justify="space-between" align="center">
+    <h1>{t.shared.title}</h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="/">Sobre</a>
+        </li>
+        <li>
+          <a href="/">Contactos</a>
+        </li>
+      </ul>
+    </nav>
+    <div>
+      <a href="/en" class="btn-lang" data-lang="en">EN</a>
+      <a href="/" class="btn-lang" data-lang="pt">PT</a>
+    </div>
+  </Grid>
 </header>

@@ -8,10 +8,11 @@ interface Props {
 }
 
 const { title } = Astro.props
+
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={Astro.currentLocale === 'pt' ? 'pt' : 'en'}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="initial-scale=1,minimum-scale=1,width=device-width,interactive-widget=resizes-content,viewport-fit=cover" />
