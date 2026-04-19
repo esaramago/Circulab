@@ -1,0 +1,30 @@
+
+body {
+  font-family: var(--font-roboto), sans-serif;
+  background-color: var(--color-neutral-90);
+  color: var(--color-neutral-10);
+  line-height: 1.4;
+  font-size: 1.6rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  @media (prefers-color-scheme: light) {
+    background-color: var(--color-neutral-10);
+    color: var(--color-neutral-90);
+  }
+}
+
+main {
+  flex: 1;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  box-sizing: border-box;
+  min-height: var(--input-height);
+  color: inherit;
+}

@@ -1,5 +1,6 @@
 @import './base/variables.css';
 @import './base/reset.css';
+@import './base/global.css';
 @import './components/grid.css';
 @import './components/table.css';
 @import './utils/utils.css';

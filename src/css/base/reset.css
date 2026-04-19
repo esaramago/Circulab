@@ -9,18 +9,6 @@ p {
 html {
   font-size: 62.5%;
 }
-body {
-  font-family: var(--font-roboto), sans-serif;
-  background-color: var(--color-neutral-90);
-  color: var(--color-neutral-10);
-  line-height: 1.4;
-  font-size: 1.6rem;
-
-  @media (prefers-color-scheme: light) {
-    background-color: var(--color-neutral-10);
-    color: var(--color-neutral-90);
-  }
-}
 
 input,
 button,
@@ -28,15 +16,11 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   box-sizing: border-box;
-  min-height: var(--input-height);
   color: inherit;
 }
 input,
 textarea {
   width: 100%;
-  &::placeholder {
-    color: var(--default-color-light);
-  }
 }
 
 
