@@ -12,3 +12,4 @@ alwaysApply: true
 - Do not use inline styles.
 - Code comments should be in English.
 - Check `.editorconfig` for coding conventions.
+- Add type definitions to `src/types/` when needed.
