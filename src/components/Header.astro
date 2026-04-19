@@ -28,3 +28,16 @@ const hrefPt = localizeHref(path, { locale: 'pt' })
     </div>
   </Grid>
 </header>
+
+<script>
+  import { setLocale } from '@/paraglide/runtime.js'
+
+  document.querySelectorAll('a.btn-lang[data-set-locale]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      const locale = el.getAttribute('data-set-locale')
+      if (locale !== 'en' && locale !== 'pt') return
+      e.preventDefault()
+      setLocale(/** @type {'en' | 'pt'} */ (locale))
+    })
+  })
+</script>
