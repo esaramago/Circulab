@@ -30,6 +30,7 @@ alwaysApply: true
 - Keep changes scoped to the request: avoid broad refactors or unrelated files.
 - Do not use inline styles.
 - Code comments should be in English.
+- Check `.editorconfig` for coding conventions.
 
 ## Configuration
 - `SITE` and domains in `astro.config.mjs` come from environment variables; avoid hardcoding production URLs in code unless necessary.

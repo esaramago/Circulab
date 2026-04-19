@@ -30,12 +30,7 @@
   --color-success-50: #00a000;
   --color-success-90: #004600;
 
-  --default-color: var(--color-neutral-10);
-  --default-color-light: var(--color-neutral-30);
   --border-color: var(--color-neutral-60);
-
-  --color-background: var(--color-neutral-90);
-  --color-background-light: var(--color-neutral-80);
 
   --input-height: 3rem;
   --input-padding: 1rem;

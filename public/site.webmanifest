@@ -1,0 +1,11 @@
+{
+    "name": "Circulab",
+    "short_name": "Circulab",
+    "id": "/",
+    "start_url": "/",
+    "description": "Circulab é uma mapa de recursos agroecológicos.",
+    "icons": [],
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "display": "standalone"
+}

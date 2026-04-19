@@ -1,15 +1,14 @@
 ---
-import { getMessages } from '@/i18n'
+import { m } from '@/paraglide/messages.js'
 import Grid from '@/components/ui/Grid.astro'
 
-const t = getMessages(Astro.currentLocale)
 ---
 
 <header>
   
 
   <Grid justify="space-between" align="center">
-    <h1>{t.shared.title}</h1>
+    <h1>{m.site_title()}</h1>
     <nav>
       <ul>
         <li>

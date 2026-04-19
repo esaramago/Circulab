@@ -1,6 +1,6 @@
 # Circulab Project
 
-This is a web application for a map of agroecological resources.  
+This is a web application with a map of agroecological resources.  
 The map has a series of pins corresponding to the location of those resources: places where agroecology workshops are held, compostable resources, materials that can be used to build objects or infrastructure, etc.
 
 ## Map

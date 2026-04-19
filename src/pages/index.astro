@@ -1,5 +1,9 @@
 ---
-import HomeView from '@/views/Home.astro'
+import Layout from '@/layouts/Layout.astro'
+import { m } from '@/paraglide/messages.js'
 ---
 
-<HomeView />
+<Layout title={m.site_title()}>
+  <p>{m.site_description()}</p>
+  <p>{m.map()}</p>
+</Layout>
