@@ -1,27 +1,30 @@
 ---
 import { m } from '@/paraglide/messages.js'
+import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.astro'
 
+const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
+const hrefEn = localizeHref(path, { locale: 'en' })
+const hrefPt = localizeHref(path, { locale: 'pt' })
 ---
 
 <header>
-  
 
   <Grid justify="space-between" align="center">
     <h1>{m.site_title()}</h1>
     <nav>
       <ul>
         <li>
-          <a href="/">Sobre</a>
+          <a href={localizeHref('/about')}>{m['about.title']()}</a>
         </li>
         <li>
-          <a href="/">Contactos</a>
+          <a href={localizeHref('/contacts')}>{m['contacts.title']()}</a>
         </li>
       </ul>
     </nav>
     <div>
-      <a href="/en" class="btn-lang" data-lang="en">EN</a>
-      <a href="/" class="btn-lang" data-lang="pt">PT</a>
+      <a href={hrefEn} class="btn-lang">EN</a>
+      <a href={hrefPt} class="btn-lang">PT</a>
     </div>
   </Grid>
 </header>
