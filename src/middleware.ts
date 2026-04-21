@@ -1,34 +1,35 @@
 import { defineMiddleware } from 'astro:middleware'
 import { paraglideMiddleware } from './paraglide/server.js'
+import { actions } from 'astro:actions'
 
-export const onRequest = defineMiddleware(async ({ request, locals, redirect }, next) => {
+export const onRequest = defineMiddleware(async ({ request, locals, redirect, callAction }, next) => {
   return paraglideMiddleware(request, async ({ request: req }) => {
-    const loggedInUser = getUser()
-    if (loggedInUser) {
-      locals.user = loggedInUser
-    }
 
     const pathname = new URL(req.url).pathname
-    const isPublicRoute = pathname !== '/dashboard'
-    if (isPublicRoute || (loggedInUser?.role === 'admin' || loggedInUser?.role === 'moderator')) {
-      return next(req)
+    const isLoginRoute = pathname.startsWith('/login')
+
+    try {
+      const { data: loggedInUser } = await callAction(actions.getUser, {})
+
+      if (loggedInUser) {
+        locals.user = {
+          id: loggedInUser.id || '',
+          email: loggedInUser.email || '',
+          role: loggedInUser.role,
+        }
+      }
+
+      const isDashboardRoute = pathname.startsWith('/dashboard')
+      const hasAccessToDashboard = loggedInUser?.role === 'admin' || loggedInUser?.role === 'moderator'
+      if ((isDashboardRoute && hasAccessToDashboard) || isLoginRoute) {
+        return next(req)
+      }
+      return redirect('/login')
+    } catch (error) {
+      if (isLoginRoute) {
+        return next(req)
+      }
+      return redirect('/login')
     }
-    return redirect('/login')
   })
 })
-
-function getUser() {
-
-  try {
-    const user = { id: '1', email: 'test@test.com', role: 'admin' } // TODO: get user from database
-    return user
-
-  } catch (error) {
-    // Only redirect if it's not a session missing error (user not logged in)
-    if (error instanceof Error && !error.message.includes('Session cookie not found')) {
-      console.error('Middleware error:', error)
-    }
-
-    return undefined
-  }
-}

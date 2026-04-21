@@ -1,0 +1,17 @@
+:root {
+  --wa-font-size-m: var(--default-font-size);
+  --wa-font-family-body: var(--font-family-body);
+
+  --wa-color-brand-10: var(--color-primary-10);
+  --wa-color-brand-20: var(--color-primary-20);
+  --wa-color-brand-30: var(--color-primary-30);
+  --wa-color-brand-40: var(--color-primary-40);
+  --wa-color-brand-50: var(--color-primary-50);
+  --wa-color-brand-60: var(--color-primary-60);
+  --wa-color-brand-70: var(--color-primary-70);
+  --wa-color-brand-80: var(--color-primary-80);
+  --wa-color-brand-90: var(--color-primary-90);
+
+  --wa-form-control-border-radius: var(--border-radius-l);
+  --wa-font-weight-action: 500;
+}

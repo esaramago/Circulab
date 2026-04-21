@@ -17,6 +17,7 @@
     "@astrojs/check": "^0.9.8",
     "@astrojs/node": "^10.0.5",
     "@awesome.me/webawesome": "^3.5.0",
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "astro": "^6.1.7",
     "typescript": "^6.0.3"
