@@ -20,8 +20,9 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
       }
 
       const isDashboardRoute = pathname.startsWith('/dashboard')
+      const isPublicRoute = !isDashboardRoute
       const hasAccessToDashboard = loggedInUser?.role === 'admin' || loggedInUser?.role === 'moderator'
-      if ((isDashboardRoute && hasAccessToDashboard) || isLoginRoute) {
+      if (isPublicRoute || (isDashboardRoute && hasAccessToDashboard)) {
         return next(req)
       }
       return redirect('/login')
