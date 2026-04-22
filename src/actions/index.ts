@@ -1,7 +1,9 @@
 import { signIn } from './auth/signIn'
-import { getUser } from './auth/getUser'
+import { checkUser } from './auth/checkUser'
+import { getUser } from './getUser'
 
 export const server = {
   signIn,
   getUser,
+  checkUser,
 }

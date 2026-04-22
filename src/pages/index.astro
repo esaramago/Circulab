@@ -4,7 +4,7 @@ import { m } from '@/paraglide/messages.js'
 import { fetchDB } from '@/utils/fetchDB'
 
 import type { Database } from '@/types/supabase'
-const { data: typologies, error } = await fetchDB('typologies').select('*')
+const { data: typologies, error } = await fetchDB('typologies', Astro).select('*')
 ---
 
 <Layout title={m.site_title()}>
@@ -20,4 +20,5 @@ const { data: typologies, error } = await fetchDB('typologies').select('*')
       </ul>
     ) : <p>No typologies found</p>
   }
+
 </Layout>

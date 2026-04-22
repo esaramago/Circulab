@@ -15,7 +15,7 @@ export const signIn = defineAction({
         request: context.request,
         cookies: context.cookies,
       })
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       })
@@ -26,6 +26,32 @@ export const signIn = defineAction({
           code: error.code as ActionErrorCode
         })
       }
+
+      const userId = signInData.user?.id
+      if (!userId) {
+        throw new ActionError({
+          message: 'Signed in but no user id returned',
+          code: 'INTERNAL_SERVER_ERROR'
+        })
+      }
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (userError || !userData) {
+        throw new ActionError({
+          message:
+            userError?.message ||
+            `No users row found for authenticated id ${userId}`,
+          code: 'NOT_FOUND'
+        })
+      }
+
+      // Set the user in the locals
+      context.locals.user = userData
 
       return {
         success: true,

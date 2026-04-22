@@ -12,18 +12,29 @@ if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
 
   try {
-    
-    const {data, error} = await Astro.callAction(actions.signIn, formData)
 
-    if (data?.success) {
-      const hasAccessToDashboard = Astro.locals.user?.role === 'admin' || Astro.locals.user?.role === 'moderator'
+    const email = formData.get('email')
+    const password = formData.get('password')
+    if (!email || !password) {
+      throw new Error('Email and password are required')
+    }
+
+        
+    const { data: loginData, error: loginError } = await Astro.callAction(actions.signIn, formData)
+    if (loginError) {
+      throw new Error(loginError.message || 'Failed to sign in')
+    }
+
+    if (loginData?.success) {
+
+      const hasAccessToDashboard = Astro.locals.user?.role_id === 2 || Astro.locals.user?.role_id === 3
       if (hasAccessToDashboard) {
         return Astro.redirect('/dashboard')
       } else {
         errorMessage = 'You do not have access to the dashboard'
       }
     } else {
-      errorMessage = error?.message || 'Failed to sign in'
+      errorMessage = loginData?.message || 'Failed to sign in'
     }
 
   } catch (error: any) {

@@ -1,7 +1,7 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
 
-export const getUser = defineAction({
+export const checkUser = defineAction({
   handler: async (_input, { request, cookies }) => {
 
     try {
@@ -9,16 +9,21 @@ export const getUser = defineAction({
         request,
         cookies,
       })
-      const { data } = await supabase.auth.getUser()
-      if (!data.user) {
+      const { data: auth } = await supabase.auth.getUser()
+      if (!auth.user) {
         return null
       }
-      const appMeta = data.user.app_metadata as { role?: string } | null | undefined
-      return {
-        id: data.user.id,
-        email: data.user.email,
-        role: appMeta?.role,
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', auth.user.id)
+        .single()
+
+      if (userError || !userData) {
+        return null
       }
+      return userData
 
     } catch (error: any) {
       throw new ActionError({

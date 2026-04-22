@@ -1,12 +1,14 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-declare namespace App {
-  interface Locals {
-    user?: {
-      id: string
-      email: string
-      role?: string
+import type { Database } from './supabase'
+
+type AppUser = Database['public']['Tables']['users']['Row']
+
+declare global {
+  namespace App {
+    interface Locals {
+      user?: AppUser
     }
   }
 }
