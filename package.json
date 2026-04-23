@@ -11,6 +11,9 @@
     "compile:paraglide": "node ./project.inlang/compile-paraglide.mjs",
     "preview": "astro preview",
     "astro": "astro",
+    "docker:build": "docker build -t circulab .",
+    "docker:run": "docker run -p 4321:4321 circulab",
+    "docker:stop": "docker stop circulab",
     "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
