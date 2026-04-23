@@ -1,3 +1,9 @@
+---
+title: Summary
+layout: '@/layouts/DocsLayout.astro'
+order: 1
+---
+
 # Circulab Project
 
 This is a web application with a map of agroecological resources.  

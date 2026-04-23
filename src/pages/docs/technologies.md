@@ -1,3 +1,9 @@
+---
+title: Technologies
+layout: '@/layouts/DocsLayout.astro'
+order: 5
+---
+
 # Technologies
 
 ## Framework

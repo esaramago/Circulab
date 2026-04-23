@@ -1,3 +1,9 @@
+---
+title: Database
+layout: '@/layouts/DocsLayout.astro'
+order: 4
+---
+
 # Database
 
 Postgres + **PostGIS** (`geography(Point, 4326)` for coordinates). Application users: **`auth.users`** (Supabase Auth); there is no `public.users` or `public.roles` table in this schema.

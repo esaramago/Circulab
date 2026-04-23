@@ -1,3 +1,9 @@
+---
+title: Users
+layout: '@/layouts/DocsLayout.astro'
+order: 3
+---
+
 # Users
 
 ## User roles

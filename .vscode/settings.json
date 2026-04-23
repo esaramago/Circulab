@@ -9,7 +9,8 @@
       "dist": true,
       "build": true,
       "package-lock.json": true,
-      ".vscode": true
+      ".vscode": true,
+      "pnpm-lock.yaml": true
     }
     
 }

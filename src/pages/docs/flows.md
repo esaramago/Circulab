@@ -1,3 +1,9 @@
+---
+title: Flows
+layout: '@/layouts/DocsLayout.astro'
+order: 2
+---
+
 # Flows
 
 ## Adding a new place
