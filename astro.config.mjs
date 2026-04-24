@@ -2,6 +2,7 @@ import { defineConfig, fontProviders } from 'astro/config'
 import node from '@astrojs/node'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { paraglideCompilerOptions } from './project.inlang/compile-paraglide.mjs'
+import paraglideSettings from './project.inlang/settings.json'
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,9 +12,8 @@ export default defineConfig({
   }),
   i18n: {
     defaultLocale: 'pt',
-    locales: ['pt', 'en'],
+    locales: paraglideSettings.locales,
     routing: {
-      // false: o pt fica na raiz (ex: /about), o en ganha prefixo (ex: /en/about)
       prefixDefaultLocale: false 
     }
   },

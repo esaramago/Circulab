@@ -25,7 +25,3 @@ pnpm-debug.log*
 
 # supabase
 supabase/.temp/
-
-# inlang
-project.inlang
-!project.inlang/settings.json
