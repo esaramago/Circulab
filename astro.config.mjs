@@ -1,7 +1,6 @@
 import { defineConfig, fontProviders } from 'astro/config'
 import node from '@astrojs/node'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
-import { paraglideCompilerOptions } from './project.inlang/paraglide.shared.mjs'
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +13,6 @@ export default defineConfig({
       paraglideVitePlugin({
         project: './project.inlang',
         outdir: './src/paraglide',
-        ...paraglideCompilerOptions,
       }),
     ],
   },

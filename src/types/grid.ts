@@ -1,1 +1,1 @@
-export type Spacing = 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl'
+export type Spacing = 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl'

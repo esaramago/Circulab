@@ -6,16 +6,16 @@ import Grid from '@/components/ui/Grid.astro'
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const hrefEn = localizeHref(path, { locale: 'en' })
 const hrefPt = localizeHref(path, { locale: 'pt' })
+
 ---
 
 <header>
-
-  <Grid justify="space-between" align="center">
-    <a href="/">
-      <h1>{m.site_title()}</h1>
+  <Grid gap="xl" align="center">
+    <a href="/" class="header__logo">
+      <span>{m.site_title()}</span>
     </a>
     <nav>
-      <ul>
+      <ul class="header__nav-list">
         <li>
           <a href={localizeHref('/about')}>{m['about.title']()}</a>
         </li>
@@ -27,22 +27,59 @@ const hrefPt = localizeHref(path, { locale: 'pt' })
         </li>
       </ul>
     </nav>
-    <div>
-      <a href={hrefEn} class="btn-lang">EN</a>
-      <a href={hrefPt} class="btn-lang">PT</a>
-    </div>
-  </Grid>
+  </G>
+  <div>
+    <a href={hrefEn} class="btn-lang">EN</a>
+    <a href={hrefPt} class="btn-lang">PT</a>
+  </div>
 </header>
 
-<script>
-  import { setLocale } from '@/paraglide/runtime.js'
+<style>
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--wa-space-xl) var(--wa-space-2xl);
+  }
+  .header__logo {
+    display: inline-flex;
+    align-items: end;
+    gap: var(--wa-space-xs);
+    font-size: var(--wa-font-size-l);
+    font-weight: var(--wa-font-weight-bold);
+    color: var(--wa-color-brand-10);
+    text-decoration: none;
+    line-height: 1;
+    transition: all .2s;
 
-  document.querySelectorAll('a.btn-lang[data-set-locale]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      const locale = el.getAttribute('data-set-locale')
-      if (locale !== 'en' && locale !== 'pt') return
-      e.preventDefault()
-      setLocale(/** @type {'en' | 'pt'} */ (locale))
-    })
-  })
-</script>
+    &:hover {
+      color: var(--wa-color-brand-40);
+    }
+    &::before {
+      content: '';
+      display: block;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: var(--wa-border-radius-circle);
+      background-color: currentColor;
+    }
+  }
+
+  .header__nav-list {
+    display: flex;
+    gap: var(--wa-space-m);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    a {
+      text-decoration: none;
+      font-weight: var(--wa-font-weight-semibold);
+      &:hover,
+      &.is-active {
+        text-decoration: underline;
+        color: var(--wa-color-brand-10);
+        font-weight: var(--wa-font-weight-bold);
+      }
+    }
+  }
+</style>
