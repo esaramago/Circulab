@@ -15,4 +15,4 @@
 # Inlang handles the gitignore itself starting with version ^2.5.
 #
 # everything is ignored except settings.json
-cache/
+*
