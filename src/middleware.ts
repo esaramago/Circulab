@@ -1,11 +1,13 @@
 import { defineMiddleware } from 'astro:middleware'
 import { paraglideMiddleware } from './paraglide/server.js'
+import { deLocalizeHref, getLocale } from './paraglide/runtime.js'
 import { actions } from 'astro:actions'
 
 export const onRequest = defineMiddleware(async ({ request, locals, redirect, callAction }, next) => {
-  return paraglideMiddleware(request, async ({ request: req }) => {
+  return paraglideMiddleware(request, async () => {
 
-    const pathname = new URL(req.url).pathname
+    const pathname = deLocalizeHref(new URL(request.url).pathname)
+    locals.locale = getLocale() // set Astro.locals.locale
     const isLoginRoute = pathname.startsWith('/login')
 
     try {
@@ -21,7 +23,7 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
             locals.user?.role_id === 2 || locals.user?.role_id === 3
   
           if (hasAccessToDashboard) {
-            return next(req) // Continue to page
+            return next(request) // Keep localized URL so Astro.currentLocale matches route
           }
           return redirect('/login')
         }
@@ -29,11 +31,11 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
       }
 
       // is public route
-      return next(req) // Continue to page
+      return next(request) // Keep localized URL so Astro.currentLocale matches route
       
     } catch (error) {
       if (isLoginRoute) {
-        return next(req) // Continue to page
+        return next(request) // Keep localized URL so Astro.currentLocale matches route
       }
       return redirect('/login')
     }

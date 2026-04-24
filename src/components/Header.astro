@@ -4,14 +4,24 @@ import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.astro'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
-const hrefEn = localizeHref(path, { locale: 'en' })
-const hrefPt = localizeHref(path, { locale: 'pt' })
+const currentLocale = Astro.locals.locale
 
+const langs = [
+  { locale: 'en',
+    href: localizeHref(path, { locale: 'en' }),
+    label: 'EN'
+  },
+  {
+    locale: 'pt',
+    href: localizeHref(path, { locale: 'pt' }),
+    label: 'PT'
+  }
+]
 ---
 
 <header>
   <Grid gap="xl" align="center">
-    <a href="/" class="header__logo">
+    <a href={localizeHref('/')} class="header__logo">
       <span>{m.site_title()}</span>
     </a>
     <nav>
@@ -27,11 +37,14 @@ const hrefPt = localizeHref(path, { locale: 'pt' })
         </li>
       </ul>
     </nav>
-  </G>
-  <div>
-    <a href={hrefEn} class="btn-lang">EN</a>
-    <a href={hrefPt} class="btn-lang">PT</a>
-  </div>
+  </Grid>
+  <ul class="header__lang-buttons">
+    {langs.map((lang) => (
+      <li>
+        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+      </li>
+    ))}
+  </ul>
 </header>
 
 <style>
@@ -65,6 +78,7 @@ const hrefPt = localizeHref(path, { locale: 'pt' })
     }
   }
 
+  .header__lang-buttons,
   .header__nav-list {
     display: flex;
     gap: var(--wa-space-m);

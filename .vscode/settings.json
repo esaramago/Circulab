@@ -10,7 +10,8 @@
       "build": true,
       "package-lock.json": true,
       ".vscode": true,
-      "pnpm-lock.yaml": true
+      "pnpm-lock.yaml": true,
+      "src/types": true
     }
     
 }

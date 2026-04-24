@@ -14,7 +14,7 @@ The map has a series of pins corresponding to the location of those resources: p
 * There will be filtering by Typology/Category
 
 ## Pins
-* Each pin includes information such as images, address, coordinates, title, notes, etc (see [database](database.md))
+* Each pin includes information such as images, address, coordinates, title, notes, etc (see [database](database))
 * Pins cluster into a bubble if they are very close
 
 ## Categorization

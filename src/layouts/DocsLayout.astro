@@ -1,6 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-const docs = Object.values(import.meta.glob('../pages/docs/*.md', { eager: true }))
+const docs = Object.values(import.meta.glob('../pages/[[]...lang]/docs/*.md', { eager: true }))
 const orderedDocs = docs.sort((a: any, b: any) => a.frontmatter.order - b.frontmatter.order)
 ---
 
@@ -11,7 +11,7 @@ const orderedDocs = docs.sort((a: any, b: any) => a.frontmatter.order - b.frontm
       {
         orderedDocs.map((doc: any) => (
           <li>
-            <a href={doc.url}>{doc.frontmatter.title || doc.url}</a>
+            <a href={doc.url.replace('/[...lang]', '')}>{doc.frontmatter.title || doc.url}</a>
           </li>
         ))
       }

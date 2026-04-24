@@ -4,13 +4,14 @@ import { m } from '@/paraglide/messages.js'
 import { fetchDB } from '@/utils/fetchDB'
 
 import type { Database } from '@/types/supabase'
-const locale = Astro.url.pathname === '/en' || Astro.url.pathname.startsWith('/en/') ? 'en' : 'pt'
 const { data: typologies, error } = await fetchDB('typologies').select('*')
+
 ---
 
-<Layout title={m.site_title(undefined, { locale })}>
-  <p>{m.site_description(undefined, { locale })}</p>
-  <p>{m.map(undefined, { locale })}</p>
+<Layout title={m.site_title}>
+  <p>{m.site_description()}</p>
+  <p>{m.map()}</p>
+  <p>{Astro.currentLocale}</p>
 
   {
     typologies ? (

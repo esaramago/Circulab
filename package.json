@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && astro build",
+    "build": "pnpm run compile:paraglide && astro build",
     "compile:paraglide": "node ./project.inlang/compile-paraglide.mjs",
     "preview": "astro preview",
     "astro": "astro",
