@@ -23,19 +23,18 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
             locals.user?.role_id === 2 || locals.user?.role_id === 3
   
           if (hasAccessToDashboard) {
-            return next(request) // Keep localized URL so Astro.currentLocale matches route
+            return next()
           }
           return redirect('/login')
         }
 
       }
 
-      // is public route
-      return next(request) // Keep localized URL so Astro.currentLocale matches route
-      
+      return next()
+
     } catch (error) {
       if (isLoginRoute) {
-        return next(request) // Keep localized URL so Astro.currentLocale matches route
+        return next()
       }
       return redirect('/login')
     }
