@@ -1,7 +1,6 @@
 ---
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
-import Grid from '@/components/ui/Grid.astro'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
@@ -41,10 +40,21 @@ const navItems = [
 ---
 
 <header>
-  <Grid gap="xl" align="center">
-    <a href={localizeHref('/')} class="header__logo">
-      <span>{m.site_title()}</span>
-    </a>
+  <a href={localizeHref('/')} class="header__logo">
+    <span>{m.site_title()}</span>
+  </a>
+
+  <wa-button
+    appearance="outlined"
+    variant="neutral"
+    class="header__toggle"
+    aria-controls="header-panel"
+    aria-expanded="false">
+    <wa-icon class="header__toggle-icon header__toggle-icon--open" name="bars" label="Open menu"></wa-icon>
+    <wa-icon class="header__toggle-icon header__toggle-icon--close" name="xmark" label="Close menu"></wa-icon>
+  </wa-button>
+
+  <div id="header-panel" class="header__panel">
     <nav>
       <ul class="header__nav-list">
         {navItems.map((item) => (
@@ -54,15 +64,46 @@ const navItems = [
         ))}
       </ul>
     </nav>
-  </Grid>
-  <ul class="header__lang-buttons">
-    {langs.map((lang) => (
-      <li>
-        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
-      </li>
-    ))}
-  </ul>
+    <ul class="header__lang-buttons">
+      {langs.map((lang) => (
+        <li>
+          <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
 </header>
+
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/icon/icon.js'
+
+  const init = () => {
+    const toggle = document.querySelector<HTMLElement>('.header__toggle')
+    const panel = document.getElementById('header-panel')
+    if (!toggle || !panel) return
+
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle('is-open', open)
+      toggle.setAttribute('aria-expanded', String(open))
+    }
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true')
+    })
+
+    panel.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => setOpen(false))
+    })
+
+    const mq = window.matchMedia('(min-width: 768px)')
+    mq.addEventListener('change', (e) => {
+      if (e.matches) setOpen(false)
+    })
+  }
+
+  document.addEventListener('astro:page-load', init)
+</script>
 
 <style>
   header {
@@ -70,9 +111,11 @@ const navItems = [
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    gap: var(--wa-space-l);
     padding: var(--wa-space-l) var(--wa-space-l);
     @media (min-width: 768px) {
       flex-wrap: nowrap;
+      gap: var(--wa-space-xl);
       padding: var(--wa-space-l) var(--wa-space-2xl);
     }
   }
@@ -100,10 +143,33 @@ const navItems = [
     }
   }
 
+  .header__toggle .header__toggle-icon--close,
+  .header__toggle[aria-expanded="true"] .header__toggle-icon--open {
+    display: none;
+  }
+  .header__toggle[aria-expanded="true"] .header__toggle-icon--close {
+    display: inline-flex;
+  }
+
+  .header__panel {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    gap: var(--wa-space-l);
+    padding-top: var(--wa-space-s);
+
+    &.is-open {
+      display: flex;
+    }
+  }
+
+  .header__nav-list {
+    flex-direction: column;
+  }
   .header__lang-buttons,
   .header__nav-list {
     display: flex;
-    gap: var(--wa-space-m);
+    gap: var(--wa-space-s);
     list-style: none;
     padding: 0;
     margin: 0;
@@ -116,6 +182,26 @@ const navItems = [
         color: var(--wa-color-brand-10);
         font-weight: var(--wa-font-weight-bold);
       }
+    }
+  }
+
+  @media (min-width: 768px) {
+    .header__toggle {
+      display: none;
+    }
+    .header__panel {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      flex-basis: auto;
+      padding-top: 0;
+    }
+    .header__lang-buttons,
+    .header__nav-list {
+      flex-direction: row;
+      gap: var(--wa-space-m);
     }
   }
 </style>
