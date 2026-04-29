@@ -17,6 +17,28 @@ const langs = [
     label: 'PT'
   }
 ]
+
+const currentPath = Astro.url.pathname
+
+const navItems = [
+  {
+    path: '/',
+    label: m['map.title']()
+  },
+  {
+    path: '/about',
+    label: m['about.title']()
+  },
+  {
+    path: '/contacts',
+    label: m['contacts.title']()
+  },
+  {
+    path: '/docs',
+    label: m['docs.title']()
+  }
+]
+
 ---
 
 <header>
@@ -26,15 +48,11 @@ const langs = [
     </a>
     <nav>
       <ul class="header__nav-list">
-        <li>
-          <a href={localizeHref('/about')}>{m['about.title']()}</a>
-        </li>
-        <li>
-          <a href={localizeHref('/contacts')}>{m['contacts.title']()}</a>
-        </li>
-        <li>
-          <a href={localizeHref('/docs')}>{m['docs.title']()}</a>
-        </li>
+        {navItems.map((item) => (
+          <li>
+            <a href={localizeHref(item.path)} class:list={item.path === currentPath ? 'is-active' : ''}>{item.label}</a>
+          </li>
+        ))}
       </ul>
     </nav>
   </Grid>

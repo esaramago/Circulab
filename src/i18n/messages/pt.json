@@ -1,7 +1,9 @@
 {
 	"site_title": "Circulab",
 	"site_description": "Circulab é um mapa de recursos agroecológicos.",
-	"map": "mapa",
+	"map": {
+    "title": "Mapa"
+  },
   "contacts": {
     "title": "Contactos"
   },

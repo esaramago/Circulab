@@ -10,7 +10,7 @@ const { data: typologies, error } = await fetchDB('typologies').select('*')
 
 <Layout title={m.site_title}>
   <p>{m.site_description()}</p>
-  <p>{m.map()}</p>
+  <p>{m['map.title']()}</p>
   <p>{Astro.currentLocale}</p>
 
   {
