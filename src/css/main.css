@@ -4,5 +4,6 @@
 @import './base/global.css';
 
 @import './components/grid.css';
+@import './plugins/leafleft.css';
 
 @import './utils/utils.css';

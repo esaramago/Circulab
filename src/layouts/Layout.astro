@@ -3,7 +3,6 @@ import { Font } from 'astro:assets'
 import '@awesome.me/webawesome/dist/styles/themes/default.css'
 import '@/css/main.css'
 import Header from '@/components/Header.astro'
-import Footer from '@/components/Footer.astro'
 import { ClientRouter } from 'astro:transitions'
 
 interface Props {
@@ -35,12 +34,13 @@ const { title } = Astro.props
     <main class="l-grid">
       <slot />
     </main>
-    <Footer />
 	</body>
 </html>
 
 <style>
   main {
-    padding: 0 var(--wa-space-2xl) var(--wa-space-2xl);
+    @media (min-width: 768px) {
+      padding: 0 var(--wa-space-2xl) var(--wa-space-2xl);
+    }
   }
 </style>

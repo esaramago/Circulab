@@ -1,26 +1,10 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
-import { fetchDB } from '@/utils/fetchDB'
-
-import type { Database } from '@/types/supabase'
-const { data: typologies, error } = await fetchDB('typologies').select('*')
+import Map from '@/components/Map.vue'
 
 ---
 
 <Layout title={m.site_title}>
-  <p>{m.site_description()}</p>
-  <p>{m['map.title']()}</p>
-  <p>{Astro.currentLocale}</p>
-
-  {
-    typologies ? (
-      <ul>
-        {typologies.map((item: Database['public']['Tables']['typologies']['Row']) => (
-          <li>{item.name}</li>
-        ))}
-      </ul>
-    ) : <p>No typologies found</p>
-  }
-
+  <Map client:only="vue" />
 </Layout>

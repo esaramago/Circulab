@@ -5,6 +5,7 @@ import Grid from '@/components/ui/Grid.astro'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
+const currentPath = Astro.url.pathname
 
 const langs = [
   { locale: 'en',
@@ -17,8 +18,6 @@ const langs = [
     label: 'PT'
   }
 ]
-
-const currentPath = Astro.url.pathname
 
 const navItems = [
   {
@@ -68,9 +67,14 @@ const navItems = [
 <style>
   header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    padding: var(--wa-space-xl) var(--wa-space-2xl);
+    padding: var(--wa-space-l) var(--wa-space-l);
+    @media (min-width: 768px) {
+      flex-wrap: nowrap;
+      padding: var(--wa-space-l) var(--wa-space-2xl);
+    }
   }
   .header__logo {
     display: inline-flex;
