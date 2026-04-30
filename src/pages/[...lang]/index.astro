@@ -5,6 +5,6 @@ import Map from '@/components/Map.vue'
 
 ---
 
-<Layout title={m.site_title}>
+<Layout title={m.site_title()} marginsMobile={false}>
   <Map client:only="vue" />
 </Layout>
