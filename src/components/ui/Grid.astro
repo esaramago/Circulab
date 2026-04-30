@@ -1,11 +1,13 @@
 ---
 import type { Spacing } from '@/types/grid'
-interface Props {
+import type { HTMLAttributes } from 'astro/types'
+interface Props extends HTMLAttributes<'div'> {
   gap?: Spacing
   align?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
   wrap?: 'nowrap' | 'wrap'
   direction?: 'row' | 'column'
+  class?: string
 }
 
 const {
@@ -14,12 +16,13 @@ const {
   justify,
   wrap,
   direction,
+  class: className,
   ...rest
 } = Astro.props
 ---
 
 <div
-  class="l-grid"
+  class:list={['l-grid', className]}
   style={`
     ${gap ? `--gap: var(--wa-space-${gap});` : ''}
     ${align ? `--align: ${align};` : ''}

@@ -1,21 +1,22 @@
 ---
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
+import Grid from '@/components/ui/Grid.astro'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
 const currentPath = Astro.url.pathname
 
 const langs = [
-  { locale: 'en',
-    href: localizeHref(path, { locale: 'en' }),
-    label: 'EN'
-  },
   {
     locale: 'pt',
     href: localizeHref(path, { locale: 'pt' }),
     label: 'PT'
-  }
+  },
+  { locale: 'en',
+    href: localizeHref(path, { locale: 'en' }),
+    label: 'EN'
+  },
 ]
 
 const navItems = [
@@ -40,23 +41,12 @@ const navItems = [
 ---
 
 <header>
-  <a href={localizeHref('/')} class="header__logo">
-    <span>{m.site_title()}</span>
-  </a>
-
-  <wa-button
-    appearance="outlined"
-    variant="neutral"
-    class="header__toggle"
-    aria-controls="header-panel"
-    aria-expanded="false">
-    <wa-icon class="header__toggle-icon header__toggle-icon--open" name="bars" label="Open menu"></wa-icon>
-    <wa-icon class="header__toggle-icon header__toggle-icon--close" name="xmark" label="Close menu"></wa-icon>
-  </wa-button>
-
-  <div id="header-panel" class="header__panel">
+  <Grid gap="xl" align="center">
+    <a href={localizeHref('/')} class="header__logo">
+      <span>{m.site_title()}</span>
+    </a>
     <nav>
-      <ul class="header__nav-list">
+      <ul class="nav-list">
         {navItems.map((item) => (
           <li>
             <a href={localizeHref(item.path)} class:list={item.path === currentPath ? 'is-active' : ''}>{item.label}</a>
@@ -64,41 +54,59 @@ const navItems = [
         ))}
       </ul>
     </nav>
-    <ul class="header__lang-buttons">
-      {langs.map((lang) => (
+  </Grid>
+  <ul class="nav-lang">
+    {langs.map((lang) => (
+      <li>
+        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+      </li>
+    ))}
+  </ul>
+
+  <wa-button
+    appearance="outlined"
+    variant="neutral"
+    class="nav-toggle"
+    aria-controls="header-panel"
+    aria-expanded="false">
+    <wa-icon class="nav-toggle__icon nav-toggle__icon--open" name="bars" label="Open menu"></wa-icon>
+    <wa-icon class="nav-toggle__icon nav-toggle__icon--close" name="xmark" label="Close menu"></wa-icon>
+  </wa-button>
+
+</header>
+
+<wa-drawer id="header-drawer" class="nav-drawer" label="Menu">
+  <nav>
+    <ul class="nav-list">
+      {navItems.map((item) => (
         <li>
-          <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+          <a href={localizeHref(item.path)} class:list={item.path === currentPath ? 'is-active' : ''}>{item.label}</a>
         </li>
       ))}
     </ul>
-  </div>
-</header>
+  </nav>
+  <ul class="nav-lang">
+    {langs.map((lang) => (
+      <li>
+        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+      </li>
+    ))}
+  </ul>
+</wa-drawer>
 
 <script>
   import '@awesome.me/webawesome/dist/components/button/button.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
+  import '@awesome.me/webawesome/dist/components/drawer/drawer.js'
 
   const init = () => {
-    const toggle = document.querySelector<HTMLElement>('.header__toggle')
-    const panel = document.getElementById('header-panel')
-    if (!toggle || !panel) return
+    const button = document.querySelector<HTMLElement>('.nav-toggle')
+    const drawer = document.getElementById('header-drawer')
+    if (!button || !drawer) return
 
-    const setOpen = (open: boolean) => {
-      panel.classList.toggle('is-open', open)
-      toggle.setAttribute('aria-expanded', String(open))
-    }
+    button.addEventListener('click', () => {
 
-    toggle.addEventListener('click', () => {
-      setOpen(toggle.getAttribute('aria-expanded') !== 'true')
-    })
-
-    panel.querySelectorAll('a').forEach((a) => {
-      a.addEventListener('click', () => setOpen(false))
-    })
-
-    const mq = window.matchMedia('(min-width: 768px)')
-    mq.addEventListener('change', (e) => {
-      if (e.matches) setOpen(false)
+      drawer.open = !drawer.open
     })
   }
 
@@ -112,11 +120,18 @@ const navItems = [
     align-items: center;
     justify-content: space-between;
     gap: var(--wa-space-l);
-    padding: var(--wa-space-l) var(--wa-space-l);
+    justify-self: start;
+    padding: var(--wa-space-m) var(--wa-space-l);
     @media (min-width: 768px) {
       flex-wrap: nowrap;
       gap: var(--wa-space-xl);
       padding: var(--wa-space-l) var(--wa-space-2xl);
+    }
+    @media (max-width: 767px) {
+      .nav-lang,
+      nav {
+        display: none;
+      }
     }
   }
   .header__logo {
@@ -143,31 +158,25 @@ const navItems = [
     }
   }
 
-  .header__toggle .header__toggle-icon--close,
-  .header__toggle[aria-expanded="true"] .header__toggle-icon--open {
-    display: none;
-  }
-  .header__toggle[aria-expanded="true"] .header__toggle-icon--close {
-    display: inline-flex;
-  }
-
-  .header__panel {
-    display: none;
-    flex-basis: 100%;
-    flex-direction: column;
-    gap: var(--wa-space-l);
-    padding-top: var(--wa-space-s);
-
-    &.is-open {
-      display: flex;
+  .nav-toggle {
+    @media (min-width: 768px) {
+      display: none;
     }
   }
 
-  .header__nav-list {
+  .nav-toggle .nav-toggle__icon--close,
+  .nav-toggle[aria-expanded="true"] .nav-toggle__icon--open {
+    display: none;
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle__icon--close {
+    display: inline-flex;
+  }
+
+  .nav-list {
     flex-direction: column;
   }
-  .header__lang-buttons,
-  .header__nav-list {
+  .nav-lang,
+  .nav-list {
     display: flex;
     gap: var(--wa-space-s);
     list-style: none;
@@ -186,22 +195,19 @@ const navItems = [
   }
 
   @media (min-width: 768px) {
-    .header__toggle {
+    .nav-toggle {
       display: none;
     }
-    .header__panel {
-      display: flex;
-      flex: 1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      flex-basis: auto;
-      padding-top: 0;
-    }
-    .header__lang-buttons,
-    .header__nav-list {
+    .nav-lang,
+    .nav-list {
       flex-direction: row;
       gap: var(--wa-space-m);
     }
+  }
+
+  .nav-drawer::part(body) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-l);
   }
 </style>
