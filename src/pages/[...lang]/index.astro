@@ -2,9 +2,76 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/Map.vue'
+import type { Database } from '@/types/supabase'
+type MarkerType = Database['public']['Tables']['pins']['Row']
 
+const markers: MarkerType[] = [
+  {
+    coordinates: {
+      latitude: 38.74,
+      longitude: -9.14
+    },
+    title: 'Lisboa',
+    description: 'Lisboa is the capital of Portugal.',
+    category_id: '1',
+    characteristics_ids: ['1'],
+    created_by: '1',
+    created_date: new Date().toISOString(),
+    id: '1',
+    images: [{
+      bucket: 'pin-images',
+      path: 'lisboa.jpg'
+    }],
+    location: 'Lisboa',
+    updated_by: '1',
+    updated_date: new Date().toISOString(),
+    accepted_by: null
+  },
+  {
+    coordinates: {
+      latitude: 38.79,
+      longitude: -9.13
+    },
+    title: 'Rizoma cooperativa Integral',
+    description: 'Rizoma cooperativa Integral',
+    category_id: '1',
+    characteristics_ids: ['1'],
+    created_by: '1',
+    created_date: new Date().toISOString(),
+    id: '1',
+    images: [{
+      bucket: 'pin-images',
+      path: 'rizoma.jpg'
+    }],
+    location: 'Rizoma cooperativa Integral',
+    updated_by: '1',
+    updated_date: new Date().toISOString(),
+    accepted_by: null
+  },
+  {
+    coordinates: {
+      latitude: 38.78,
+      longitude: -9.12
+    },
+    title: 'Rizoma cooperativa Integral',
+    description: 'Rizoma cooperativa Integral',
+    category_id: '1',
+    characteristics_ids: ['1'],
+    created_by: '1',
+    created_date: new Date().toISOString(),
+    id: '1',
+    images: [{
+      bucket: 'pin-images',
+      path: 'rizoma.jpg'
+    }],
+    location: 'Rizoma cooperativa Integral',
+    updated_by: '1',
+    updated_date: new Date().toISOString(),
+    accepted_by: null
+  }
+]
 ---
 
 <Layout title={m.site_title()} marginsMobile={false}>
-  <Map client:only="vue" />
+  <Map client:only="vue" markers={markers} />
 </Layout>
