@@ -27,7 +27,6 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
           }
           return redirect('/login')
         }
-
       }
 
       return next()

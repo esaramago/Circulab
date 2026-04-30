@@ -67,6 +67,7 @@ const navItems = [
     appearance="outlined"
     variant="neutral"
     class="nav-toggle"
+    id="nav-toggle"
     aria-controls="header-panel"
     aria-expanded="false">
     <wa-icon class="nav-toggle__icon nav-toggle__icon--open" name="bars" label="Open menu"></wa-icon>
@@ -100,13 +101,18 @@ const navItems = [
   import '@awesome.me/webawesome/dist/components/drawer/drawer.js'
 
   const init = () => {
-    const button = document.querySelector<HTMLElement>('.nav-toggle')
+    const button = document.getElementById('nav-toggle')
     const drawer = document.getElementById('header-drawer')
     if (!button || !drawer) return
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      // @ts-ignore
+      const button = event.currentTarget as HTMLElement
+      const isExpanded = button.getAttribute('aria-expanded') === 'true'
+      button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false')
 
-      drawer.open = !drawer.open
+      // @ts-expect-error - drawer is a custom element
+      drawer.open = !isExpanded
     })
   }
 
