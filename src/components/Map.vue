@@ -5,11 +5,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Map, TileLayer, Marker, LayerGroup, DivIcon } from 'leaflet'
-import type { Database } from '@/types/supabase'
+import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MarkerPopup from '@/components/MarkerPopup.vue'
-type MarkerType = Database['public']['Tables']['pins']['Row']
+import type { Marker as MarkerType } from '@/types/data'
 
 const props = defineProps<{
   markers: MarkerType[]
@@ -18,10 +17,10 @@ const props = defineProps<{
 const activeMarker = ref<MarkerType | null>(null)
 
 const tree = {}
-function ensureGroup(typology: MarkerType['category_id'], category: MarkerType['category_id'], characteristics: MarkerType['characteristics_ids']) {
+function ensureGroup(typology: MarkerType['typology'], category: MarkerType['category']) {
   tree[typology] ??= {}
-  tree[category_id][characteristics_ids] ??= new LayerGroup()
-  return tree[category_id][characteristics_ids]
+  tree[category] ??= new LayerGroup()
+  return tree[category]
 }
 
 const tooltipSize = 24;
@@ -56,14 +55,17 @@ onMounted(() => {
   addMarkers(props.markers, map/* , markersLayer */)
 })
 
-function addMarkers(markers, map) {
+function addMarkers(markers: MarkerType[], map: Map) {
   markers.forEach(marker => {
     //const group = ensureGroup(marker.typology, marker.category, marker.characteristics)
     //group.addTo(map)
     addMarker(marker, map)
   })
 }
-function addMarker(marker, map) {
+function addMarker(marker: MarkerType, map: Map) {
+
+  if (!marker?.coordinates) return
+
   const markerLayer = new Marker([
     marker.coordinates.latitude,
     marker.coordinates.longitude],
@@ -75,7 +77,7 @@ function addMarker(marker, map) {
   })
 }
 
-function showPopup(marker) {
+function showPopup(marker: MarkerType) {
   activeMarker.value = marker // set active marker
 }
 </script>

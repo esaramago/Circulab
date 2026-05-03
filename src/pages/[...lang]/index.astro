@@ -2,10 +2,11 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/Map.vue'
-import type { Database } from '@/types/supabase'
-type MarkerType = Database['public']['Tables']['pins']['Row']
+import { actions } from 'astro:actions'
 
-const markers: MarkerType[] = [
+const { data: markers } = await Astro.callAction(actions.getMarkers, {})
+
+/* const markers: MarkerType[] = [
   {
     coordinates: {
       latitude: 38.74,
@@ -69,9 +70,10 @@ const markers: MarkerType[] = [
     updated_date: new Date().toISOString(),
     accepted_by: null
   }
-]
+] */
+
 ---
 
 <Layout title={m.site_title()} marginsMobile={false}>
-  <Map client:only="vue" markers={markers} />
+  <Map client:only="vue" markers={markers ?? []} />
 </Layout>
