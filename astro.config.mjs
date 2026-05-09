@@ -2,7 +2,6 @@ import { defineConfig, fontProviders } from 'astro/config'
 import node from '@astrojs/node'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { paraglideCompilerOptions } from './project.inlang/compile-paraglide.mjs'
-import paraglideSettings from './project.inlang/settings.json'
 
 import vue from '@astrojs/vue'
 
@@ -13,14 +12,6 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
-
-  i18n: {
-    defaultLocale: 'pt',
-    locales: paraglideSettings.locales,
-    routing: {
-      prefixDefaultLocale: false 
-    }
-  },
 
   vite: {
     plugins: [

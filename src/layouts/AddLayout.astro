@@ -26,7 +26,7 @@ const steps = [
   }
 ]
 
-const currentStep = 'validation'
+const currentStep = Astro.props.currentStep || 'validation'
 ---
 
 <Layout title="Adicionar">

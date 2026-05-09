@@ -1,0 +1,16 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+---
+
+<script>
+  
+</script>
+<AddLayout currentStep="summary">
+  <h2>Resumo</h2>
+  <Grid justify="end">
+    <wa-button variant="primary" href={localizeHref('/')}>Adicionar</wa-button>
+  </Grid>
+</AddLayout>

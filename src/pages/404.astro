@@ -1,1 +1,15 @@
-<h1>404</h1>
+---
+import Layout from '@/layouts/Layout.astro'
+import Grid from '@/components/ui/Grid.vue'
+
+import { localizeHref } from '@/paraglide/runtime.js'
+---
+
+<Layout title="Página não encontrada">
+  <Grid direction="column" align="center" gap="xl">
+    <h1>Página não encontrada</h1>
+    <wa-button size="l" href={`${localizeHref('/')}`}>Voltar ao mapa</wa-button>
+  </Grid>
+</Layout>
+
+<script></script>

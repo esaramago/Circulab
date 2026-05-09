@@ -4,7 +4,7 @@ import { deLocalizeHref, getLocale } from './paraglide/runtime.js'
 import { actions } from 'astro:actions'
 
 export const onRequest = defineMiddleware(async ({ request, locals, redirect, callAction }, next) => {
-  return paraglideMiddleware(request, async () => {
+  return paraglideMiddleware(request, async ({ request: localizedRequest }) => {
 
     const pathname = deLocalizeHref(new URL(request.url).pathname)
     locals.locale = getLocale() // set Astro.locals.locale
@@ -18,22 +18,22 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
         const { data: sessionUser } = await callAction(actions.checkUser, {})
         if (sessionUser) {
           locals.user = sessionUser
-          
+
           const hasAccessToDashboard =
             locals.user?.role_id === 2 || locals.user?.role_id === 3
-  
+
           if (hasAccessToDashboard) {
-            return next()
+            return next(localizedRequest)
           }
           return redirect('/login')
         }
       }
 
-      return next()
+      return next(localizedRequest)
 
     } catch (error) {
       if (isLoginRoute) {
-        return next()
+        return next(localizedRequest)
       }
       return redirect('/login')
     }

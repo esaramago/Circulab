@@ -1,6 +1,7 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
 
 let errorMessage = ''
 let existsChecked = false
@@ -13,7 +14,7 @@ if (Astro.request.method === 'POST') {
   permanentChecked = formData.has('permanent')
   notRepeatedChecked = formData.has('not-repeated')
   if (existsChecked && permanentChecked && notRepeatedChecked) {
-    return Astro.redirect('/dashboard/adicionar/tipologia')
+    return Astro.redirect(localizeHref('/dashboard/adicionar/description'))
   } else {
     errorMessage = 'Tem de aceitar todas as condições para continuar'
   }

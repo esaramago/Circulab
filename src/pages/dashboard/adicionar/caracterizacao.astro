@@ -1,0 +1,36 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+let errorMessage = ''
+let characterization = ''
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  const characterization = formData.get('characterization')
+  if (characterization) {
+    return Astro.redirect(localizeHref('/dashboard/adicionar/location'))
+  } else {
+    errorMessage = 'Tem de introduzir uma caracterização válida para continuar'
+  }
+}
+---
+
+<script>
+import '@awesome.me/webawesome/dist/components/input/input.js'
+import '@awesome.me/webawesome/dist/components/button/button.js'
+import '@awesome.me/webawesome/dist/components/callout/callout.js'
+</script>
+<AddLayout currentStep="characterization">
+  <h2>Caracterização</h2>
+  {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+  <form method="post">
+    <Grid gap="xl" direction="column">
+      <wa-input name="characterization" label="Caracterização" />
+    </Grid>
+    <Grid justify="end">
+      <wa-button variant="primary" type="submit">Continuar</wa-button>
+    </Grid>
+  </form>
+</AddLayout>
