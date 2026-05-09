@@ -3,10 +3,6 @@
 :root {
   --font-family-body: var(--font-roboto), sans-serif;
   --default-font-size: 1.6rem;
-
-  --input-height: 3rem;
-  --input-padding: 1rem;
-  --input-border-radius: var(--border-radius-m);
 }
 
 /* Web Awesome variables */
@@ -15,10 +11,13 @@
   --wa-border-radius-scale: 3;
   --wa-shadow-scale: 1.6;
   --wa-space-scale: 1.6;
+  --wa-color-surface-default: var(--wa-color-neutral-20);
   
   --wa-font-family-body: var(--font-family-body);
   
   --wa-color-brand-20: #a6d0f0;
   --wa-color-brand-50: #0093ff;
   --wa-color-brand-60: #0083e5;
+
+  --wa-form-control-border-radius: var(--wa-border-radius-l);
 }

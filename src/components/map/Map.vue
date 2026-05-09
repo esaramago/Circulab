@@ -1,6 +1,6 @@
 <template>
-  <MapFilters />
   <div class="c-map-container">
+    <MapFilters />
     <div id="map"></div>
     <MarkerPopup :open="activeMarker !== null" :marker="activeMarker" @close="activeMarker = null" />
   </div>

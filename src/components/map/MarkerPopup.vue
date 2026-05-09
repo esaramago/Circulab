@@ -54,7 +54,7 @@ const emit = defineEmits<{
   width: clamp(30rem, 30vw, 40rem);
   inset: var(--inset) var(--inset) var(--inset) auto;
   display: none;
-  z-index: 1001; /* one more than the map */
+  z-index: 1002; /* map + 2 */
   &[open] {
     display: block;
   }
