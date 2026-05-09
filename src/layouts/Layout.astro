@@ -27,7 +27,7 @@ const { title, marginsMobile = true } = Astro.props
 		<meta name="generator" content={Astro.generator} />
 		<title>{title} {title ? '|' : ''} Circulab</title>
     <!-- <script is:inline defer src="https://analytics.emanuelsaramago.com/script.js" data-website-id="a128d8c5-ae20-44aa-be85-6e45880b27db"></script> -->
-	
+
     <ClientRouter />
   </head>
 	<body class="wa-dark wa-custom-theme">
@@ -40,6 +40,7 @@ const { title, marginsMobile = true } = Astro.props
 
 <style>
   main {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;

@@ -1,7 +1,9 @@
 <template>
   <MapFilters />
-  <div id="map"></div>
-  <MarkerPopup :open="activeMarker !== null" :marker="activeMarker" @close="activeMarker = null" />
+  <div class="c-map-container">
+    <div id="map"></div>
+    <MarkerPopup :open="activeMarker !== null" :marker="activeMarker" @close="activeMarker = null" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -86,6 +88,7 @@ function showPopup(marker: MarkerType) {
 
 <style scoped>
 #map {
+  position: relative;
   flex: 1;
   overflow: hidden;
   @media (min-width: 768px) {
@@ -95,6 +98,12 @@ function showPopup(marker: MarkerType) {
 </style>
 
 <style>
+.c-map-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 .leaflet-container {
   font-family: inherit;
 }

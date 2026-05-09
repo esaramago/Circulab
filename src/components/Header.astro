@@ -1,7 +1,7 @@
 ---
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
-import Grid from '@/components/ui/Grid.astro'
+import Grid from '@/components/ui/Grid.vue'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
@@ -64,12 +64,13 @@ const navItems = [
   </ul>
 
   <wa-button
-    appearance="outlined"
     variant="neutral"
     class="nav-toggle"
     id="nav-toggle"
     aria-controls="header-panel"
-    aria-expanded="false">
+    aria-expanded="false"
+    size="s"
+  >
     <wa-icon class="nav-toggle__icon nav-toggle__icon--open" name="bars" label="Open menu"></wa-icon>
     <wa-icon class="nav-toggle__icon nav-toggle__icon--close" name="xmark" label="Close menu"></wa-icon>
   </wa-button>
