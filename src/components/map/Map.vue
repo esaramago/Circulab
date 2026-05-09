@@ -7,7 +7,7 @@
 import { onMounted, ref } from 'vue'
 import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import MarkerPopup from '@/components/MarkerPopup.vue'
+import MarkerPopup from './MarkerPopup.vue'
 import type { Marker as MarkerType } from '@/types/data'
 
 const props = defineProps<{
