@@ -7,10 +7,10 @@ import { ClientRouter } from 'astro:transitions'
 
 interface Props {
 	title: string
-	marginsMobile?: boolean
+	fullWidth?: boolean
 }
 
-const { title, marginsMobile = true } = Astro.props
+const { title, fullWidth } = Astro.props
 
 ---
 
@@ -32,7 +32,7 @@ const { title, marginsMobile = true } = Astro.props
   </head>
 	<body class="wa-dark wa-custom-theme">
     <Header />
-    <main class:list={marginsMobile ? '' : 'no-margins-mobile'}>
+    <main class:list={fullWidth ? 'u-width-full' : ''}>
       <slot />
     </main>
 	</body>
@@ -43,10 +43,17 @@ const { title, marginsMobile = true } = Astro.props
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    gap: var(--wa-space-l);
     flex: 1;
-    padding: 0 var(--wa-space-xl) var(--wa-space-xl);
-    @media (max-width: 767px) {
-      &.no-margins-mobile {
+    padding: var(--wa-space-l) var(--wa-space-xl) var(--wa-space-xl);
+    box-sizing: border-box;
+    &.u-width-full {
+      max-width: none;
+      padding-block-start: 0;
+      @media (max-width: 767px) {
         padding: 0;
       }
     }

@@ -1,0 +1,49 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Wizard from '@/components/Wizard.vue'
+import WizardStep from '@/components/WizardStep.vue'
+
+const steps = [
+  {
+    code: 'validation',
+    label: 'Validação'
+  },
+  {
+    code: 'description',
+    label: 'Descrição'
+  },
+  {
+    code: 'characterization',
+    label: 'Caracterização'
+  },
+  {
+    code: 'location',
+    label: 'Localização'
+  },
+  {
+    code: 'summary',
+    label: 'Resumo'
+  }
+]
+
+const currentStep = 'validation'
+---
+
+<Layout title="Adicionar">
+  <h1>Adicionar pin ao mapa</h1>
+  <Wizard>
+    {
+      steps.map((step, index) => (
+        <WizardStep client:only="vue" step={index + 1} label={step.label} isActive={step.code === currentStep}></WizardStep>
+      ))
+    }
+  </Wizard>
+  <slot />
+</Layout>
+
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/select/select.js'
+  import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js'
+</script>

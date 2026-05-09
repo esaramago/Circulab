@@ -28,3 +28,7 @@ textarea {
   min-height: var(--input-height);
   color: inherit;
 }
+
+h1 {
+  font-weight: var(--wa-font-weight-semibold);
+}

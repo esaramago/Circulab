@@ -74,6 +74,6 @@ const { data: markers } = await Astro.callAction(actions.getMarkers, {})
 
 ---
 
-<Layout title={m.site_title()} marginsMobile={false}>
+<Layout title={m.site_title()} fullWidth={true}>
   <Map client:only="vue" markers={markers ?? []} />
 </Layout>

@@ -1,0 +1,45 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import Grid from '@/components/ui/Grid.vue'
+
+let errorMessage = ''
+let existsChecked = false
+let permanentChecked = false
+let notRepeatedChecked = false
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  existsChecked = formData.has('exists')
+  permanentChecked = formData.has('permanent')
+  notRepeatedChecked = formData.has('not-repeated')
+  if (existsChecked && permanentChecked && notRepeatedChecked) {
+    return Astro.redirect('/dashboard/adicionar/tipologia')
+  } else {
+    errorMessage = 'Tem de aceitar todas as condições para continuar'
+  }
+}
+---
+
+<AddLayout>
+  <form method="post">
+    <Grid gap="xl" direction="column">
+      <h2>Validação</h2>
+      {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+      <Grid gap="m" direction="column">
+        <p>Ao adicionar um novo pin ao mapa, declaro que:</p>
+        <wa-checkbox name="exists" checked={existsChecked ? true : undefined}><strong>Existe agora</strong>, não é um projeto que acabou</wa-checkbox>
+        <wa-checkbox name="permanent" checked={permanentChecked ? true : undefined}><strong>É um local permanente</strong>. Não é uma atividade ou evento pontual</wa-checkbox>
+        <wa-checkbox name="not-repeated" checked={notRepeatedChecked ? true : undefined}><strong>Não é um local que já foi adicionado</strong>. Se já existir, edite o pin existente.</wa-checkbox>
+      </Grid>
+      <Grid justify="end">
+        <wa-button variant="primary" type="submit">Continuar</wa-button>
+      </Grid>
+    </Grid>
+  </form>
+</AddLayout>
+
+<script>
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js'
+import '@awesome.me/webawesome/dist/components/button/button.js'
+import '@awesome.me/webawesome/dist/components/callout/callout.js'
+</script>

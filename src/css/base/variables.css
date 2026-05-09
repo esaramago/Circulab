@@ -18,6 +18,7 @@
   --wa-color-brand-20: #a6d0f0;
   --wa-color-brand-50: #0093ff;
   --wa-color-brand-60: #0083e5;
+  --wa-color-danger-fill-normal: var(--wa-color-danger-60);
 
   --wa-form-control-border-radius: var(--wa-border-radius-l);
 }

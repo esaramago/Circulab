@@ -55,13 +55,23 @@ const navItems = [
       </ul>
     </nav>
   </Grid>
-  <ul class="nav-lang">
-    {langs.map((lang) => (
-      <li>
-        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
-      </li>
-    ))}
-  </ul>
+  <Grid gap="s" align="center">
+    {
+      !currentPath.endsWith('/adicionar') && (
+        <wa-button variant="neutral" size="s" appearance="plain" href={localizeHref('/dashboard/adicionar')}>
+          <wa-icon name="plus" label="Adicionar"></wa-icon>
+          Adicionar
+        </wa-button>
+      )
+    }
+    <ul class="nav-lang">
+      {langs.map((lang) => (
+        <li>
+          <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+        </li>
+      ))}
+    </ul>
+  </Grid>
 
   <wa-button
     variant="neutral"
@@ -87,13 +97,19 @@ const navItems = [
       ))}
     </ul>
   </nav>
-  <ul class="nav-lang">
-    {langs.map((lang) => (
-      <li>
-        <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
-      </li>
-    ))}
-  </ul>
+  <Grid gap="s" align="center">
+    <wa-button variant="neutral" size="s" appearance="plain">
+      <wa-icon name="plus" label="Adicionar"></wa-icon>
+      Adicionar
+    </wa-button>
+    <ul class="nav-lang">
+      {langs.map((lang) => (
+        <li>
+          <a href={lang.href} class:list={lang.locale === currentLocale ? 'is-active' : ''}>{lang.label}</a>
+        </li>
+      ))}
+    </ul>
+  </Grid>
 </wa-drawer>
 
 <script>
