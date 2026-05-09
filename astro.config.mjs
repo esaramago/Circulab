@@ -4,7 +4,7 @@ import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { paraglideCompilerOptions } from './project.inlang/compile-paraglide.mjs'
 import paraglideSettings from './project.inlang/settings.json'
 
-import vue from '@astrojs/vue';
+import vue from '@astrojs/vue'
 
 // https://astro.build/config
 export default defineConfig({

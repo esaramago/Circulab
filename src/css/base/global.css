@@ -1,8 +1,8 @@
 
 body {
   font-family: var(--font-roboto), sans-serif;
-  background-color: var(--color-neutral-90);
-  color: var(--color-neutral-10);
+  background-color: var(--wa-color-neutral-10);
+  color: var(--wa-color-neutral-90);
   line-height: 1.4;
   font-size: var(--default-font-size);
   min-height: 100vh;
@@ -10,8 +10,8 @@ body {
   flex-direction: column;
 
   @media (prefers-color-scheme: light) {
-    background-color: var(--color-neutral-10);
-    color: var(--color-neutral-90);
+    background-color: var(--wa-color-neutral-90);
+    color: var(--wa-color-neutral-10);
   }
 }
 

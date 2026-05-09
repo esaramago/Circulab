@@ -30,7 +30,7 @@ const { title, marginsMobile = true } = Astro.props
 	
     <ClientRouter />
   </head>
-	<body>
+	<body class="wa-dark wa-custom-theme">
     <Header />
     <main class:list={marginsMobile ? '' : 'no-margins-mobile'}>
       <slot />

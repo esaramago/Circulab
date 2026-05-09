@@ -1,9 +1,24 @@
-:root {
+@layer module, state;
 
+:root {
+  --font-family-body: var(--font-roboto), sans-serif;
   --default-font-size: 1.6rem;
 
   --input-height: 3rem;
   --input-padding: 1rem;
   --input-border-radius: var(--border-radius-m);
+}
 
+/* Web Awesome variables */
+.wa-custom-theme {
+  --wa-font-size-scale: 1.6;
+  --wa-border-radius-scale: 3;
+  --wa-shadow-scale: 1.6;
+  --wa-space-scale: 1.6;
+  
+  --wa-font-family-body: var(--font-family-body);
+  
+  --wa-color-brand-20: #a6d0f0;
+  --wa-color-brand-50: #0093ff;
+  --wa-color-brand-60: #0083e5;
 }

@@ -106,8 +106,8 @@ function showPopup(marker: MarkerType) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--wa-color-brand-95);
-  border: 2px solid var(--wa-color-brand-10);
+  background-color: var(--wa-color-brand-50);
+  border: 2px solid var(--wa-color-brand-20);
   box-sizing: border-box;
   border-radius: var(--wa-border-radius-circle);
   font-size: var(--wa-font-size-s);
