@@ -1,4 +1,5 @@
 <template>
+  <MapFilters />
   <div id="map"></div>
   <MarkerPopup :open="activeMarker !== null" :marker="activeMarker" @close="activeMarker = null" />
 </template>
@@ -8,6 +9,7 @@ import { onMounted, ref } from 'vue'
 import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MarkerPopup from './MarkerPopup.vue'
+import MapFilters from './MapFilters.vue'
 import type { Marker as MarkerType } from '@/types/data'
 
 const props = defineProps<{

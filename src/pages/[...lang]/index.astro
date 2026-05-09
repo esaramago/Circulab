@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
-import Map from '@/components/Map.vue'
+import Map from '@/components/map/Map.vue'
 import { actions } from 'astro:actions'
 
 const { data: markers } = await Astro.callAction(actions.getMarkers, {})
