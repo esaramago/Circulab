@@ -14,7 +14,7 @@ if (Astro.request.method === 'POST') {
   permanentChecked = formData.has('permanent')
   notRepeatedChecked = formData.has('not-repeated')
   if (existsChecked && permanentChecked && notRepeatedChecked) {
-    return Astro.redirect(localizeHref('/dashboard/adicionar/description'))
+    return Astro.redirect(localizeHref('/dashboard/adicionar/descricao'))
   } else {
     errorMessage = 'Tem de aceitar todas as condições para continuar'
   }
@@ -40,7 +40,7 @@ if (Astro.request.method === 'POST') {
 </AddLayout>
 
 <script>
-import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js'
-import '@awesome.me/webawesome/dist/components/button/button.js'
-import '@awesome.me/webawesome/dist/components/callout/callout.js'
+import '@webawesome/checkbox/checkbox.js'
+import '@webawesome/button/button.js'
+import '@webawesome/callout/callout.js'
 </script>

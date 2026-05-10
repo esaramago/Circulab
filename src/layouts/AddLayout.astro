@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import Wizard from '@/components/Wizard.vue'
-import WizardStep from '@/components/WizardStep.vue'
+import Wizard from '@/components/pages/add/Wizard.vue'
+import WizardStep from '@/components/pages/add/WizardStep.vue'
 
 const steps = [
   {
@@ -40,10 +40,3 @@ const currentStep = Astro.props.currentStep || 'validation'
   </Wizard>
   <slot />
 </Layout>
-
-<script>
-  import '@awesome.me/webawesome/dist/components/button/button.js'
-  import '@awesome.me/webawesome/dist/components/input/input.js'
-  import '@awesome.me/webawesome/dist/components/select/select.js'
-  import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js'
-</script>

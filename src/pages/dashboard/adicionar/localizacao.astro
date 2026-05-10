@@ -9,7 +9,7 @@ if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const location = formData.get('location')
   if (location) {
-    return Astro.redirect(localizeHref('/dashboard/adicionar/summary'))
+    return Astro.redirect(localizeHref('/dashboard/adicionar/resumo'))
   } else {
     errorMessage = 'Tem de selecionar uma localização válida para continuar'
   }
@@ -17,9 +17,9 @@ if (Astro.request.method === 'POST') {
 ---
 
 <script>
-import '@awesome.me/webawesome/dist/components/input/input.js'
-import '@awesome.me/webawesome/dist/components/button/button.js'
-import '@awesome.me/webawesome/dist/components/callout/callout.js'
+import '@webawesome/input/input.js'
+import '@webawesome/button/button.js'
+import '@webawesome/callout/callout.js'
 </script>
 <AddLayout currentStep="location">
   <h2>Localização</h2>
@@ -28,7 +28,7 @@ import '@awesome.me/webawesome/dist/components/callout/callout.js'
     <Grid gap="xl" direction="column">
       <wa-input name="location" label="Localização" />
       <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" href={localizeHref('/dashboard/adicionar/characterization')}>Voltar</wa-button>
+        <wa-button variant="primary" appearance="outlined" href={localizeHref('/dashboard/adicionar/caracterizacao')}>Voltar</wa-button>
         <wa-button variant="primary" type="submit">Continuar</wa-button>
       </Grid>
     </Grid>

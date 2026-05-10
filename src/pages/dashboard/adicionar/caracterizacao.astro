@@ -10,7 +10,7 @@ if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const characterization = formData.get('characterization')
   if (characterization) {
-    return Astro.redirect(localizeHref('/dashboard/adicionar/location'))
+    return Astro.redirect(localizeHref('/dashboard/adicionar/localizacao'))
   } else {
     errorMessage = 'Tem de introduzir uma caracterização válida para continuar'
   }
@@ -18,9 +18,9 @@ if (Astro.request.method === 'POST') {
 ---
 
 <script>
-import '@awesome.me/webawesome/dist/components/input/input.js'
-import '@awesome.me/webawesome/dist/components/button/button.js'
-import '@awesome.me/webawesome/dist/components/callout/callout.js'
+import '@webawesome/input/input.js'
+import '@webawesome/button/button.js'
+import '@webawesome/callout/callout.js'
 </script>
 <AddLayout currentStep="characterization">
   <h2>Caracterização</h2>
@@ -30,7 +30,8 @@ import '@awesome.me/webawesome/dist/components/callout/callout.js'
       <wa-input name="characterization" label="Caracterização" />
     </Grid>
     <Grid justify="end">
-      <wa-button variant="primary" type="submit">Continuar</wa-button>
+      <wa-button variant="brand" appearance="outlined" href={localizeHref('/dashboard/adicionar/descricao')}>Voltar</wa-button>
+      <wa-button variant="brand" type="submit">Continuar</wa-button>
     </Grid>
   </form>
 </AddLayout>

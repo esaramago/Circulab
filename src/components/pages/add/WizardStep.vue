@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import '@awesome.me/webawesome/dist/components/tooltip/tooltip.js'
+import '@webawesome/tooltip/tooltip.js'
 
 const props = defineProps<{
   step: number

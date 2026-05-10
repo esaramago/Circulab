@@ -9,7 +9,7 @@ if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const description = formData.get('description')
   if (description) {
-    return Astro.redirect(localizeHref('/dashboard/adicionar/characterization'))
+    return Astro.redirect(localizeHref('/dashboard/adicionar/caracterizacao'))
   } else {
     errorMessage = 'Tem de introduzir uma descrição válida para continuar'
   }
@@ -17,9 +17,9 @@ if (Astro.request.method === 'POST') {
 ---
 
 <script>
-import '@awesome.me/webawesome/dist/components/input/input.js'
-import '@awesome.me/webawesome/dist/components/button/button.js'
-import '@awesome.me/webawesome/dist/components/callout/callout.js'
+import '@webawesome/input/input.js'
+import '@webawesome/button/button.js'
+import '@webawesome/callout/callout.js'
 </script>
 <AddLayout currentStep="description">
   <h2>Descrição</h2>

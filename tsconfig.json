@@ -13,6 +13,12 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@ui/*": [
+        "src/components/ui/*"
+      ],
+      "@webawesome/*": [
+        "node_modules/@awesome.me/webawesome/dist/components/*"
       ]
     },
     "jsx": "preserve"

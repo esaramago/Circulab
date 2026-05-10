@@ -6,11 +6,12 @@ import { localizeHref } from '@/paraglide/runtime.js'
 ---
 
 <script>
-  
+import '@webawesome/button/button.js'
 </script>
 <AddLayout currentStep="summary">
   <h2>Resumo</h2>
   <Grid justify="end">
-    <wa-button variant="primary" href={localizeHref('/')}>Adicionar</wa-button>
+    <wa-button variant="outlined" appearance="outlined" href={localizeHref('/dashboard/adicionar/localizacao')}>Voltar</wa-button>
+    <wa-button variant="brand" href={localizeHref('/')}>Adicionar</wa-button>
   </Grid>
 </AddLayout>

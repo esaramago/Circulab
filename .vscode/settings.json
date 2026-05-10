@@ -1,17 +1,17 @@
 {
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
-    "javascript.preferences.quoteStyle": "single",
-    "typescript.preferences.quoteStyle": "single",
-    "search.exclude": {
-      "node_modules": true,
-      "dist": true,
-      "build": true,
-      "package-lock.json": true,
-      ".vscode": true,
-      "pnpm-lock.yaml": true,
-      "src/types": true
-    }
-    
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "search.exclude": {
+    "node_modules": true,
+    "dist": true,
+    "build": true,
+    "package-lock.json": true,
+    ".vscode": true,
+    "pnpm-lock.yaml": true,
+    "src/types": true
+  },
+  "html.customData": ["./node_modules/@awesome.me/webawesome/dist/vscode.html-custom-data.json"]
 }
