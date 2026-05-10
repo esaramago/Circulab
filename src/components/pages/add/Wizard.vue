@@ -1,6 +1,22 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+
+const props = defineProps<{
+  steps: { code: string; label: string }[]
+  currentStep?: string
+}>()
+
+const currentStep = computed(() => {
+  return props.currentStep || props.steps[0]?.code
+})
+</script>
+
 <template>
   <ul class="c-wizard">
-    <slot></slot>
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': step.code === currentStep }">
+      <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
+      <span class="c-wizard__step-label">{{ step.label }}</span>
+    </li>
   </ul>
 </template>
 
@@ -9,11 +25,58 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--wa-space-s);
+  gap: var(--wa-space-xs);
   list-style: none;
   padding: 0;
   margin: 0;
-  gap: var(--wa-space-m);
   justify-content: center;
+}
+.c-wizard__step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  width: 12rem;
+  &:not(:last-child):after {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    right: -5px;
+    transform: translateX(50%);
+    display: block;
+    width: 6rem;
+    height: 1px;
+    background-color: var(--wa-color-neutral-60);
+  }
+  &.is-active {
+    .c-wizard__step-number {
+      background-color: var(--wa-color-brand-50);
+      color: var(--wa-color-neutral-90);
+    }
+  }
+  &.is-done {
+    .c-wizard__step-number {
+      background-color: var(--wa-color-brand-30);
+      color: var(--wa-color-neutral-90);
+    }
+  }
+}
+.c-wizard__step-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--wa-color-neutral-20);
+  color: var(--wa-color-neutral-70);
+  font-weight: var(--wa-font-weight-bold);
+}
+.c-wizard__step-label {
+  font-size: var(--wa-font-size-xs);
+  color: var(--wa-color-neutral-80);
 }
 </style>

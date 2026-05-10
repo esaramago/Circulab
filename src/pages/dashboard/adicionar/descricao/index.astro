@@ -2,6 +2,7 @@
 import AddLayout from '@/layouts/AddLayout.astro'
 import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
+import Form from './Form.vue'
 
 let errorMessage = ''
 let characterization = ''
@@ -18,20 +19,20 @@ if (Astro.request.method === 'POST') {
 ---
 
 <script>
-import '@webawesome/input/input.js'
 import '@webawesome/button/button.js'
 import '@webawesome/callout/callout.js'
 </script>
-<AddLayout currentStep="characterization">
-  <h2>Caracterização</h2>
+
+<AddLayout currentStep="description">
+  <h2>Informação base</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
   <form method="post">
     <Grid gap="xl" direction="column">
-      <wa-input name="characterization" label="Caracterização" />
-    </Grid>
-    <Grid justify="end">
-      <wa-button variant="brand" appearance="outlined" href={localizeHref('/dashboard/adicionar/descricao')}>Voltar</wa-button>
-      <wa-button variant="brand" type="submit">Continuar</wa-button>
+      <Form client:only="vue" />
+      <Grid justify="end" gap="s">
+        <wa-button variant="brand" appearance="outlined" href={localizeHref('/dashboard/adicionar/descricao')}>Voltar</wa-button>
+        <wa-button variant="brand" type="submit">Continuar</wa-button>
+      </Grid>
     </Grid>
   </form>
 </AddLayout>

@@ -1,7 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import Wizard from '@/components/pages/add/Wizard.vue'
-import WizardStep from '@/components/pages/add/WizardStep.vue'
+import Container from '@/components/ui/Container.vue'
+import Grid from '@/components/ui/Grid.vue'
 
 const steps = [
   {
@@ -11,10 +12,6 @@ const steps = [
   {
     code: 'description',
     label: 'Descrição'
-  },
-  {
-    code: 'characterization',
-    label: 'Caracterização'
   },
   {
     code: 'location',
@@ -30,13 +27,22 @@ const currentStep = Astro.props.currentStep || 'validation'
 ---
 
 <Layout title="Adicionar">
-  <h1>Adicionar pin ao mapa</h1>
-  <Wizard>
-    {
-      steps.map((step, index) => (
-        <WizardStep client:only="vue" step={index + 1} label={step.label} isActive={step.code === currentStep}></WizardStep>
-      ))
-    }
-  </Wizard>
-  <slot />
+  <Grid gap="xs" direction="column">
+    <h1>Adicionar pin ao mapa</h1>
+    <p>Adicione um novo pin ao mapa para partilhar com a comunidade.</p>
+  </Grid>
+  <Wizard steps={steps} currentStep={currentStep}></Wizard>
+  <Container width="xs">
+    <slot />
+  </Container>
 </Layout>
+
+<style scoped>
+h1 {
+  font-size: var(--wa-font-size-2xl);
+  font-weight: var(--wa-font-weight-semibold);
+}
+p {
+  color: var(--wa-color-neutral-70);
+}
+</style>

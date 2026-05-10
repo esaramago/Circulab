@@ -2,6 +2,7 @@ import { defineConfig, fontProviders } from 'astro/config'
 import node from '@astrojs/node'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { paraglideCompilerOptions } from './project.inlang/compile-paraglide.mjs'
+import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@astrojs/vue'
 
@@ -14,6 +15,11 @@ export default defineConfig({
   }),
 
   vite: {
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
     plugins: [
       paraglideVitePlugin({
         ...paraglideCompilerOptions,
