@@ -1,7 +1,7 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
-import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
+import Form from './Form.vue'
 
 let errorMessage = ''
 
@@ -17,20 +17,20 @@ if (Astro.request.method === 'POST') {
 ---
 
 <script>
-import '@webawesome/input/input.js'
 import '@webawesome/button/button.js'
 import '@webawesome/callout/callout.js'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+window.addEventListener('submit-form', (event) => {
+  const formData = (event as CustomEvent).detail
+  window.location.href = localizeHref('/dashboard/adicionar/resumo')
+})
+window.addEventListener('back', () => {
+  window.location.href = localizeHref('/dashboard/adicionar/descricao')
+})
 </script>
 <AddLayout currentStep="location">
   <h2>Localização</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
-  <form method="post">
-    <Grid gap="xl" direction="column">
-      <wa-input name="location" label="Localização" />
-      <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" href={localizeHref('/dashboard/adicionar/caracterizacao')}>Voltar</wa-button>
-        <wa-button variant="primary" type="submit">Continuar</wa-button>
-      </Grid>
-    </Grid>
-  </form>
+  <Form client:only="vue" />
 </AddLayout>

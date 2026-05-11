@@ -1,7 +1,5 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
-import Grid from '@/components/ui/Grid.vue'
-import { localizeHref } from '@/paraglide/runtime.js'
 import Form from './Form.vue'
 
 let errorMessage = ''
@@ -9,11 +7,10 @@ let characterization = ''
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
-  const characterization = formData.get('characterization')
-  if (characterization) {
+  if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category') && formData.get('characteristics') && formData.get('images')) {
     return Astro.redirect(localizeHref('/dashboard/adicionar/localizacao'))
   } else {
-    errorMessage = 'Tem de introduzir uma caracterização válida para continuar'
+    errorMessage = 'Tem de preencher todos os campos para continuar'
   }
 }
 ---
@@ -21,18 +18,21 @@ if (Astro.request.method === 'POST') {
 <script>
 import '@webawesome/button/button.js'
 import '@webawesome/callout/callout.js'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+window.addEventListener('submit-form', (event) => {
+  const formData = (event as CustomEvent).detail
+  // trigger a post request to the /dashboard/adicionar/descricao route
+
+  window.location.href = localizeHref('/dashboard/adicionar/localizacao')
+})
+window.addEventListener('back', () => {
+  window.location.href = localizeHref('/dashboard/adicionar')
+})
 </script>
 
 <AddLayout currentStep="description">
   <h2>Informação base</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
-  <form method="post">
-    <Grid gap="xl" direction="column">
-      <Form client:only="vue" />
-      <Grid justify="end" gap="s">
-        <wa-button variant="brand" appearance="outlined" href={localizeHref('/dashboard/adicionar')}>Voltar</wa-button>
-        <wa-button variant="brand" type="submit">Continuar</wa-button>
-      </Grid>
-    </Grid>
-  </form>
+  <Form client:only="vue" />
 </AddLayout>

@@ -1,5 +1,5 @@
 <template>
-  <div class="l-grid" :style="gridStyle">
+  <div class="l-grid" :style="gridStyle" :class="{ 'l-grid--full-width': fullWidth }">
     <slot></slot>
   </div>
 </template>
@@ -14,6 +14,7 @@ const props = defineProps<{
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
   wrap?: 'nowrap' | 'wrap'
   direction?: 'row' | 'column'
+  fullWidth?: boolean
 }>()
 
 const gridStyle = computed<CSSProperties>(() => {
@@ -29,7 +30,7 @@ const gridStyle = computed<CSSProperties>(() => {
 
 <style scoped>
 .l-grid {
-  --gap: var(--spacing-m);
+  --gap: var(--wa-space-m);
   --align: initial;
   --justify: initial;
   --wrap: initial;
@@ -40,5 +41,8 @@ const gridStyle = computed<CSSProperties>(() => {
   align-items: var(--align);
   justify-content: var(--justify);
   flex-wrap: var(--wrap);
+}
+.l-grid--full-width > *{
+  flex: 1;
 }
 </style>
