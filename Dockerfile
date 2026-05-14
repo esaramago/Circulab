@@ -1,5 +1,7 @@
 FROM node:22-alpine AS base
 WORKDIR /app
+# pnpm refuses to purge/reinstall node_modules without a TTY unless CI is set
+ENV CI=true
 RUN corepack enable
 
 FROM base AS deps

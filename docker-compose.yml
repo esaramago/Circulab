@@ -1,0 +1,21 @@
+# Circulab (Astro SSR). Copy .env.example to .env and fill values before production use.
+# Run: docker compose up --build
+
+services:
+  circulab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: circulab:latest
+    container_name: circulab
+    ports:
+      - "${HOST_PORT:-4321}:4321"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      HOST: "0.0.0.0"
+      PORT: "4321"
+      SITE: ${SITE:-http://localhost:4321}
+    restart: unless-stopped
