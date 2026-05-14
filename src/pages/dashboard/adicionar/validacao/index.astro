@@ -1,0 +1,25 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import Form from './_Form.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+let errorMessage = ''
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  const existsChecked = formData.get('exists') === 'on'
+  const permanentChecked = formData.get('permanent') === 'on'
+  const notRepeatedChecked = formData.get('not-repeated') === 'on'
+  if (existsChecked && permanentChecked && notRepeatedChecked) {
+    return Astro.redirect(localizeHref('/dashboard/adicionar/descricao'))
+  } else {
+    errorMessage = 'Tem de aceitar todas as condições para continuar'
+  }
+}
+---
+
+<AddLayout>
+  <h2>Validação</h2>
+  {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+  <Form client:only="vue" formAction={Astro.url.pathname} />
+</AddLayout>

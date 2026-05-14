@@ -1,39 +1,23 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
-import Form from './Form.vue'
+import Form from './_Form.vue'
 import { fetchDB } from '@/utils/fetchDB'
-import type { Database } from '@/types/supabase'
+import { localizeHref } from '@/paraglide/runtime.js'
 
 let errorMessage = ''
-let characterization = ''
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
-  if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category') && formData.get('characteristics') && formData.get('images')) {
+  if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category')) {
     return Astro.redirect(localizeHref('/dashboard/adicionar/localizacao'))
   } else {
-    errorMessage = 'Tem de preencher todos os campos para continuar'
+    errorMessage = 'Tens de preencher todos os assinalados para continuar'
   }
 }
 
 const { data: typologies, error } = await fetchDB('typologies').select('*')
 ---
 
-<script>
-import '@webawesome/button/button.js'
-import '@webawesome/callout/callout.js'
-import { localizeHref } from '@/paraglide/runtime.js'
-
-window.addEventListener('submit-form', (event) => {
-  const formData = (event as CustomEvent).detail
-  // trigger a post request to the /dashboard/adicionar/descricao route
-
-  window.location.href = localizeHref('/dashboard/adicionar/localizacao')
-})
-window.addEventListener('back', () => {
-  window.location.href = localizeHref('/dashboard/adicionar')
-})
-</script>
 
 <AddLayout currentStep="description">
   <h2>Informação base</h2>
@@ -41,5 +25,6 @@ window.addEventListener('back', () => {
   <Form
     client:only="vue"
     typologies={typologies}
+    formAction={Astro.url.pathname}
   />
 </AddLayout>

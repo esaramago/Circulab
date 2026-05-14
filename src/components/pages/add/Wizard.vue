@@ -10,15 +10,22 @@ const currentStep = computed(() => {
   return props.currentStep || props.steps[0]?.code
 })
 
+function isStepCompleted(code: string) {
+  return window.localStorage.getItem(`circulab:add:${code}`) !== null
+}
 </script>
 
 <template>
   <ul class="c-wizard">
-    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': step.code === currentStep }">
-      <a :href="step.path" class="c-wizard__step-link">
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': step.code === currentStep, 'is-done': isStepCompleted(step.code) }">
+      <a v-if="isStepCompleted(step.code)" :href="step.path" class="c-wizard__step-link">
         <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
         <span class="c-wizard__step-label">{{ step.label }}</span>
       </a>
+      <span v-else class="c-wizard__step-link">
+        <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
+        <span class="c-wizard__step-label">{{ step.label }}</span>
+      </span>
     </li>
   </ul>
 </template>
@@ -50,13 +57,14 @@ const currentStep = computed(() => {
   }
   &.is-active {
     .c-wizard__step-number {
+      border-style: solid;
       background-color: var(--wa-color-brand-50);
       color: var(--wa-color-neutral-90);
     }
   }
   &.is-done {
     .c-wizard__step-number {
-      background-color: var(--wa-color-brand-30);
+      border-style: solid;
       color: var(--wa-color-neutral-90);
     }
   }
@@ -78,6 +86,7 @@ const currentStep = computed(() => {
   height: 4rem;
   border-radius: 50%;
   background-color: var(--wa-color-neutral-20);
+  border: 2px dashed var(--wa-color-brand-50);
   color: var(--wa-color-neutral-70);
   font-weight: var(--wa-font-weight-bold);
 }

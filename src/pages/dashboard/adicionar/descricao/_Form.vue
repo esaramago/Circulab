@@ -14,7 +14,8 @@ type categoriesType = Database['public']['Tables']['categories']['Row'][]
 type characteristicsType = Database['public']['Tables']['characteristics']['Row'][]
 
 const props = defineProps<{
-  typologies: Database['public']['Tables']['typologies']['Row'][] | null
+  typologies: typologiesType | null
+  formAction: string
 }>()
 
 const categories = ref<categoriesType>([])
@@ -55,7 +56,7 @@ const onChangeCategory = async (event: Event) => {
 }
 
 const handleSubmit = () => {
-  window.dispatchEvent(new CustomEvent('submit-form', {detail: form}))
+  window.localStorage.setItem('circulab:add:description', JSON.stringify(form))
 }
 const handleBack = () => {
   window.dispatchEvent(new CustomEvent('back'))
@@ -63,7 +64,12 @@ const handleBack = () => {
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form
+    :action="formAction"
+    method="post"
+    data-astro-reload
+    @submit="handleSubmit"
+  >
     <Grid gap="xl" direction="column">
       <wa-input name="name" label="Nome" :value="form.name" required @input="form.name = $event.target.value" />
       <wa-textarea name="description" label="Descrição" :value="form.description" required @input="form.description = $event.target.value" />

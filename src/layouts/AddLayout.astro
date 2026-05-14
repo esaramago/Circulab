@@ -35,7 +35,7 @@ const currentStep = Astro.props.currentStep || 'validation'
     <h1>Adicionar pin ao mapa</h1>
     <p>Adicione um novo pin ao mapa para partilhar com a comunidade.</p>
   </Grid>
-  <Wizard steps={steps} currentStep={currentStep}></Wizard>
+  <Wizard client:only="vue" steps={steps} currentStep={currentStep} />
   <Container width="xs">
     <slot />
   </Container>
