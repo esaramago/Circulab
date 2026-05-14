@@ -1,41 +1,44 @@
 <template>
-  <div class="c-gallery-form">
-    <ul v-if="images.length > 0">
-      <li v-for="image in images" :key="image.url">
-        <!-- <img :src="CONFIG.images_url + image.filename" :alt="image.alt" /> -->
-        <img :src="image.url" :alt="image.alt" />
-      </li>
-    </ul>
-    <wa-input type="file" name="images" label="Imagens do pin" multiple @change="handleImagesChange"></wa-input>
-  </div>
+  <Grid gap="m" direction="column">
+    <Gallery v-if="images.length > 0">
+      <InputFile
+        id="images"
+        multiple
+        label="Imagens do pin"
+        accept="image/*"
+        :filesNumber="images.length"
+        @change="handleImagesChange"
+      />
+      <GalleryItem v-for="image in images" :key="image.src" :src="image.src" :alt="image.alt" @remove="handleRemoveImage" />
+    </Gallery>
+  </Grid>
 </template>
 
 <script setup lang="ts">
-import { CONFIG } from '@/config'
 import { ref } from 'vue'
 import '@webawesome/input/input.js'
 import '@webawesome/button/button.js'
+import InputFile from '@/components/ui/InputFile.vue'
+import Gallery from '@/components/ui/Gallery.vue'
+import GalleryItem from '@/components/ui/GalleryItem.vue'
+import Grid from '@/components/ui/Grid.vue'
 
 const images = ref<{
-  url: string
+  src: string
   alt: string
 }[]>([])
 
-const handleImagesChange = (event: Event) => {
-  const file = (event.target as HTMLInputElement).value
-  if (file) {
+const handleImagesChange = (files: FileList) => {
+  if (!files) return
+  for (const file of files) {
     images.value.push({
-      url: file,
-      alt: '',
+      src: URL.createObjectURL(file),
+      alt: file.name || '',
     })
   }
 }
-</script>
 
-<style scoped>
-.c-gallery-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-xs);
+const handleRemoveImage = (image: { src: string; alt: string }) => {
+  images.value = images.value.filter((i) => i.src !== image.src)
 }
-</style>
+</script>

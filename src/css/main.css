@@ -3,5 +3,6 @@
 @import './base/global.css';
 
 @import './plugins/leafleft.css';
+@import './plugins/webawesome.css';
 
 @import './utils/utils.css';
