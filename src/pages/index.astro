@@ -7,9 +7,6 @@ import { fetchDB } from '@/utils/fetchDB'
 import type { Database } from '@/types/supabase'
 
 const { data: markers } = await Astro.callAction(actions.getMarkers, {})
-
-
-
 const { data: typologies, error } = await fetchDB('typologies').select('*')
 
 /* const markers: MarkerType[] = [

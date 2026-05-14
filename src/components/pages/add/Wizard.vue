@@ -2,20 +2,23 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-  steps: { code: string; label: string }[]
+  steps: { path: string; code: string; label: string }[]
   currentStep?: string
 }>()
 
 const currentStep = computed(() => {
   return props.currentStep || props.steps[0]?.code
 })
+
 </script>
 
 <template>
   <ul class="c-wizard">
     <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': step.code === currentStep }">
-      <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
-      <span class="c-wizard__step-label">{{ step.label }}</span>
+      <a :href="step.path" class="c-wizard__step-link">
+        <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
+        <span class="c-wizard__step-label">{{ step.label }}</span>
+      </a>
     </li>
   </ul>
 </template>
@@ -33,11 +36,6 @@ const currentStep = computed(() => {
 }
 .c-wizard__step {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--wa-space-xs);
   width: 12rem;
   &:not(:last-child):after {
     content: '';
@@ -62,6 +60,14 @@ const currentStep = computed(() => {
       color: var(--wa-color-neutral-90);
     }
   }
+}
+.c-wizard__step-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  text-decoration: none;
 }
 .c-wizard__step-number {
   display: flex;
