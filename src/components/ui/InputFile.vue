@@ -52,7 +52,7 @@ input {
   gap: var(--wa-space-s);
   border: 1px dashed var(--wa-color-neutral-50);
   border-radius: var(--wa-border-radius-m);
-  padding: var(--wa-space-m) var(--wa-space-s);
+  padding: var(--wa-space-s) var(--wa-space-l);
   box-sizing: border-box;
   color: var(--wa-color-neutral-70);
   text-align: center;

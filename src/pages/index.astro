@@ -3,8 +3,14 @@ import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import { actions } from 'astro:actions'
+import { fetchDB } from '@/utils/fetchDB'
+import type { Database } from '@/types/supabase'
 
 const { data: markers } = await Astro.callAction(actions.getMarkers, {})
+
+
+
+const { data: typologies, error } = await fetchDB('typologies').select('*')
 
 /* const markers: MarkerType[] = [
   {
@@ -75,5 +81,14 @@ const { data: markers } = await Astro.callAction(actions.getMarkers, {})
 ---
 
 <Layout title={m.site_title()} fullWidth={true}>
+  {
+    typologies ? (
+      <ul>
+        {typologies.map((item: Database['public']['Tables']['typologies']['Row']) => (
+          <li>{item.name}</li>
+        ))}
+      </ul>
+    ) : <p>No typologies found</p>
+  }
   <Map client:only="vue" markers={markers ?? []} />
 </Layout>

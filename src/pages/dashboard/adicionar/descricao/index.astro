@@ -1,6 +1,8 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import Form from './Form.vue'
+import { fetchDB } from '@/utils/fetchDB'
+import type { Database } from '@/types/supabase'
 
 let errorMessage = ''
 let characterization = ''
@@ -13,6 +15,8 @@ if (Astro.request.method === 'POST') {
     errorMessage = 'Tem de preencher todos os campos para continuar'
   }
 }
+
+const { data: typologies, error } = await fetchDB('typologies').select('*')
 ---
 
 <script>
@@ -34,5 +38,8 @@ window.addEventListener('back', () => {
 <AddLayout currentStep="description">
   <h2>Informação base</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
-  <Form client:only="vue" />
+  <Form
+    client:only="vue"
+    typologies={typologies}
+  />
 </AddLayout>
