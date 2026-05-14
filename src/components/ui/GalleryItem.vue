@@ -1,12 +1,12 @@
 <template>
-    <li class="c-gallery__item">
-      <button type="button" class="c-gallery__image">
-        <img :src="src" :alt="alt" />
-      </button>
-      <wa-button variant="neutral" appearance="plain" class="c-gallery__remove" @click="removeImage">
-        <wa-icon name="times" label="Remover"></wa-icon>
-      </wa-button>
-    </li>
+  <div class="c-gallery__item">
+    <button type="button" class="c-gallery__image">
+      <img :src="src" :alt="alt" />
+    </button>
+    <wa-button variant="neutral" appearance="plain" class="c-gallery__remove" @click="removeImage">
+      <wa-icon name="times" label="Remover"></wa-icon>
+    </wa-button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -25,28 +25,39 @@ const removeImage = () => {
 </script>
 
 <style scoped>
-
 .c-gallery__item {
   position: relative;
-  aspect-ratio: 3/2;
-  border-radius: var(--wa-border-radius-m);
-  overflow: hidden;
-  border: 1px solid var(--wa-color-neutral-20);
+  max-width: 100%;
+  height: 12rem;
   box-shadow: var(--wa-shadow-sm);
-  transition: all 0.3s ease;
-  &:hover {
-    z-index: 1;
-    transform: scale(1.5);
-  }
 }
 .c-gallery__image {
-  object-fit: cover;
-  object-position: center;
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 3/2;
+  overflow: hidden;
+  background-color: var(--wa-color-neutral-20);
+  border-radius: var(--wa-border-radius-m);
+  border: 1px solid var(--wa-color-neutral-20);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: scale(1.1);
+    & {
+      z-index: 2;
+    }
+  }
+  > img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 }
 .c-gallery__remove {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
-  z-index: 1;
+  z-index: 2;
 }
 </style>

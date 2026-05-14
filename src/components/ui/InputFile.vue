@@ -1,19 +1,21 @@
 <template>
-  <label :for="id">
-    <span>{{ label }}</span>
-    <div class="c-input-file__dropzone">
-      <Icon name="upload" size="xl"></Icon>
-      <span v-if="filesNumber">{{ filesNumber }} imagens adicionadas</span>
-      <span v-else>Adicione até 5 imagens</span>
-    </div>
-  </label>
-  <input ref="inputRef" :id="id" type="file" @change="handleImagesChange" v-bind="$attrs">
+  <div class="c-input-file">
+    <label :for="id">
+      <span :class="{ 'is-visually-hidden': hiddenLabel }">{{ label }}</span>
+      <div class="c-input-file__dropzone">
+        <Icon name="upload" size="xl"></Icon>
+        <slot name="label"></slot>
+      </div>
+    </label>
+    <input ref="inputRef" :id="id" type="file" @change="handleImagesChange" v-bind="$attrs">
+  </div>
 </template>
 
 <script setup lang="ts">
 import Icon from '@/components/ui/Icon.vue'
 const props = defineProps<{
   label: string
+  hiddenLabel?: boolean
   id: string
   filesNumber?: number
 }>()
@@ -43,17 +45,17 @@ input {
 }
 .c-input-file__dropzone {
   display: flex;
+  min-height: 12rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: var(--wa-space-s);
-  width: 15rem;
-  aspect-ratio: 3/2;
   border: 1px dashed var(--wa-color-neutral-50);
   border-radius: var(--wa-border-radius-m);
-  padding: var(--wa-space-l) var(--wa-space-m);
+  padding: var(--wa-space-m) var(--wa-space-s);
   box-sizing: border-box;
   color: var(--wa-color-neutral-70);
   text-align: center;
+  font-size: var(--wa-font-size-s);
 }
 </style>

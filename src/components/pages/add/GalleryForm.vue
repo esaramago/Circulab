@@ -1,15 +1,24 @@
 <template>
-  <Grid gap="m" direction="column">
-    <Gallery v-if="images.length > 0">
+  <Grid gap="s" direction="column">
+    <Heading level="3" appearance="p">Imagens do pin</Heading>
+    <Gallery>
+      <template v-if="images.length > 0">
+        <GalleryItem v-for="image in images" :key="image.src" :src="image.src" :alt="image.alt" @remove="handleRemoveImage" />
+      </template>
       <InputFile
         id="images"
         multiple
         label="Imagens do pin"
+        hiddenLabel
         accept="image/*"
         :filesNumber="images.length"
         @change="handleImagesChange"
-      />
-      <GalleryItem v-for="image in images" :key="image.src" :src="image.src" :alt="image.alt" @remove="handleRemoveImage" />
+      >
+        <template #label>
+          <span v-if="images.length > 0">{{ images.length }} imagens adicionadas</span>
+          <span v-else>Adicione imagens do pin</span>
+        </template>
+      </InputFile>
     </Gallery>
   </Grid>
 </template>
