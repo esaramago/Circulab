@@ -5,31 +5,16 @@ import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import type { Database } from '@/types/supabase'
-import { fetchDB } from '@/utils/fetchDB'
+import { useTypologyCascade } from '@/composables/useTypologyCascade'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
-type categoriesType = Database['public']['Tables']['categories']['Row'][]
-type characteristicsType = Database['public']['Tables']['characteristics']['Row'][]
 
-const props = defineProps<{
+defineProps<{
   typologies: typologiesType | null
   formAction: string
 }>()
-
-const categories = ref<categoriesType>([])
-const characteristics = ref<characteristicsType>([])
-
-const getCategories = async (typologyId: string) => {
-  const { data: categories, error } = await fetchDB('categories').select('*').eq('typology_id', typologyId)
-  return categories ?? []
-}
-
-const getCharacteristics = async (categoryId: string) => {
-  const { data: characteristics, error } = await fetchDB('characteristics').select('*').eq('category_id', categoryId)
-  return characteristics ?? []
-}
 
 const form = reactive({
   name: null,
@@ -40,19 +25,24 @@ const form = reactive({
   images: [] as { id: string; url: string; alt: string }[],
 })
 
-const onChangeTypology = async (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  form.typology = target.value
+const {
+  categories,
+  characteristics,
+  loadCategories,
+  loadCharacteristics,
+} = useTypologyCascade()
+
+async function setTypology(id: string) {
+  form.typology = id
   form.category = null
   form.characteristics = []
-  categories.value = await getCategories(form.typology)
+  await loadCategories(id)
 }
 
-const onChangeCategory = async (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  form.category = target.value
+async function setCategory(id: string) {
+  form.category = id
   form.characteristics = []
-  characteristics.value = await getCharacteristics(form.category)
+  await loadCharacteristics(id)
 }
 
 const handleSubmit = () => {
@@ -79,7 +69,7 @@ const handleBack = () => {
         label="Tipologia"
         :value="form.typology"
         required
-        @input="onChangeTypology"
+        @input="setTypology(($event.target as HTMLSelectElement).value)"
       >
         <template v-if="typologies && typologies.length > 0">
           <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">{{ typology.name }}</wa-option>
@@ -91,9 +81,9 @@ const handleBack = () => {
         label="Categoria"
         required
         :value="form.category"
-        @input="onChangeCategory"
+        @input="setCategory(($event.target as HTMLSelectElement).value)"
       >
-        <template v-if="categories && categories.length > 0">
+        <template v-if="categories.length > 0">
           <wa-option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</wa-option>
         </template>
       </wa-select>
@@ -104,7 +94,7 @@ const handleBack = () => {
         :value="form.characteristics"
         @input="form.characteristics = $event.target.value"
       >
-        <template v-if="characteristics && characteristics.length > 0">
+        <template v-if="characteristics.length > 0">
           <wa-option v-for="characteristic in characteristics" :key="characteristic.id" :value="characteristic.id">{{ characteristic.name }}</wa-option>
         </template>
       </wa-select>
