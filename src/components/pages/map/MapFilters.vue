@@ -40,6 +40,7 @@ async function setCategory(id: string) {
       size="s"
       :value="typology"
       @input="setTypology(($event.target as HTMLSelectElement).value)"
+      with-clear
     >
       <wa-option v-for="item in typologies" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
@@ -49,6 +50,7 @@ async function setCategory(id: string) {
       size="s"
       :value="category"
       @input="setCategory(($event.target as HTMLSelectElement).value)"
+      with-clear
     >
       <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>

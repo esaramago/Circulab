@@ -5,7 +5,7 @@ import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import type { Database } from '@/types/supabase'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
 
@@ -32,6 +32,53 @@ const {
   loadCharacteristics,
 } = useTypologyCascade()
 
+onMounted(() => {
+  const description = JSON.parse(window.localStorage.getItem('circulab:add:description') || '{}')
+  form.name = description.name || null
+  form.description = description.description || null
+  form.typology = description.typology || null
+  form.category = description.category || null
+  form.characteristics = description.characteristics || []
+  form.images = description.images || []
+
+  if (description.typology) {
+    setTypology(description.typology)
+  }
+  if (description.category) {
+    setCategory(description.category)
+  }
+})
+
+function handleInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  form[target.name as keyof typeof form] = target.value as never
+  saveOnLocalStorage()
+}
+
+function handleChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  form[target.name as keyof typeof form] = target.value as never
+  if (target.name === 'typology') {
+    setTypology(target.value)
+  } else if (target.name === 'category') {
+    setCategory(target.value)
+  }
+  saveOnLocalStorage()
+}
+
+function saveOnLocalStorage() {
+  const data = {
+    name: form.name,
+    description: form.description,
+    typology: form.typology,
+    category: form.category,
+    characteristics: form.characteristics,
+    images: form.images
+  }
+  window.localStorage.setItem('circulab:add:description', JSON.stringify(data))
+}
+
+// #region Typology Cascade
 async function setTypology(id: string) {
   form.typology = id
   form.category = null
@@ -44,13 +91,21 @@ async function setCategory(id: string) {
   form.characteristics = []
   await loadCharacteristics(id)
 }
+// #endregion
 
-const handleSubmit = () => {
-  window.localStorage.setItem('circulab:add:description', JSON.stringify(form))
+// #region Handle Events
+function handleBack() {
+  window.location.href = '/dashboard/adicionar/validacao'
 }
-const handleBack = () => {
-  window.dispatchEvent(new CustomEvent('back'))
+
+function handleSubmit(event: Event) {
+  const isCompleted = form.name && form.description && form.typology && form.category
+  window.localStorage.setItem('circulab:add:description:completed', isCompleted ? 'true' : 'false')
+  if (!isCompleted) {
+    event.preventDefault()
+  }
 }
+// #endregion
 </script>
 
 <template>
@@ -61,15 +116,27 @@ const handleBack = () => {
     @submit="handleSubmit"
   >
     <Grid gap="xl" direction="column">
-      <wa-input name="name" label="Nome" :value="form.name" required @input="form.name = $event.target.value" />
-      <wa-textarea name="description" label="Descrição" :value="form.description" required @input="form.description = $event.target.value" />
+      <wa-input
+        name="name"
+        label="Nome"
+        :value="form.name"
+        required
+        @input="handleInput"
+      />
+      <wa-textarea
+        name="description"
+        label="Descrição"
+        :value="form.description"
+        required
+        @input="handleInput"
+      />
       <GalleryForm client:only="vue" :images="form.images" @change="form.images = $event" />
       <wa-select
         name="typology"
         label="Tipologia"
         :value="form.typology"
         required
-        @input="setTypology(($event.target as HTMLSelectElement).value)"
+        @input="handleChange"
       >
         <template v-if="typologies && typologies.length > 0">
           <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">{{ typology.name }}</wa-option>
@@ -81,7 +148,7 @@ const handleBack = () => {
         label="Categoria"
         required
         :value="form.category"
-        @input="setCategory(($event.target as HTMLSelectElement).value)"
+        @input="handleChange"
       >
         <template v-if="categories.length > 0">
           <wa-option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</wa-option>
@@ -92,7 +159,7 @@ const handleBack = () => {
         name="characteristics"
         label="Características"
         :value="form.characteristics"
-        @input="form.characteristics = $event.target.value"
+        @input="handleChange"
       >
         <template v-if="characteristics.length > 0">
           <wa-option v-for="characteristic in characteristics" :key="characteristic.id" :value="characteristic.id">{{ characteristic.name }}</wa-option>

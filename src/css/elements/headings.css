@@ -1,0 +1,32 @@
+h1,
+[appearance="h1"] {
+  font-size: var(--wa-font-size-2xl);
+}
+h2,
+[appearance="h2"] {
+  font-size: var(--wa-font-size-xl);
+}
+legend,
+h3,
+[appearance="h3"] {
+  font-weight: var(--wa-font-weight-bold);
+  font-size: var(--wa-font-size-l);
+}
+h4,
+[appearance="h4"] {
+  font-size: var(--wa-font-size-m);
+}
+h5,
+[appearance="h5"] {
+  font-size: var(--wa-font-size-m);
+  font-weight: var(--wa-font-weight-semibold);
+}
+h6,
+[appearance="h6"] {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-neutral-70);
+}
+[appearance="p"] {
+  font-size: var(--wa-font-size-m);
+  font-weight: var(--wa-font-weight-normal);
+}

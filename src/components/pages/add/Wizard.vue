@@ -11,21 +11,21 @@ const currentStep = computed(() => {
 })
 
 function isStepCompleted(code: string) {
-  return window.localStorage.getItem(`circulab:add:${code}`) !== null
+  return window.localStorage.getItem(`circulab:add:${code}:completed`) === 'true'
+}
+
+function isStepActive(code: string) {
+  return currentStep.value === code
 }
 </script>
 
 <template>
   <ul class="c-wizard">
-    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': step.code === currentStep, 'is-done': isStepCompleted(step.code) }">
-      <a v-if="isStepCompleted(step.code)" :href="step.path" class="c-wizard__step-link">
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': isStepCompleted(step.code) }">
+      <a :href="step.path" class="c-wizard__step-link">
         <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
         <span class="c-wizard__step-label">{{ step.label }}</span>
       </a>
-      <span v-else class="c-wizard__step-link">
-        <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
-        <span class="c-wizard__step-label">{{ step.label }}</span>
-      </span>
     </li>
   </ul>
 </template>

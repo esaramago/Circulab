@@ -1,13 +1,31 @@
+html {
+  font-size: 62.5%;
+}
 
 body,
 h1,
 h2,
 h3,
-p {
+button,
+p,
+fieldset {
   margin: 0;
 }
-html {
-  font-size: 62.5%;
+
+button,
+fieldset {
+  border: none;
+}
+
+button,
+legend,
+fieldset {
+  padding: 0;
+}
+
+
+button {
+  background: none;
 }
 
 input,
@@ -19,10 +37,10 @@ textarea {
   color: inherit;
 }
 input,
-textarea {
+textarea,
+legend {
   width: 100%;
 }
-
 
 code[contenteditable]:focus {
   outline: none;
@@ -31,12 +49,6 @@ code[contenteditable]:focus {
 a,
 button {
   color: inherit;
-}
-
-button {
-  background: none;
-  border: none;
-  padding: 0;
 }
 
 img {

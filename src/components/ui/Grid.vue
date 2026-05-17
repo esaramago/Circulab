@@ -9,11 +9,11 @@ import { computed, type CSSProperties } from 'vue'
 import type { Spacing } from '@/types/grid'
 
 const props = defineProps<{
-  gap?: Spacing
+  direction?: 'row' | 'column'
   align?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
-  wrap?: 'nowrap' | 'wrap'
-  direction?: 'row' | 'column'
+  gap?: Spacing
+  wrap?: boolean
   fullWidth?: boolean
 }>()
 
@@ -22,7 +22,7 @@ const gridStyle = computed<CSSProperties>(() => {
   if (props.gap) style['--gap'] = `var(--wa-space-${props.gap})`
   if (props.align) style['--align'] = props.align
   if (props.justify) style['--justify'] = props.justify
-  if (props.wrap) style['--wrap'] = props.wrap
+  if (props.wrap) style['--wrap'] = props.wrap ? 'wrap' : 'nowrap'
   if (props.direction) style['--direction'] = props.direction
   return style as CSSProperties
 })
@@ -42,7 +42,7 @@ const gridStyle = computed<CSSProperties>(() => {
   justify-content: var(--justify);
   flex-wrap: var(--wrap);
 }
-.l-grid--full-width > *{
+.l-grid--full-width > * {
   flex: 1;
 }
 </style>

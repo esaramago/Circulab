@@ -1,6 +1,6 @@
 <template>
   <Grid gap="s" direction="column">
-    <Heading level="3" appearance="p">Imagens do pin</Heading>
+    <h3 appearance="p">Imagens do pin</h3>
     <Gallery>
       <template v-if="images.length > 0">
         <GalleryItem v-for="image in images" :key="image.src" :src="image.src" :alt="image.alt" @remove="handleRemoveImage" />

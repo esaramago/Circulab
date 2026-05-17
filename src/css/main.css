@@ -5,4 +5,6 @@
 @import './plugins/leafleft.css';
 @import './plugins/webawesome.css';
 
+@import './elements/headings.css';
+
 @import './utils/utils.css';
