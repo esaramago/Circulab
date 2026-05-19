@@ -100,10 +100,12 @@ function handleBack() {
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
-  if (!isCompleted) {
+  if (isCompleted) {
+    window.localStorage.setItem('circulab:add:description:completed', 'true')
+  } else {
+    window.localStorage.removeItem('circulab:add:description:completed')
     event.preventDefault()
   }
-  window.localStorage.setItem('circulab:add:description:completed', isCompleted ? 'true' : 'false')
 }
 // #endregion
 </script>

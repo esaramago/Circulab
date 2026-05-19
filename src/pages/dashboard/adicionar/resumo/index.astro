@@ -1,0 +1,12 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro';
+import Resume from './_Resume.vue';
+---
+
+<script>
+  import '@webawesome/button/button.js';
+</script>
+<AddLayout currentStep="summary">
+  <h2>Resumo</h2>
+  <Resume client:only="vue" />
+</AddLayout>

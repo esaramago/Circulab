@@ -159,10 +159,12 @@ function handleBack() {
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
-  if (!isCompleted) {
+  if (isCompleted) {
+    window.localStorage.setItem('circulab:add:location:completed', 'true')
+  } else {
+    window.localStorage.removeItem('circulab:add:location:completed')
     event.preventDefault()
   }
-  window.localStorage.setItem('circulab:add:location:completed', isCompleted ? 'true' : 'false')
 }
 </script>
 
