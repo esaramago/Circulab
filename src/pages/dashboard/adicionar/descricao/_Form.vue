@@ -99,11 +99,11 @@ function handleBack() {
 }
 
 function handleSubmit(event: Event) {
-  const isCompleted = form.name && form.description && form.typology && form.category
-  window.localStorage.setItem('circulab:add:description:completed', isCompleted ? 'true' : 'false')
+  const isCompleted = (event.target as HTMLFormElement).checkValidity()
   if (!isCompleted) {
     event.preventDefault()
   }
+  window.localStorage.setItem('circulab:add:description:completed', isCompleted ? 'true' : 'false')
 }
 // #endregion
 </script>

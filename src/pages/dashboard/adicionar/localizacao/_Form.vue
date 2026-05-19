@@ -3,21 +3,17 @@ import Grid from '@/components/ui/Grid.vue'
 import '@webawesome/input/input.js'
 import '@webawesome/button/button.js'
 import '@webawesome/checkbox/checkbox.js'
-import { onMounted, reactive } from 'vue'
+import '@webawesome/radio/radio.js'
+import '@webawesome/radio-group/radio-group.js'
+import { onMounted, reactive, watch, ref } from 'vue'
 import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { weekdays } from '@/config'
 
-const days = [
-  { label: 'Segunda', value: 'monday' },
-  { label: 'Terça', value: 'tuesday' },
-  { label: 'Quarta', value: 'wednesday' },
-  { label: 'Quinta', value: 'thursday' },
-  { label: 'Sexta', value: 'friday' },
-  { label: 'Sábado', value: 'saturday' },
-  { label: 'Domingo', value: 'sunday' },
-]
+let mapInstance: Map | null = null
+let markerInstance: Marker | null = null
 
-type OpeningDaysType = (typeof openingDays)[keyof typeof openingDays]
+type OpeningDaysType = (typeof weekdays)[keyof typeof weekdays]
 type OpeningHoursType = {
   [key in OpeningDaysType['value']]: {
     start: string
@@ -25,6 +21,7 @@ type OpeningHoursType = {
   }
 }
 
+const insideSpace = ref(false)
 const openingDays = reactive({
   monday: false,
   tuesday: false,
@@ -39,6 +36,7 @@ const form = reactive({
   postal_code: '' as string,
   latitude: undefined as number | undefined,
   longitude: undefined as number | undefined,
+  accessibility: '' as 'public' | 'private',
   opening_days: [] as string[],
   opening_hours: {} as OpeningHoursType,
   email: '' as string,
@@ -54,15 +52,15 @@ onMounted(() => {
   initMap()
 })
 function getLocalStorage() {
-  const location = JSON.parse(window.localStorage.getItem('circulab:add:location') || '{}')
-  form.address = location.address || null
-  form.postal_code = location.postal_code || null
-  form.latitude = location.latitude || null
-  form.longitude = location.longitude || null
+  const locationForm = JSON.parse(window.localStorage.getItem('circulab:add:location') || '{}')
+  Object.assign(form, locationForm)
 }
 function initMap() {
-  const map = new Map('map', {
-    center: [38.74, -9.14], // Lisboa coordinates
+  const initialLat = form.latitude || 38.74
+  const initialLng = form.longitude || -9.14
+
+  mapInstance = new Map('map', {
+    center: [initialLat, initialLng],
     zoom: 14,
   })
   new TileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -70,30 +68,89 @@ function initMap() {
     subdomains: 'abcd',
     maxNativeZoom: 19,
     maxZoom: 22,
-  }).addTo(map)
+  }).addTo(mapInstance)
+
+  markerInstance = new Marker([initialLat, initialLng], { draggable: true }).addTo(mapInstance)
+
+  markerInstance.on('dragend', () => {
+    const position = markerInstance!.getLatLng()
+    form.latitude = Number(position.lat.toFixed(6))
+    form.longitude = Number(position.lng.toFixed(6))
+    saveOnLocalStorage()
+    fetchAddress(form.latitude, form.longitude)
+  })
+
+  mapInstance.on('click', (e: any) => {
+    markerInstance!.setLatLng(e.latlng)
+    form.latitude = Number(e.latlng.lat.toFixed(6))
+    form.longitude = Number(e.latlng.lng.toFixed(6))
+    saveOnLocalStorage()
+    fetchAddress(form.latitude, form.longitude)
+  })
 }
 
-function handleInput(event: Event) {
-  const target = event.target as HTMLInputElement
-  form[target.name as keyof typeof form] = target.value as never
-  saveOnLocalStorage()
+async function fetchAddress(lat: number, lng: number) {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    const data = await response.json()
+    if (data && data.address) {
+      const road = data.address.road || data.address.pedestrian || ''
+      const houseNumber = data.address.house_number || ''
+      let address = road
+      if (houseNumber) {
+        address += `, ${houseNumber}`
+      }
+      if (!address) {
+        address = data.display_name.split(',')[0]
+      }
+      form.address = address
+      form.postal_code = data.address.postcode || ''
+      saveOnLocalStorage()
+    }
+  } catch (error) {
+    console.error('Erro a obter a morada:', error)
+  }
 }
+
+watch(() => [form.latitude, form.longitude], ([lat, lng]) => {
+  // Update marker position and zoom when coordinates change
+  if (mapInstance && markerInstance) {
+    let numLat = Number(lat)
+    let numLng = Number(lng)
+
+    if (typeof lat === 'string' && (lat as string).includes(',')) numLat = Number((lat as string).replace(',', '.'))
+    if (typeof lng === 'string' && (lng as string).includes(',')) numLng = Number((lng as string).replace(',', '.'))
+
+    if (!isNaN(numLat) && !isNaN(numLng) && numLat >= -90 && numLat <= 90 && numLng >= -180 && numLng <= 180) {
+      const currentLatLng = markerInstance.getLatLng()
+      if (currentLatLng.lat !== numLat || currentLatLng.lng !== numLng) {
+        markerInstance.setLatLng([numLat, numLng])
+        mapInstance.setView([numLat, numLng])
+      }
+    }
+  }
+})
+
+function handleInput(event: Event) {
+  const field = event.target as HTMLInputElement
+  form[field.name as keyof typeof form] = field.value as never
+  const isFieldValid = field.checkValidity()
+  if (isFieldValid) {
+    saveOnLocalStorage()
+  }
+}
+
+/*
 function handleChangeDay(event: Event) {
   const target = event.target as HTMLInputElement
   openingDays[target.name as keyof typeof openingDays] = target.checked as never
   saveOnLocalStorage()
-}
+}*/
 const handleAddNetwork = () => {
   console.log('add network')
 }
 function saveOnLocalStorage() {
-  const data = {
-    address: form.address,
-    postal_code: form.postal_code,
-    latitude: form.latitude,
-    longitude: form.longitude
-  }
-  window.localStorage.setItem('circulab:add:location', JSON.stringify(data))
+  window.localStorage.setItem('circulab:add:location', JSON.stringify(form))
 }
 
 function handleBack() {
@@ -101,42 +158,50 @@ function handleBack() {
 }
 
 function handleSubmit(event: Event) {
-  const isCompleted = form.address && form.postal_code && form.latitude && form.longitude
-  window.localStorage.setItem('circulab:add:location:completed', isCompleted ? 'true' : 'false')
-  saveOnLocalStorage()
+  const isCompleted = (event.target as HTMLFormElement).checkValidity()
   if (!isCompleted) {
     event.preventDefault()
   }
+  window.localStorage.setItem('circulab:add:location:completed', isCompleted ? 'true' : 'false')
 }
-
-
 </script>
 
 <template>  
   <form
-    @submit.prevent="handleSubmit"
-    action="/dashboard/adicionar/descricao"
+    action="/dashboard/adicionar/resumo"
     method="post"
     data-astro-reload
+    @submit="handleSubmit"
   >
     <Grid gap="xl" direction="column">
       <div id="map"></div>
       <fieldset>
         <legend appearance="h2">Coordenadas</legend>
         <Grid fullWidth>
-          <wa-input name="latitude" type="number" label="Latitude" required @input="handleInput" hint="Formato: 12.345678" :value="form.latitude"></wa-input>
-          <wa-input name="longitude" type="number" label="Longitude" required @input="handleInput" hint="Formato: -12.345678" :value="form.longitude"></wa-input>
+          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="form.latitude"></wa-input>
+          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="form.longitude"></wa-input>
         </Grid>
       </fieldset>
       <wa-input name="address" label="Morada" required @input="handleInput" :value="form.address"></wa-input>
       <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleInput" :value="form.postal_code"></wa-input>
+      
+      <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="form.accessibility">
+        <wa-radio value="public">Acessível ao público</wa-radio>
+        <wa-radio value="private">Local privado</wa-radio>
+      </wa-radio-group>
 
-      <h3>Horários</h3>
+      <!---
+      <wa-checkbox name="inside_space" @change="insideSpace = !insideSpace">Está dentro de um espaço?</wa-checkbox>
+      <wa-input v-if="insideSpace" name="space_name" label="Nome do espaço" required @input="handleInput"></wa-input>
+      -->
+      
+
+      <!--<h3>Horários</h3>
       <fieldset>
         <Grid direction="column">
           <legend>Dias da semana</legend>
           <Grid wrap justify="start" direction="column">
-            <Grid direction="column" v-for="day in days" :key="day.value">
+            <Grid direction="column" v-for="day in weekdays" :key="day.value">
               <wa-checkbox :name="day.value" @change="handleChangeDay" :checked="openingDays[day.value as keyof typeof openingDays]">{{ day.label }}</wa-checkbox>
               <Grid v-if="openingDays[day.value as keyof typeof openingDays]">
                 <wa-input type="time" :id="`opening_hours_start_${day.value}`" :name="`opening_hours_start_${day.value}`" label="Início" @input="handleInput" />
@@ -145,15 +210,15 @@ function handleSubmit(event: Event) {
             </Grid>
           </Grid>
         </Grid>
-      </fieldset>
+      </fieldset>-->
       <h3>Contactos</h3>
       <wa-input name="email" type="email" label="Email" :value="form.email" @input="handleInput"></wa-input>
-      <wa-input name="phone" type="tel" label="Telefone" :value="form.phone" @input="handleInput"></wa-input>
+      <wa-input name="phone" type="tel" label="Telefone" pattern="^\+?[0-9\s\-]+$" hint="Ex: +351 912345678" :value="form.phone" @input="handleInput"></wa-input>
       <h3>Canais</h3>
       <wa-input name="website" type="url" label="Website" :value="form.website" @input="handleInput"></wa-input>
       <wa-input name="instagram" type="url" label="Instagram" :value="form.instagram" @input="handleInput"></wa-input>
       <wa-input name="facebook" type="url" label="Facebook" :value="form.facebook" @input="handleInput"></wa-input>
-      <wa-button variant="primary" appearance="outlined" @click="handleAddNetwork">Adicionar canal</wa-button>
+      <!---<wa-button variant="primary" appearance="outlined" @click="handleAddNetwork">Adicionar canal</wa-button>-->
       <Grid justify="end" gap="xs">
         <wa-button variant="primary" appearance="outlined" @click="handleBack">Voltar</wa-button>
         <wa-button variant="primary" type="submit">Continuar</wa-button>
