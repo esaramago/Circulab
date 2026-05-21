@@ -2,10 +2,12 @@
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import UserInfo from '@/components/UserInfo.vue'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
 const currentPath = Astro.url.pathname
+const user = Astro.locals.user
 
 const langs = [
   {
@@ -58,7 +60,7 @@ const navItems = [
   <Grid gap="s" align="center">
     {
       !currentPath.endsWith('/adicionar') && (
-        <wa-button variant="neutral" size="s" appearance="plain" href={localizeHref('/dashboard/adicionar')}>
+        <wa-button size="s" href={localizeHref('/dashboard/adicionar')}>
           <wa-icon name="plus" label="Adicionar"></wa-icon>
           Adicionar
         </wa-button>
@@ -71,6 +73,11 @@ const navItems = [
         </li>
       ))}
     </ul>
+    {
+      user && (
+        <UserInfo user={user} locale={currentLocale ?? 'pt'} client:only="vue" />
+      )
+    }
   </Grid>
 
   <wa-button

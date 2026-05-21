@@ -1,7 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { actions } from 'astro:actions'
-
+import Grid from '@/components/ui/Grid.vue'
+import Container from '@/components/ui/Container.vue'
 
 let errorMessage = ''
 const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL
@@ -50,16 +51,17 @@ if (Astro.request.method === 'POST') {
 </script>
 
 <Layout title="Login">
-  <div class="wrapper">
-    <div class="container l-grid l-grid--s">
-      <h1>Astro Appwrite Starter</h1>
-      {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
-      <form method="post">
+  <Container width="xs">
+    <h1>Login</h1>
+    {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
+    <form method="post">
+      <Grid gap="s" direction="column">
         <wa-input
           id="email"
           type="email"
           name="email"
           required
+          label="Email"
           placeholder="Email"
           value={ADMIN_EMAIL}
           autofocus
@@ -68,13 +70,13 @@ if (Astro.request.method === 'POST') {
           id="password"
           type="password"
           name="password"
+          label="Password"
           required
           placeholder="Password"
           value={ADMIN_PASSWORD}
         />
         <wa-button variant="primary" type="submit">Login</wa-button>
-      </form>
-    </div>
-  </div>
-
+      </Grid>
+    </form>
+  </Container>
 </Layout>
