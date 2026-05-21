@@ -2,6 +2,7 @@ import { defineMiddleware } from 'astro:middleware'
 import { paraglideMiddleware } from './paraglide/server.js'
 import { deLocalizeHref, getLocale, localizeHref } from './paraglide/runtime.js'
 import { actions } from 'astro:actions'
+import { buildLoginRedirectUrl, localizeRedirectPath } from '@/utils/authRedirect'
 
 export const onRequest = defineMiddleware(async ({ request, locals, redirect, callAction }, next) => {
   return paraglideMiddleware(request, async ({ request: delocalizedRequest }) => {
@@ -25,13 +26,15 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     const isLoginRoute = pathname.startsWith('/login')
     const isDashboardRoute = pathname.startsWith('/dashboard')
 
-    // If the user is logged in and tries to access the login page, redirect to the dashboard
+    // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
-      return redirect(localizeHref('/dashboard'))
+      const redirectParam = new URL(request.url).searchParams.get('redirect')
+      return redirect(localizeRedirectPath(redirectParam, locals.locale))
     }
 
     if (isDashboardRoute && !locals.user) {
-      return redirect(localizeHref('/login'))
+      const returnPath = pathname + new URL(request.url).search
+      return redirect(buildLoginRedirectUrl(returnPath, locals.locale))
     }
 
     if (isDashboardRoute && locals.user) {

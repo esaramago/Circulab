@@ -59,7 +59,7 @@ const navItems = [
   </Grid>
   <Grid gap="s" align="center">
     {
-      !currentPath.endsWith('/adicionar') && (
+      !currentPath.includes('/dashboard/adicionar') && (
         <wa-button size="s" href={localizeHref('/dashboard/adicionar')}>
           <wa-icon name="plus" label="Adicionar"></wa-icon>
           Adicionar

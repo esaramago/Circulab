@@ -3,8 +3,12 @@ import Layout from '@/layouts/Layout.astro'
 import { actions } from 'astro:actions'
 import Grid from '@/components/ui/Grid.vue'
 import Container from '@/components/ui/Container.vue'
+import { getSafeRedirectPath, localizeRedirectPath } from '@/utils/authRedirect'
 
 let errorMessage = ''
+const redirectAfterLogin = getSafeRedirectPath(
+  Astro.url.searchParams.get('redirect')
+)
 const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL
 const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD
 
@@ -16,11 +20,13 @@ if (Astro.request.method === 'POST') {
 
     const email = formData.get('email')
     const password = formData.get('password')
+    const redirectTarget = getSafeRedirectPath(
+      (formData.get('redirect') as string) || Astro.url.searchParams.get('redirect')
+    )
     if (!email || !password) {
       throw new Error('Email and password are required')
     }
 
-        
     const { data: loginData, error: loginError } = await Astro.callAction(actions.signIn, formData)
     if (loginError) {
       throw new Error(loginError.message || 'Failed to sign in')
@@ -30,7 +36,7 @@ if (Astro.request.method === 'POST') {
 
       const hasAccessToDashboard = Astro.locals.user?.role_id === 2 || Astro.locals.user?.role_id === 3
       if (hasAccessToDashboard) {
-        return Astro.redirect('/dashboard')
+        return Astro.redirect(localizeRedirectPath(redirectTarget, Astro.locals.locale))
       } else {
         errorMessage = 'You do not have access to the dashboard'
       }
@@ -55,6 +61,7 @@ if (Astro.request.method === 'POST') {
     <h1>Login</h1>
     {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
     <form method="post">
+      <input type="hidden" name="redirect" value={redirectAfterLogin} />
       <Grid gap="s" direction="column">
         <wa-input
           id="email"
