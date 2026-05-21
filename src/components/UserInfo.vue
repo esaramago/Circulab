@@ -25,6 +25,7 @@ async function logout() {
       <wa-icon name="user" label="User"></wa-icon>
       {{ user?.email }}
     </wa-button>
+    <wa-dropdown-item :href="localizeHref('/dashboard', { locale: props.locale })">Dashboard</wa-dropdown-item>
     <wa-dropdown-item @click="logout">Logout</wa-dropdown-item>
   </wa-dropdown>
 </template>

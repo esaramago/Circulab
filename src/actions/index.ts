@@ -3,6 +3,7 @@ import { checkUser } from './auth/checkUser'
 import { logout } from './auth/logout'
 import { getUser } from './getUser'
 import { getMarkers } from './markers'
+import { addMarker } from './markers'
 
 export const server = {
   signIn,
@@ -10,4 +11,5 @@ export const server = {
   getUser,
   checkUser,
   getMarkers,
+  addMarker,
 }

@@ -126,6 +126,7 @@ export type Database = {
           phone: string | null
           postal_code: string | null
           updated_at: string
+          get_geojson: Json | null
         }
         Insert: {
           address?: string | null
@@ -185,22 +186,23 @@ export type Database = {
           description: string | null
           id: string
           images: Json
-          location: string | null
+          location_id: string
           title: string
           updated_by: string | null
           updated_date: string
+          get_geojson: Json | null
         }
         Insert: {
           accepted_by?: string | null
           category_id: string
-          characteristics_ids?: string[]
-          coordinates?: unknown
+          characteristics_ids: string[]
+          coordinates: unknown
           created_by: string
           created_date?: string
           description?: string | null
           id?: string
           images?: Json
-          location?: string | null
+          location_id: string
           title: string
           updated_by?: string | null
           updated_date?: string
@@ -215,7 +217,7 @@ export type Database = {
           description?: string | null
           id?: string
           images?: Json
-          location?: string | null
+          location_id?: string
           title?: string
           updated_by?: string | null
           updated_date?: string
@@ -226,6 +228,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pins_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -635,6 +644,19 @@ export type Database = {
         Returns: boolean
       }
       geomfromewkt: { Args: { "": string }; Returns: unknown }
+      get_geojson:
+        | {
+            Args: { "": Database["public"]["Tables"]["locations"]["Row"] }
+            Returns: {
+              error: true
+            } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+          }
+        | {
+            Args: { "": Database["public"]["Tables"]["pins"]["Row"] }
+            Returns: {
+              error: true
+            } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+          }
       gettransactionid: { Args: never; Returns: unknown }
       longtransactionsenabled: { Args: never; Returns: boolean }
       populate_geometry_columns:

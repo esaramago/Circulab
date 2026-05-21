@@ -1,9 +1,55 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+import { actions } from 'astro:actions'
+import type { MarkerType } from '@/types/data'
+
+const markers = await Astro.callAction(actions.getMarkers, {})
+
 ---
 
 <Layout title="Dashboard">
   <h1>Dashboard</h1>
 
-  <p>This is a private page. Only accessible to logged in users.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Imagem</th>
+        <th>Categoria</th>
+        <th>Características</th>
+        <th>Localização</th>
+        <th>Endereço</th>
+        <th>Código Postal</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Coordenadas</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        markers.data && markers.data.map((marker: MarkerType) => (
+          <tr>
+            <td>{ marker.name || marker.title }</td>
+            <td>{ marker.description }</td>
+            <td>{ marker.images.length }</td>
+            <td>{ marker.category_id }</td>
+            <td>{ marker.characteristics_ids?.join(', ') }</td>
+            <td>{ marker.locations?.name }</td>
+            <td>{ marker.address }</td>
+            <td>{ marker.postal_code }</td>
+            <td>{ marker.locations?.email }</td>
+            <td>{ marker.locations?.phone }</td>
+            <td>Coordenadas</td>
+            <td>{ marker.get_geojson?.coordinates[1] }, { marker.get_geojson?.coordinates[0] }</td>
+            <td>
+              <wa-button variant="primary">Editar</wa-button>
+              <wa-button variant="danger">Apagar</wa-button>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
 </Layout>
