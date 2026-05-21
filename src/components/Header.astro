@@ -36,7 +36,8 @@ const navItems = [
   },
   {
     path: '/docs',
-    label: m['docs.title']()
+    label: m['docs.title'](),
+    loggedInOnly: true
   }
 ]
 
@@ -49,7 +50,7 @@ const navItems = [
     </a>
     <nav>
       <ul class="nav-list">
-        {navItems.map((item) => (
+        {navItems.filter((item) => !item.loggedInOnly || user).map((item) => (
           <li>
             <a href={localizeHref(item.path)} class:list={item.path === currentPath ? 'is-active' : ''}>{item.label}</a>
           </li>
