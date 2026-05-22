@@ -241,22 +241,22 @@ export type Database = {
       }
       roles: {
         Row: {
+          code: string
           description: string | null
           id: number
           name: string | null
-          slug: string
         }
         Insert: {
+          code: string
           description?: string | null
           id?: number
           name?: string | null
-          slug: string
         }
         Update: {
+          code?: string
           description?: string | null
           id?: number
           name?: string | null
-          slug?: string
         }
         Relationships: []
       }
@@ -1431,3 +1431,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
