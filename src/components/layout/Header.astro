@@ -2,7 +2,7 @@
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
-import UserInfo from '@/components/UserInfo.vue'
+import UserInfo from '@/components/layout/UserInfo.vue'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale

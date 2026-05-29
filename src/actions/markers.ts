@@ -2,6 +2,9 @@ import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { fetchDB } from '@/utils/fetchDB'
 import { pointCoordinates, type GeoJsonPoint, type ImageType, type MarkerType } from '@/types/data'
 import { z } from 'astro/zod'
+import type { Database } from '@/types/supabase'
+type PinInsert = Database['public']['Tables']['pins']['Insert']
+type LocationInsert = Database['public']['Tables']['locations']['Insert']
 
 export const getMarkers = defineAction({
   handler: async () => {
@@ -63,46 +66,56 @@ export const getMarkers = defineAction({
 
 export const addMarker = defineAction({
   input: z.object({
-    name: z.string(),
-    description: z.string(),
+    title: z.string(),
+    category_id: z.string(),
+    characteristics_ids: z.array(z.string()),
+    coordinates: z.object({
+      latitude: z.number(),
+      longitude: z.number(),
+    }),
+    description: z.string().optional(),
     images: z.array(z.object({
-      url: z.string(),
-      alt: z.string(),
+      bucket: z.string(),
+      path: z.string(),
     })),
-    latitude: z.number(),
-    longitude: z.number(),
-    category: z.string(),
-    characteristics: z.array(z.string()),
-    location_id: z.string(),
-    address: z.string(),
-    postal_code: z.string(),
-    email: z.string(),
-    phone: z.number(),
+    //location_id: z.string(),
   }),
-  handler: async ({ name, description, images, latitude, longitude, category, characteristics, address, postal_code, email, phone }: z.infer<typeof input>) => {
+  handler: async (input) => {
     try {
-      const { data, error } = await fetchDB('pins').insert({
-        title: name,
-        description,
-        images: images.map((image) => ({
-          bucket: 'pin-images',
-          path: image.url,
+
+      const { data: locationsData, error: locationsError } = await fetchDB('locations').insert({
+        name: input.location_name,
+        address: input.address,
+        postal_code: input.postal_code,
+        location: input.location,
+        coordinates: input.coordinates,
+        email: input.email,
+        phone: input.phone,
+      })
+
+      if (locationsError) {
+        throw new ActionError({
+          message: locationsError.message || 'Failed to add marker',
+          code: locationsError.code as ActionErrorCode
+        })
+      }
+
+      const { data: pinsData, error: pinsError } = await fetchDB('pins').insert({
+        title: input.title || '',
+        description: input.description || '',
+        images: input.images.map((image) => ({
+          bucket: image.bucket,
+          path: image.path,
         })),
         get_geojson: {
           type: 'Point',
-          coordinates: [longitude, latitude],
+          coordinates: [input.coordinates.longitude, input.coordinates.latitude],
         },
-        category_id: category,
-        characteristics_ids: characteristics,
-        location_id: location_id,
+        category_id: input.category_id,
+        characteristics_ids: input.characteristics_ids,
+        location_id: input.location_id,
       })
-      if (error) {
-        throw new ActionError({
-          message: error.message || 'Failed to add marker',
-          code: error.code as ActionErrorCode
-        })
-      }
-      return data
+
     } catch (error: any) {
       throw new ActionError({
         message: error.message || 'Failed to add marker',
@@ -110,4 +123,4 @@ export const addMarker = defineAction({
       })
     }
   },
-})  
+})

@@ -13,8 +13,13 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
-
+  server: {
+    port: Number(import.meta.env.PORT || 4200),
+  },
   vite: {
+    server: {
+      strictPort: true,
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

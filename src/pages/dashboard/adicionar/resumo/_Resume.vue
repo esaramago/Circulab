@@ -13,7 +13,7 @@ function getLocalStorage() {
   const location = JSON.parse(
     window.localStorage.getItem('circulab:add:location') || '{}'
   )
-  
+
   const result = {
     ...description,
     ...location
@@ -32,7 +32,7 @@ async function handleSubmit() {
   const { data, error } = await actions.addMarker({
     name: result.value?.title || '',
     description: result.value?.description || '',
-    images: result.value?.images as ImageType[],
+    images: result.value?.images || [],
     latitude: result.value?.coordinates?.latitude as number,
     longitude: result.value?.coordinates?.longitude as number,
     category: result.value?.category_id as string,
@@ -44,9 +44,13 @@ async function handleSubmit() {
     phone: result.value?.locations?.phone as number,
   })
 
-
-  clearLocalStorage()
-  window.location.href = '/'
+  if (error) {
+    debugger
+    console.error(error)
+  } else {
+    clearLocalStorage()
+    window.location.href = '/'
+  }
 }
 
 function clearLocalStorage() {
