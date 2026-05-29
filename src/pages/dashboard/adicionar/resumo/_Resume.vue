@@ -61,7 +61,7 @@ async function handleSubmit() {
     location_name: resumeData.value?.location_name,
     address: resumeData.value?.address,
     postal_code: resumeData.value?.postal_code,
-    email: resumeData.value?.email,
+    email: resumeData.value?.email || undefined,
     phone: resumeData.value?.phone,
   })
 
