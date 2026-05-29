@@ -5,7 +5,7 @@ import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
 import { markerSchema } from '@/schemas/marker.server'
 
 
-export const getMarkers = defineAction({
+export const getMapPins = defineAction({
   handler: async () => {
     try {
       const { data, error } = await supabase.from('pins').select(`
@@ -24,11 +24,11 @@ export const getMarkers = defineAction({
         })
       }
 
-      const markers = [] as MapPin[]
+      const pins = [] as MapPin[]
 
       data.forEach((rawPin) => {
         const pin = rawPin as MapPinRow
-        markers.push({
+        pins.push({
           id: pin.id,
           title: pin.title,
           coordinates: {
@@ -40,12 +40,49 @@ export const getMarkers = defineAction({
         })
       })
 
-      return markers
+      return pins
 
 
     } catch (error: any) {
       throw new ActionError({
         message: error.message || 'Failed to get public user',
+        code: error.code as ActionErrorCode
+      })
+    }
+  },
+})
+
+export const getMarkers = defineAction({
+  handler: async () => {
+    try {
+      const { data, error } = await supabase.from('pins').select(`
+        id,
+        title,
+        category_id,
+        get_geojson,
+        location_id,
+        locations (
+          name,
+          address,
+          postal_code,
+          email,
+          phone
+        ),
+        categories (
+          typology_id
+        )
+      `)
+      if (error) {
+        throw new ActionError({
+          message: error.message || 'Failed to get pins',
+          code: error.code as ActionErrorCode
+        })
+      }
+
+      return data
+    } catch (error: any) {
+      throw new ActionError({
+        message: error.message || 'Failed to get markers',
         code: error.code as ActionErrorCode
       })
     }

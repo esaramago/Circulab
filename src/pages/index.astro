@@ -4,9 +4,9 @@ import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import { actions } from 'astro:actions'
 
-const { data: markers } = await Astro.callAction(actions.getMarkers, {})
+const { data: mapPins } = await Astro.callAction(actions.getMapPins, {})
 ---
 
 <Layout title={m.site_title()} fullWidth={true}>
-  <Map client:only="vue" markers={markers ?? []} />
+  <Map client:only="vue" markers={mapPins ?? []} />
 </Layout>

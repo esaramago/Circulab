@@ -1,10 +1,17 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { actions } from 'astro:actions'
-import type { MarkerType } from '@/types/data'
+import type { PinRow, LocationRow, GeoJsonPoint, ImageType } from '@/types/data'
 
 const markers = await Astro.callAction(actions.getMarkers, {})
 
+function getLatitude(geojson: GeoJsonPoint) {
+  return geojson.coordinates[1]
+}
+
+function getLongitude(geojson: GeoJsonPoint) {
+  return geojson.coordinates[0]
+}
 ---
 
 <Layout title="Dashboard">
@@ -23,26 +30,27 @@ const markers = await Astro.callAction(actions.getMarkers, {})
         <th>Código Postal</th>
         <th>Email</th>
         <th>Telefone</th>
-        <th>Coordenadas</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
       {
-        markers.data && markers.data.map((marker: MarkerType) => (
+        markers.data && markers.data.map((marker: PinRow & {images: ImageType, locations: LocationRow, get_geojson: GeoJsonPoint }) => (
           <tr>
-            <td>{ marker.name || marker.title }</td>
+            <td>{ marker.title }</td>
             <td>{ marker.description }</td>
-            <td>{ marker.images.length }</td>
+            <td>{ marker.images }</td>
             <td>{ marker.category_id }</td>
             <td>{ marker.characteristics_ids?.join(', ') }</td>
-            <td>{ marker.locations?.name }</td>
-            <td>{ marker.address }</td>
-            <td>{ marker.postal_code }</td>
-            <td>{ marker.locations?.email }</td>
-            <td>{ marker.locations?.phone }</td>
-            <td>Coordenadas</td>
-            <td>{ marker.get_geojson?.coordinates[1] }, { marker.get_geojson?.coordinates[0] }</td>
+            <td>{ marker.locations.name }</td>
+            <td>{ marker.locations.address }</td>
+            <td>{ marker.locations.postal_code }</td>
+            <td>{ marker.locations.email }</td>
+            <td>{ marker.locations.phone }</td>
+            <td>{ getLatitude(marker.get_geojson) }</td>
+            <td>{ getLongitude(marker.get_geojson) }</td>
             <td>
               <wa-button variant="primary">Editar</wa-button>
               <wa-button variant="danger">Apagar</wa-button>
