@@ -13,15 +13,14 @@ type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
 defineProps<{
   typologies: typologiesType | null
-  formAction: string
 }>()
 
 const form = reactive({
-  name: null,
+  title: null,
   description: null,
-  typology: null as string | null,
-  category: null as string | null,
-  characteristics: [] as string[],
+  typology_id: null as string | null,
+  category_id: null as string | null,
+  characteristics_ids: [] as string[],
   images: [] as { id: string; url: string; alt: string }[],
 })
 
@@ -34,18 +33,18 @@ const {
 
 onMounted(() => {
   const description = JSON.parse(window.localStorage.getItem('circulab:add:description') || '{}')
-  form.name = description.name || null
+  form.title = description.title || null
   form.description = description.description || null
-  form.typology = description.typology || null
-  form.category = description.category || null
-  form.characteristics = description.characteristics || []
+  form.typology_id = description.typology_id || null
+  form.category_id = description.category_id || null
+  form.characteristics_ids = description.characteristics_ids || []
   form.images = description.images || []
 
-  if (description.typology) {
-    setTypology(description.typology)
+  if (description.typology_id) {
+    setTypology(description.typology_id)
   }
-  if (description.category) {
-    setCategory(description.category)
+  if (description.category_id) {
+    setCategory(description.category_id)
   }
 })
 
@@ -68,11 +67,11 @@ function handleChange(event: Event) {
 
 function saveOnLocalStorage() {
   const data = {
-    name: form.name,
+    title: form.title,
     description: form.description,
-    typology: form.typology,
-    category: form.category,
-    characteristics: form.characteristics,
+    typology_id: form.typology_id,
+    category_id: form.category_id,
+    characteristics_ids: form.characteristics_ids,
     images: form.images
   }
   window.localStorage.setItem('circulab:add:description', JSON.stringify(data))
@@ -80,15 +79,15 @@ function saveOnLocalStorage() {
 
 // #region Typology Cascade
 async function setTypology(id: string) {
-  form.typology = id
-  form.category = null
-  form.characteristics = []
+  form.typology_id = id
+  form.category_id = null
+  form.characteristics_ids = []
   await loadCategories(id)
 }
 
 async function setCategory(id: string) {
-  form.category = id
-  form.characteristics = []
+  form.category_id = id
+  form.characteristics_ids = []
   await loadCharacteristics(id)
 }
 // #endregion
@@ -100,6 +99,7 @@ function handleBack() {
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
+  debugger
   if (isCompleted) {
     window.localStorage.setItem('circulab:add:description:completed', 'true')
   } else {
@@ -112,16 +112,16 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    :action="formAction"
+    action="/dashboard/adicionar/localizacao"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
   >
     <Grid gap="xl" direction="column">
       <wa-input
-        name="name"
-        label="Nome"
-        :value="form.name"
+        name="title"
+        label="Título"
+        :value="form.title"
         required
         @input="handleInput"
       />
@@ -136,7 +136,7 @@ function handleSubmit(event: Event) {
       <wa-select
         name="typology"
         label="Tipologia"
-        :value="form.typology"
+        :value="form.typology_id"
         required
         @input="handleChange"
       >
@@ -145,11 +145,11 @@ function handleSubmit(event: Event) {
         </template>
       </wa-select>
       <wa-select
-        v-if="form.typology"
+        v-if="form.typology_id"
         name="category"
         label="Categoria"
         required
-        :value="form.category"
+        :value="form.category_id"
         @input="handleChange"
       >
         <template v-if="categories.length > 0">
@@ -157,10 +157,10 @@ function handleSubmit(event: Event) {
         </template>
       </wa-select>
       <wa-select
-        v-if="form.category"
+        v-if="form.category_id"
         name="characteristics"
         label="Características"
-        :value="form.characteristics"
+        :value="form.characteristics_ids"
         @input="handleChange"
       >
         <template v-if="characteristics.length > 0">

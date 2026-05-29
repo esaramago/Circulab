@@ -32,6 +32,7 @@ const openingDays = reactive({
   sunday: false,
 })
 const form = reactive({
+  location_name: '' as string,
   address: '' as string,
   postal_code: '' as string,
   latitude: undefined as number | undefined,
@@ -168,7 +169,7 @@ function handleSubmit(event: Event) {
 }
 </script>
 
-<template>  
+<template>
   <form
     action="/dashboard/adicionar/resumo"
     method="post"
@@ -177,6 +178,7 @@ function handleSubmit(event: Event) {
   >
     <Grid gap="xl" direction="column">
       <div id="map"></div>
+      <wa-input name="location_name" label="Nome do local" @input="handleInput" :value="form.location_name"></wa-input>
       <fieldset>
         <legend appearance="h2">Coordenadas</legend>
         <Grid fullWidth>
@@ -186,7 +188,7 @@ function handleSubmit(event: Event) {
       </fieldset>
       <wa-input name="address" label="Morada" required @input="handleInput" :value="form.address"></wa-input>
       <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleInput" :value="form.postal_code"></wa-input>
-      
+
       <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="form.accessibility">
         <wa-radio value="public">Acessível ao público</wa-radio>
         <wa-radio value="private">Local privado</wa-radio>
@@ -196,7 +198,7 @@ function handleSubmit(event: Event) {
       <wa-checkbox name="inside_space" @change="insideSpace = !insideSpace">Está dentro de um espaço?</wa-checkbox>
       <wa-input v-if="insideSpace" name="space_name" label="Nome do espaço" required @input="handleInput"></wa-input>
       -->
-      
+
 
       <!--<h3>Horários</h3>
       <fieldset>

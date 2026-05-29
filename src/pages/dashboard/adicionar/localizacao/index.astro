@@ -6,7 +6,6 @@ import Form from './_Form.vue'
 let errorMessage = ''
 
 if (Astro.request.method === 'POST') {
-  debugger
   const formData = await Astro.request.formData()
   const location = formData.get('location')
   if (location) {

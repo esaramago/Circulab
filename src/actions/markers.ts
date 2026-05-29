@@ -1,10 +1,15 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { fetchDB } from '@/utils/fetchDB'
-import { pointCoordinates, type GeoJsonPoint, type ImageType, type MarkerType } from '@/types/data'
-import { z } from 'astro/zod'
-import type { Database } from '@/types/supabase'
-type PinInsert = Database['public']['Tables']['pins']['Insert']
-type LocationInsert = Database['public']['Tables']['locations']['Insert']
+import { createClient } from '@/utils/supabase'
+import {
+  pointCoordinates,
+  type GeoJsonPoint,
+  type ImageType,
+  type LocationInsert, type PinRow,
+} from '@/types/data'
+import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
+import { markerSchema } from '@/schemas/marker.server'
+import type { MarkerType } from '@/types/data'
 
 export const getMarkers = defineAction({
   handler: async () => {
@@ -39,20 +44,21 @@ export const getMarkers = defineAction({
         })
       }
 
-      const markers = data.map((marker: MarkerType) => ({
-        id: marker.id,
-        title: marker.title,
+      const markers = data.map((marker: PinRow) => ({
+        accepted_by: marker.accepted_by,
+        category_id: marker.category_id,
+        characteristics_ids: marker.characteristics_ids,
+        coordinates: marker.coordinates,
+        created_by: marker.created_by,
+        created_date: marker.created_date,
         description: marker.description,
-        images: marker.images as ImageType[],
-        category: marker.category_id,
-        characteristics: marker.characteristics_ids,
-        location: marker.location_id,
-        address: marker.locations.address,
-        postal_code: marker.locations.postal_code,
-        email: marker.locations.email as string,
-        phone: marker.locations.phone as number,
-        coordinates: pointCoordinates(marker.get_geojson as GeoJsonPoint),
-      } satisfies MarkerType))
+        id: marker.id,
+        images: marker.images,
+        location_id: marker.location_id,
+        title: marker.title,
+        updated_by: marker.updated_by,
+        updated_date: marker.updated_date,
+      }))
 
       return markers
     } catch (error: any) {
@@ -65,56 +71,66 @@ export const getMarkers = defineAction({
 })
 
 export const addMarker = defineAction({
-  input: z.object({
-    title: z.string(),
-    category_id: z.string(),
-    characteristics_ids: z.array(z.string()),
-    coordinates: z.object({
-      latitude: z.number(),
-      longitude: z.number(),
-    }),
-    description: z.string().optional(),
-    images: z.array(z.object({
-      bucket: z.string(),
-      path: z.string(),
-    })),
-    //location_id: z.string(),
-  }),
-  handler: async (input) => {
+  input: markerSchema,
+  handler: async (input: MarkerType, { request, cookies }) => {
+
     try {
+      const supabase = createClient({ request, cookies })
+      const { data: auth, error: authError } = await supabase.auth.getUser()
 
-      const { data: locationsData, error: locationsError } = await fetchDB('locations').insert({
-        name: input.location_name,
-        address: input.address,
-        postal_code: input.postal_code,
-        location: input.location,
-        coordinates: input.coordinates,
-        email: input.email,
-        phone: input.phone,
-      })
-
-      if (locationsError) {
+      if (authError || !auth.user) {
         throw new ActionError({
-          message: locationsError.message || 'Failed to add marker',
-          code: locationsError.code as ActionErrorCode
+          message: 'Not authenticated',
+          code: 'UNAUTHORIZED',
         })
       }
 
-      const { data: pinsData, error: pinsError } = await fetchDB('pins').insert({
+      const locationInsert: LocationInsert = {
+        name: input.location_name || '',
+        address: input.address || '',
+        postal_code: input.postal_code || '',
+        location: input.location || null,
+        coordinates: geographyPointEwkt(
+          Number(input.coordinates.longitude),
+          Number(input.coordinates.latitude),
+        ),
+        email: input.email || '',
+        phone: input.phone != null ? String(input.phone) : null,
+      }
+
+      const { data: locationsData, error: locationsError } = await supabase
+        .from('locations')
+        .insert(locationInsert)
+        .select('id')
+        .single()
+
+      if (!locationsData?.id) {
+        throw new ActionError({
+          message: locationsError?.message || 'Failed to add location',
+          code: locationsError?.code as ActionErrorCode
+        })
+      }
+
+      const { data: pinsData, error: pinsError } = await supabase.from('pins').insert({
         title: input.title || '',
         description: input.description || '',
-        images: input.images.map((image) => ({
-          bucket: image.bucket,
-          path: image.path,
-        })),
-        get_geojson: {
-          type: 'Point',
-          coordinates: [input.coordinates.longitude, input.coordinates.latitude],
-        },
+        images: [],
+        coordinates: geographyPointEwkt(
+          Number(input.coordinates.longitude),
+          Number(input.coordinates.latitude),
+        ),
         category_id: input.category_id,
         characteristics_ids: input.characteristics_ids,
-        location_id: input.location_id,
-      })
+        location_id: locationsData.id,
+        created_by: auth.user.id,
+      }).select('id').single()
+
+      if (!pinsData?.id) {
+        throw new ActionError({
+          message: pinsError?.message || 'Failed to add pin',
+          code: pinsError?.code as ActionErrorCode,
+        })
+      }
 
     } catch (error: any) {
       throw new ActionError({

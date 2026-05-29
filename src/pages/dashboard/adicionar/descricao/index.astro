@@ -25,6 +25,5 @@ const { data: typologies, error } = await fetchDB('typologies').select('*')
   <Form
     client:only="vue"
     typologies={typologies}
-    formAction={Astro.url.pathname}
   />
 </AddLayout>

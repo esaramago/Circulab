@@ -1,10 +1,27 @@
 <script setup lang="ts">
 import Grid from '@/components/ui/Grid.vue'
-import { ref, onMounted } from 'vue'
-import type { MarkerType } from '@/types/data'
+import { ref, onMounted, reactive } from 'vue'
 import { actions } from 'astro:actions'
+import type { ImageType } from '@/types/data'
+import type { MarkerType } from '@/types/marker'
 
-const result = ref<MarkerType | null>(null)
+/* const resumeData = reactive({
+  title: '',
+  description: '',
+  images: [],
+  coordinates: { latitude: 0, longitude: 0 },
+  typology_id: '',
+  category_id: '',
+  characteristics_ids: [],
+  location_name: '',
+  address: '',
+  postal_code: '',
+  email: '',
+  phone: 0,
+  location_id: '',
+}) */
+
+const resumeData = ref<MarkerType | null>(null)
 
 function getLocalStorage() {
   const description = JSON.parse(
@@ -14,38 +31,41 @@ function getLocalStorage() {
     window.localStorage.getItem('circulab:add:location') || '{}'
   )
 
-  const result = {
+  return {
     ...description,
     ...location
   }
-
-  return result
 }
 
 onMounted(() => {
-  result.value = getLocalStorage()
+  resumeData.value = getLocalStorage()
 })
 
 async function handleSubmit() {
   // save marker
 
   const { data, error } = await actions.addMarker({
-    name: result.value?.title || '',
-    description: result.value?.description || '',
-    images: result.value?.images || [],
-    latitude: result.value?.coordinates?.latitude as number,
-    longitude: result.value?.coordinates?.longitude as number,
-    category: result.value?.category_id as string,
-    characteristics: result.value?.characteristics_ids as string[],
-    location_id: result.value?.location_id as string,
-    address: result.value?.locations?.address as string,
-    postal_code: result.value?.locations?.postal_code as string,
-    email: result.value?.locations?.email as string,
-    phone: result.value?.locations?.phone as number,
+    title: resumeData.value?.title || '',
+    description: resumeData.value?.description || '',
+    /* images: resumeData.value?.images?.map((image: ImageType) => ({
+      bucket: image.bucket,
+      path: image.path,
+    })) || [], */
+    coordinates: {
+      latitude: Number(resumeData.value?.latitude) || 0,
+      longitude: Number(resumeData.value?.longitude) || 0,
+    },
+    typology_id: resumeData.value?.typology_id || '',
+    category_id: resumeData.value?.category_id || '',
+    characteristics_ids: resumeData.value?.characteristics_ids || [],
+    location_name: resumeData.value?.location_name,
+    address: resumeData.value?.address,
+    postal_code: resumeData.value?.postal_code,
+    email: resumeData.value?.email,
+    phone: resumeData.value?.phone,
   })
 
   if (error) {
-    debugger
     console.error(error)
   } else {
     clearLocalStorage()
@@ -64,13 +84,18 @@ function clearLocalStorage() {
 
 <template>
   <ul>
-    <li>{{ result?.name }}</li>
-    <li>{{ result?.description }}</li>
-    <li>{{ result?.images?.length }}</li>
-    <li>{{ result?.latitude }}, {{ result?.longitude }}</li>
-    <li>{{ result?.category }}</li>
-    <li>{{ result?.characteristics }}</li>
-    <li>{{ result?.address }}</li>
+    <li>Título:{{ resumeData?.title }}</li>
+    <li>Descrição:{{ resumeData?.description }}</li>
+    <li>Imagem:{{ resumeData?.images?.length }}</li>
+    <li>Tipologia:{{ resumeData?.typology_id }}</li>
+    <li>Categoria:{{ resumeData?.category_id }}</li>
+    <li>Características:{{ resumeData?.characteristics_ids?.join(', ') }}</li>
+    <li>Localização:{{ resumeData?.location_name }}</li>
+    <li>Coordenadas:{{ resumeData?.latitude }}, {{ resumeData?.longitude }}</li>
+    <li>Morada:{{ resumeData?.address }}</li>
+    <li>Código postal:{{ resumeData?.postal_code }}</li>
+    <li>Email:{{ resumeData?.email }}</li>
+    <li>Telefone:{{ resumeData?.phone }}</li>
   </ul>
 
   <Grid justify="end">
