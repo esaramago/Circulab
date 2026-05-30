@@ -20,7 +20,7 @@ export const getPins = defineAction({
         categories (
           typology_id
         )
-      `)
+      `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or 'approved'
       if (error) {
         throw new ActionError({
           message: error.message || 'Failed to get pins',
@@ -137,7 +137,7 @@ export const getResources = defineAction({
         categories (
           typology_id
         )
-      `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or approved
+      `)
 
       if (error) {
         throw new ActionError({
