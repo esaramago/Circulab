@@ -6,6 +6,9 @@ import Container from '@/components/ui/Container.vue'
 import { getSafeRedirectPath, localizeRedirectPath } from '@/utils/authRedirect'
 
 let errorMessage = ''
+if (Astro.url.searchParams.get('error') === 'auth') {
+  errorMessage = 'The sign-in link is invalid or has expired. Please request a new one.'
+}
 const redirectAfterLogin = getSafeRedirectPath(
   Astro.url.searchParams.get('redirect')
 )

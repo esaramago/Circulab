@@ -1,4 +1,6 @@
 {
+  "debug.javascript.autoAttachFilter": "onlyWithFlag",
+  "debug.javascript.debugByLinkOptions": "off",
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
