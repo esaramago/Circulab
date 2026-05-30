@@ -136,7 +136,8 @@ export const getResources = defineAction({
         ),
         categories (
           typology_id
-        )
+        ),
+        status
       `)
 
       if (error) {

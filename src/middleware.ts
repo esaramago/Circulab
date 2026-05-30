@@ -26,21 +26,17 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
 
     const isLoginRoute = pathname.startsWith('/login')
     const isDashboardRoute = pathname.startsWith('/dashboard')
-    const isAddRoute = pathname.startsWith('/adicionar')
-    const isPrivateRoute = isDashboardRoute || isAddRoute
+    const isResourceRoute = pathname.startsWith('/recursos')
+    const isPrivateRoute = isDashboardRoute || isResourceRoute
 
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
       const redirectParam = new URL(request.url).searchParams.get('redirect')
       return redirect(localizeRedirectPath(redirectParam, locals.locale))
-    }
-
-    if (isPrivateRoute && !locals.user) {
+    } else if (isPrivateRoute && !locals.user) {
       const returnPath = pathname + new URL(request.url).search
       return redirect(buildLoginRedirectUrl(returnPath, locals.locale))
-    }
-
-    if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
+    } else if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
       return redirect(localizeHref('/'))
     }
 

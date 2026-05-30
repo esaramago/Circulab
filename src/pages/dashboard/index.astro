@@ -5,7 +5,7 @@ import geojson from '@/utils/geojson'
 const resources = await Astro.callAction(actions.getResources, {})
 ---
 
-<Layout title="Dashboard">
+<Layout title="Dashboard" fullWidth={true}>
   <h1>Dashboard</h1>
 
   <table>
@@ -21,8 +21,8 @@ const resources = await Astro.callAction(actions.getResources, {})
         <th>Código Postal</th>
         <th>Email</th>
         <th>Telefone</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
+        <th>Coordenadas</th>
+        <th>Estado</th>
         <th></th>
       </tr>
     </thead>
@@ -40,8 +40,8 @@ const resources = await Astro.callAction(actions.getResources, {})
             <td>{ resource.locations.postal_code }</td>
             <td>{ resource.locations.email }</td>
             <td>{ resource.locations.phone }</td>
-            <td>{ resource.get_geojson ? geojson.getLatitude(resource.get_geojson) : '' }</td>
-            <td>{ resource.get_geojson ? geojson.getLongitude(resource.get_geojson) : '' }</td>
+            <td>{ resource.get_geojson ? geojson.getLatitude(resource.get_geojson) : '' } { resource.get_geojson ? geojson.getLongitude(resource.get_geojson) : '' }</td>
+            <td>{ resource.status }</td>
             <td>
               <wa-button variant="primary">Editar</wa-button>
               <wa-button variant="danger">Apagar</wa-button>
