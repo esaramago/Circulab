@@ -3,6 +3,18 @@ import type { EmailOtpType } from '@supabase/supabase-js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { createClient } from '@/utils/supabase'
 import { getSafeRedirectPath, localizeRedirectPath } from '@/utils/authRedirect'
+
+function postConfirmRedirect(
+  type: EmailOtpType | null,
+  next: string | null,
+  locale: App.Locals['locale'],
+): string {
+  if (type === 'recovery') {
+    return localizeHref('/auth/update-password', locale ? { locale } : undefined)
+  }
+  return localizeRedirectPath(getSafeRedirectPath(next), locale)
+}
+
 function loginErrorUrl(locale: App.Locals['locale']): string {
   const url = new URL(localizeHref('/login', locale ? { locale } : undefined), 'http://local')
   url.searchParams.set('error', 'auth')
@@ -14,7 +26,7 @@ export const GET: APIRoute = async ({ request, cookies, redirect, locals }) => {
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type') as EmailOtpType | null
   const code = requestUrl.searchParams.get('code')
-  const next = getSafeRedirectPath(requestUrl.searchParams.get('next'))
+  const next = requestUrl.searchParams.get('next')
   const locale = locals.locale
 
   const supabase = createClient({ request, cookies })
@@ -22,7 +34,7 @@ export const GET: APIRoute = async ({ request, cookies, redirect, locals }) => {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return redirect(localizeRedirectPath(next, locale))
+      return redirect(postConfirmRedirect(type, next, locale))
     }
     return redirect(loginErrorUrl(locale))
   }
@@ -30,7 +42,7 @@ export const GET: APIRoute = async ({ request, cookies, redirect, locals }) => {
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash, type })
     if (!error) {
-      return redirect(localizeRedirectPath(next, locale))
+      return redirect(postConfirmRedirect(type, next, locale))
     }
   }
 
