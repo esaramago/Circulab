@@ -1,25 +1,9 @@
 <script setup lang="ts">
 import Grid from '@/components/ui/Grid.vue'
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import { actions } from 'astro:actions'
-import type { ImageType } from '@/types/data'
-import type { MarkerType } from '@/types/marker'
-
-/* const resumeData = reactive({
-  title: '',
-  description: '',
-  images: [],
-  coordinates: { latitude: 0, longitude: 0 },
-  typology_id: '',
-  category_id: '',
-  characteristics_ids: [],
-  location_name: '',
-  address: '',
-  postal_code: '',
-  email: '',
-  phone: 0,
-  location_id: '',
-}) */
+import type { ImageType } from '@/types/database'
+import type { MarkerType } from '@/schemas/marker.server'
 
 const resumeData = ref<MarkerType | null>(null)
 
@@ -102,7 +86,7 @@ function clearLocalStorage() {
     <wa-button
       variant="outlined"
       appearance="outlined"
-      href="/dashboard/adicionar/localizacao">Voltar</wa-button
+      href="/adicionar/localizacao">Voltar</wa-button
     >
     <wa-button variant="brand" @click="handleSubmit">Adicionar</wa-button>
   </Grid>

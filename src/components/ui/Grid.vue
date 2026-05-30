@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed, type CSSProperties } from 'vue'
-import type { Spacing } from '@/types/grid'
+import type { Spacing } from '@/types/ui/grid'
 
 const props = defineProps<{
   direction?: 'row' | 'column'

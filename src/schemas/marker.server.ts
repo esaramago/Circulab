@@ -23,3 +23,5 @@ export const markerSchema = z.object({
   email: z.email().optional(),
   phone: z.number().optional(),
 })
+
+export type MarkerType = z.infer<typeof markerSchema>

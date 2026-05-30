@@ -10,7 +10,7 @@ const form = reactive({
   permanent: false,
   notRepeated: false
 })
-  
+
 const errorMessage = ref<string>('')
 
 const handleSubmit = (event: Event) => {
@@ -47,7 +47,7 @@ onMounted(() => {
 
 <template>
   <form
-    action="/dashboard/adicionar/descricao"
+    action="/adicionar/descricao"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

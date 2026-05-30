@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { AppUser } from '@/types/env'
+import type { AppUser } from '@/types/domain/user'
 import { localizeHref } from '@/paraglide/runtime.js'
 import '@webawesome/button/button.js'
 import '@webawesome/dropdown/dropdown.js'
 import '@webawesome/dropdown-item/dropdown-item.js'
 import { actions } from 'astro:actions'
+import { userHasAccess } from '@/utils/userHasAccess'
 
 const props = defineProps<{
   user: AppUser
@@ -25,7 +26,7 @@ async function logout() {
       <wa-icon name="user" label="User"></wa-icon>
       {{ user?.email }}
     </wa-button>
-    <wa-dropdown-item :href="localizeHref('/dashboard', { locale: props.locale })">Dashboard</wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" :href="localizeHref('/dashboard', { locale: props.locale })">Dashboard</wa-dropdown-item>
     <wa-dropdown-item @click="logout">Logout</wa-dropdown-item>
   </wa-dropdown>
 </template>

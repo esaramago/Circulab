@@ -16,7 +16,10 @@ export const checkUser = defineAction({
 
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*')
+        .select(`
+          *,
+          role:roles(*)
+        `)
         .eq('id', auth.user.id)
         .single()
 

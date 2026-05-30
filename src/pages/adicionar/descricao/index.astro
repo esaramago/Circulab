@@ -9,7 +9,7 @@ let errorMessage = ''
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category')) {
-    return Astro.redirect(localizeHref('/dashboard/adicionar/localizacao'))
+    return Astro.redirect(localizeHref('/adicionar/localizacao'))
   } else {
     errorMessage = 'Tens de preencher todos os assinalados para continuar'
   }

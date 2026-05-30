@@ -3,6 +3,7 @@ import { paraglideMiddleware } from './paraglide/server.js'
 import { deLocalizeHref, getLocale, localizeHref } from './paraglide/runtime.js'
 import { actions } from 'astro:actions'
 import { buildLoginRedirectUrl, localizeRedirectPath } from '@/utils/authRedirect'
+import { userHasAccess } from './utils/userHasAccess.js'
 
 export const onRequest = defineMiddleware(async ({ request, locals, redirect, callAction }, next) => {
   return paraglideMiddleware(request, async ({ request: delocalizedRequest }) => {
@@ -25,6 +26,8 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
 
     const isLoginRoute = pathname.startsWith('/login')
     const isDashboardRoute = pathname.startsWith('/dashboard')
+    const isAddRoute = pathname.startsWith('/adicionar')
+    const isPrivateRoute = isDashboardRoute || isAddRoute
 
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
@@ -32,16 +35,12 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
       return redirect(localizeRedirectPath(redirectParam, locals.locale))
     }
 
-    if (isDashboardRoute && !locals.user) {
+    if (isPrivateRoute && !locals.user) {
       const returnPath = pathname + new URL(request.url).search
       return redirect(buildLoginRedirectUrl(returnPath, locals.locale))
     }
 
-    if (isDashboardRoute && locals.user) {
-      const hasAccessToDashboard = locals.user?.role_id === 2 || locals.user?.role_id === 3
-      if (hasAccessToDashboard) {
-        return next(delocalizedRequest)
-      }
+    if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
       return redirect(localizeHref('/'))
     }
 

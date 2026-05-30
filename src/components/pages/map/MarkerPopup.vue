@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import { CONFIG } from '@/config'
+import type { Marker } from '@/types/domain/marker'
+
+const props = defineProps<{
+  marker: Marker | null,
+  open: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'close'): void
+}>()
+
+</script>
+
 <template>
   <div class="c-popup" :open="open || null" id="marker-popup">
     <div class="c-popup__wrapper">
@@ -22,28 +37,13 @@
         </ul>
 
         <p>{{ marker?.description }}</p>
-        
+
         <wa-button appearance="outlined">Sugerir edição</wa-button>
 
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { CONFIG } from '@/config'
-import type { Marker } from '@/types/data'
-
-const props = defineProps<{
-  marker: Marker | null,
-  open: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'close'): void
-}>()
-
-</script>
 
 <style scoped>
 .c-popup {

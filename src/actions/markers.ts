@@ -1,6 +1,8 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient, supabase } from '@/utils/supabase'
-import type { LocationInsert, MapPinRow, MarkerType, MapPin } from '@/types/data'
+import type { LocationInsert, MapPinRow, MarkerRow } from '@/types/database'
+import type { MapPin } from '@/types/domain/marker'
+import type { MarkerType } from '@/schemas/marker.server'
 import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
 import { markerSchema } from '@/schemas/marker.server'
 
@@ -58,7 +60,10 @@ export const getMarkers = defineAction({
       const { data, error } = await supabase.from('pins').select(`
         id,
         title,
+        description,
+        images,
         category_id,
+        characteristics_ids,
         get_geojson,
         location_id,
         locations (
@@ -79,7 +84,7 @@ export const getMarkers = defineAction({
         })
       }
 
-      return data
+      return data as MarkerRow[]
     } catch (error: any) {
       throw new ActionError({
         message: error.message || 'Failed to get markers',

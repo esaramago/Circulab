@@ -12,16 +12,16 @@ import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MarkerPopup from './MarkerPopup.vue'
 import MapFilters from './MapFilters.vue'
-import type { Marker as MarkerType } from '@/types/data'
+import type { MapPin } from '@/types/domain/marker'
 
 const props = defineProps<{
-  markers: MarkerType[]
+  markers: MapPin[]
 }>()
 
-const activeMarker = ref<MarkerType | null>(null)
+const activeMarker = ref<MapPin | null>(null)
 
 const tree = {}
-function ensureGroup(typology: MarkerType['typology'], category: MarkerType['category']) {
+function ensureGroup(typology: MapPin['typology_id'], category: MapPin['category_id']) {
   tree[typology] ??= {}
   tree[category] ??= new LayerGroup()
   return tree[category]
@@ -59,14 +59,14 @@ onMounted(() => {
   addMarkers(props.markers, map/* , markersLayer */)
 })
 
-function addMarkers(markers: MarkerType[], map: Map) {
+function addMarkers(markers: MapPin[], map: Map) {
   markers.forEach(marker => {
     //const group = ensureGroup(marker.typology, marker.category, marker.characteristics)
     //group.addTo(map)
     addMarker(marker, map)
   })
 }
-function addMarker(marker: MarkerType, map: Map) {
+function addMarker(marker: MapPin, map: Map) {
 
   if (!marker?.coordinates) return
 
@@ -81,7 +81,7 @@ function addMarker(marker: MarkerType, map: Map) {
   })
 }
 
-function showPopup(marker: MarkerType) {
+function showPopup(marker: MapPin) {
   activeMarker.value = marker // set active marker
 }
 </script>

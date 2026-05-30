@@ -94,12 +94,11 @@ async function setCategory(id: string) {
 
 // #region Handle Events
 function handleBack() {
-  window.location.href = '/dashboard/adicionar/validacao'
+  window.location.href = '/adicionar/validacao'
 }
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
-  debugger
   if (isCompleted) {
     window.localStorage.setItem('circulab:add:description:completed', 'true')
   } else {
@@ -112,7 +111,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/dashboard/adicionar/localizacao"
+    action="/adicionar/localizacao"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

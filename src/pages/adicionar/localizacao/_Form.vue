@@ -6,12 +6,14 @@ import '@webawesome/checkbox/checkbox.js'
 import '@webawesome/radio/radio.js'
 import '@webawesome/radio-group/radio-group.js'
 import { onMounted, reactive, watch, ref } from 'vue'
-import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
+import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
+import type { Map as LeafletMapType, Marker as LeafletMarkerType } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { weekdays } from '@/config'
 
-let mapInstance: Map | null = null
-let markerInstance: Marker | null = null
+let mapInstance: LeafletMapType | null = null
+let markerInstance: LeafletMarkerType | null = null
+
 
 type OpeningDaysType = (typeof weekdays)[keyof typeof weekdays]
 type OpeningHoursType = {
@@ -60,7 +62,7 @@ function initMap() {
   const initialLat = form.latitude || 38.74
   const initialLng = form.longitude || -9.14
 
-  mapInstance = new Map('map', {
+  mapInstance = new LeafletMap('map', {
     center: [initialLat, initialLng],
     zoom: 14,
   })
@@ -71,18 +73,20 @@ function initMap() {
     maxZoom: 22,
   }).addTo(mapInstance)
 
-  markerInstance = new Marker([initialLat, initialLng], { draggable: true }).addTo(mapInstance)
+  markerInstance = new LeafletMarker([initialLat, initialLng], { draggable: true }).addTo(mapInstance)
 
   markerInstance.on('dragend', () => {
-    const position = markerInstance!.getLatLng()
-    form.latitude = Number(position.lat.toFixed(6))
-    form.longitude = Number(position.lng.toFixed(6))
-    saveOnLocalStorage()
-    fetchAddress(form.latitude, form.longitude)
+    const position = markerInstance?.getLatLng()
+    if (position) {
+      form.latitude = Number(position.lat.toFixed(6))
+      form.longitude = Number(position.lng.toFixed(6))
+      saveOnLocalStorage()
+      fetchAddress(form.latitude, form.longitude)
+    }
   })
 
   mapInstance.on('click', (e: any) => {
-    markerInstance!.setLatLng(e.latlng)
+    markerInstance?.setLatLng(e.latlng)
     form.latitude = Number(e.latlng.lat.toFixed(6))
     form.longitude = Number(e.latlng.lng.toFixed(6))
     saveOnLocalStorage()
@@ -155,7 +159,7 @@ function saveOnLocalStorage() {
 }
 
 function handleBack() {
-  window.location.href = '/dashboard/adicionar/descricao'
+  window.location.href = '/adicionar/descricao'
 }
 
 function handleSubmit(event: Event) {
@@ -171,7 +175,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/dashboard/adicionar/resumo"
+    action="/adicionar/resumo"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
