@@ -1,27 +1,27 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import Wizard from '@/components/pages/add/Wizard.vue'
+import Wizard from '@/components/pages/resources/Wizard.vue'
 import Container from '@/components/ui/Container.vue'
 import Grid from '@/components/ui/Grid.vue'
 
 const steps = [
   {
-    path: '/adicionar',
+    path: '/recursos/novo',
     code: 'validation',
     label: 'Validação'
   },
   {
-    path: '/adicionar/descricao',
+    path: '/recursos/novo/descricao',
     code: 'description',
     label: 'Descrição'
   },
   {
-    path: '/adicionar/localizacao',
+    path: '/recursos/novo/localizacao',
     code: 'location',
     label: 'Localização'
   },
   {
-    path: '/adicionar/resumo',
+    path: '/recursos/novo/resumo',
     code: 'summary',
     label: 'Resumo'
   }
@@ -30,10 +30,10 @@ const steps = [
 const currentStep = Astro.props.currentStep || 'validation'
 ---
 
-<Layout title="Adicionar">
+<Layout title="Adicionar recurso">
   <Grid gap="xs" direction="column">
-    <h1>Adicionar pin ao mapa</h1>
-    <p>Adicione um novo pin ao mapa para partilhar com a comunidade.</p>
+    <h1>Adicionar recurso</h1>
+    <p>Adicione um novo recurso para partilhar com a comunidade.</p>
   </Grid>
   <Wizard client:only="vue" steps={steps} currentStep={currentStep} />
   <Container width="xs">

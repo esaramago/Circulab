@@ -86,7 +86,7 @@ function clearLocalStorage() {
     <wa-button
       variant="outlined"
       appearance="outlined"
-      href="/adicionar/localizacao">Voltar</wa-button
+      href="/recursos/novo/localizacao">Voltar</wa-button
     >
     <wa-button variant="brand" @click="handleSubmit">Adicionar</wa-button>
   </Grid>

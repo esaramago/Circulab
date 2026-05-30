@@ -1,7 +1,7 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import { localizeHref } from '@/paraglide/runtime.js'
-import Form from './_Form.vue'
+import LocationForm from '@/components/pages/resources/LocationForm.vue'
 
 let errorMessage = ''
 
@@ -9,7 +9,7 @@ if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   const location = formData.get('location')
   if (location) {
-    return Astro.redirect(localizeHref('/adicionar/resumo'))
+    return Astro.redirect(localizeHref('/recursos/novo/resumo'))
   } else {
     errorMessage = 'Tem de selecionar uma localização válida para continuar'
   }
@@ -23,14 +23,14 @@ import { localizeHref } from '@/paraglide/runtime.js'
 
 window.addEventListener('submit-form', (event) => {
   const formData = (event as CustomEvent).detail
-  window.location.href = localizeHref('/adicionar/resumo')
+  window.location.href = localizeHref('/recursos/novo/resumo')
 })
 window.addEventListener('back', () => {
-  window.location.href = localizeHref('/adicionar/descricao')
+  window.location.href = localizeHref('/recursos/novo/descricao')
 })
 </script>
 <AddLayout currentStep="location">
   <h2>Localização</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
-  <Form client:only="vue" />
+  <LocationForm client:only="vue" />
 </AddLayout>

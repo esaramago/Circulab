@@ -60,10 +60,10 @@ const navItems = [
   </Grid>
   <Grid gap="s" align="center">
     {
-      !currentPath.includes('/adicionar') && (
-        <wa-button size="s" href={localizeHref('/adicionar')}>
-          <wa-icon name="plus" label="Adicionar"></wa-icon>
-          Adicionar
+      !currentPath.includes('/recursos') && (
+        <wa-button size="s" href={localizeHref('/recursos/novo')}>
+          <wa-icon name="plus"></wa-icon>
+          Adicionar recurso
         </wa-button>
       )
     }
@@ -107,8 +107,8 @@ const navItems = [
   </nav>
   <Grid gap="s" align="center">
     <wa-button variant="neutral" size="s" appearance="plain">
-      <wa-icon name="plus" label="Adicionar"></wa-icon>
-      Adicionar
+      <wa-icon name="plus"></wa-icon>
+      Adicionar recurso
     </wa-button>
     <ul class="nav-lang">
       {langs.map((lang) => (

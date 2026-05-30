@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GalleryForm from '@/components/pages/add/GalleryForm.vue'
+import GalleryForm from '@/components/pages/resources/GalleryForm.vue'
 import Grid from '@/components/ui/Grid.vue'
 import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
@@ -94,7 +94,7 @@ async function setCategory(id: string) {
 
 // #region Handle Events
 function handleBack() {
-  window.location.href = '/adicionar/validacao'
+  window.location.href = '/recursos/novo'
 }
 
 function handleSubmit(event: Event) {
@@ -111,7 +111,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/adicionar/localizacao"
+    action="/recursos/novo/localizacao"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

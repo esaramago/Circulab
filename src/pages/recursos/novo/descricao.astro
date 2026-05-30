@@ -1,6 +1,6 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
-import Form from './_Form.vue'
+import DescriptionForm from '@/components/pages/resources/DescriptionForm.vue'
 import { fetchDB } from '@/utils/fetchDB'
 import { localizeHref } from '@/paraglide/runtime.js'
 
@@ -9,7 +9,7 @@ let errorMessage = ''
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
   if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category')) {
-    return Astro.redirect(localizeHref('/adicionar/localizacao'))
+    return Astro.redirect(localizeHref('/recursos/novo/localizacao'))
   } else {
     errorMessage = 'Tens de preencher todos os assinalados para continuar'
   }
@@ -22,7 +22,7 @@ const { data: typologies, error } = await fetchDB('typologies').select('*')
 <AddLayout currentStep="description">
   <h2>Informação base</h2>
   {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
-  <Form
+  <DescriptionForm
     client:only="vue"
     typologies={typologies}
   />

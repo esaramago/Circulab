@@ -1,0 +1,9 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import ValidationForm from '@/components/pages/resources/ValidationForm.vue'
+---
+
+<AddLayout>
+  <h2>Validação</h2>
+  <ValidationForm client:only="vue" />
+</AddLayout>

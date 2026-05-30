@@ -47,7 +47,7 @@ onMounted(() => {
 
 <template>
   <form
-    action="/adicionar/descricao"
+    action="/recursos/novo/descricao"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

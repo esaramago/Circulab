@@ -159,7 +159,7 @@ function saveOnLocalStorage() {
 }
 
 function handleBack() {
-  window.location.href = '/adicionar/descricao'
+  window.location.href = '/recursos/novo/descricao'
 }
 
 function handleSubmit(event: Event) {
@@ -175,7 +175,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/adicionar/resumo"
+    action="/recursos/novo/resumo"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
