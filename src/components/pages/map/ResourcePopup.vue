@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { CONFIG } from '@/config'
-import type { Marker } from '@/types/domain/marker'
+import type { ResourcePopup } from '@/types/domain/resource'
+import { ref, watch } from 'vue'
+import { actions } from 'astro:actions'
 
 const props = defineProps<{
-  marker: Marker | null,
+  resourceId: string | null
   open: boolean
 }>()
 
@@ -11,32 +13,45 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+const resource = ref<ResourcePopup | null>(null)
+
+watch(() => props.resourceId, async () => {
+  if (props.resourceId) {
+    const { data, error } = await actions.getResource({ id: props.resourceId })
+    if (error) {
+      console.error(error)
+    } else {
+      console.log(data)
+      resource.value = data as unknown as ResourcePopup
+    }
+  }
+})
 </script>
 
 <template>
   <div class="c-popup" :open="open || null" id="marker-popup">
     <div class="c-popup__wrapper">
       <div class="c-popup__header">
-        <h2>{{ marker?.title }}</h2>
+        <h2>{{ resource?.title }}</h2>
         <wa-button class="c-popup__close" variant="neutral" @click="emit('close')" pill size="xs">
           <wa-icon name="close"></wa-icon>
         </wa-button>
       </div>
       <div class="c-popup__body">
 
-        <img class="c-popup__image" :src="CONFIG.images_url + marker?.images?.[0]?.url" :alt="marker?.title" />
-        <p>{{ marker?.category }} ({{ marker?.typology }})</p>
-        <p>{{ marker?.characteristics }}</p>
+        <img v-if="resource?.images?.[0]" class="c-popup__image" :src="CONFIG.images_url + resource?.images?.[0]?.url" :alt="resource?.title" />
+        <p>{{ resource?.category }} ({{ resource?.typology }})</p>
+        <p>{{ resource?.characteristics }}</p>
 
         <ul>
-          <li>{{ marker?.location }}</li>
-          <li>{{ marker?.address }}, {{ marker?.postal_code }}</li>
-          <li>{{ marker?.coordinates?.latitude }}, {{ marker?.coordinates?.longitude }}</li>
-          <li v-if="marker?.email">{{ marker?.email }}</li>
-          <li v-if="marker?.phone">{{ marker?.phone }}</li>
+          <li>{{ resource?.location }}</li>
+          <li>{{ resource?.location.address }}, {{ resource?.location.postal_code }}</li>
+          <li>{{ resource?.coordinates.coordinates[1] }}, {{ resource?.coordinates.coordinates[0] }}</li>
+          <li v-if="resource?.location.email">{{ resource?.location.email }}</li>
+          <li v-if="resource?.location.phone">{{ resource?.location.phone }}</li>
         </ul>
 
-        <p>{{ marker?.description }}</p>
+        <p>{{ resource?.description }}</p>
 
         <wa-button appearance="outlined">Sugerir edição</wa-button>
 

@@ -9,11 +9,9 @@
     "dev": "astro dev",
     "build": "pnpm run compile:paraglide && astro build",
     "compile:paraglide": "node ./project.inlang/compile-paraglide.mjs",
+    "gen:supabase": "bash -c 'set -a && [ -f .env ] && . ./.env; set +a; supabase gen types typescript --project-id \"$PROJECT_ID\" > src/types/supabase.ts'",
     "preview": "astro preview",
     "astro": "astro",
-    "docker:build": "docker build -t circulab .",
-    "docker:run": "docker run -p 4321:4321 circulab",
-    "docker:stop": "docker stop circulab",
     "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
@@ -31,6 +29,7 @@
     "@inlang/cli": "^3.0.0",
     "@inlang/paraglide-js": "^2.16.0",
     "@types/leaflet": "^1.9.21",
+    "supabase": "^2.102.0",
     "typescript": "^6.0.3"
   }
 }

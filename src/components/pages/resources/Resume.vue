@@ -3,9 +3,9 @@ import Grid from '@/components/ui/Grid.vue'
 import { ref, onMounted } from 'vue'
 import { actions } from 'astro:actions'
 import type { ImageType } from '@/types/database'
-import type { MarkerType } from '@/schemas/marker.server'
+import type { ResourceType } from '@/schemas/resource.server'
 
-const resumeData = ref<MarkerType | null>(null)
+const resumeData = ref<ResourceType | null>(null)
 
 function getLocalStorage() {
   const description = JSON.parse(
@@ -26,9 +26,9 @@ onMounted(() => {
 })
 
 async function handleSubmit() {
-  // save marker
+  // save resource
 
-  const { data, error } = await actions.addMarker({
+  const { data, error } = await actions.addResource({
     title: resumeData.value?.title || '',
     description: resumeData.value?.description || '',
     /* images: resumeData.value?.images?.map((image: ImageType) => ({

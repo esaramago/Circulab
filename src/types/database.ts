@@ -7,12 +7,28 @@ type Tables = Database['public']['Tables']
 export type UserRow = Tables['users']['Row']
 export type RoleRow = Tables['roles']['Row']
 
-export type PinInsert = Tables['pins']['Insert']
-export type PinRow = Tables['pins']['Row']
+export type CategoryRow = Tables['categories']['Row']
+export type CharacteristicRow = Tables['characteristics']['Row']
+export type TypologyRow = Tables['typologies']['Row']
+export type PinStatusRow = Tables['pin_status']['Row']
+
+export const PIN_STATUS = {
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  PENDING: 'pending',
+} as const
+
+export type PinStatusCode = typeof PIN_STATUS[keyof typeof PIN_STATUS]
+
+export type PinRow = Omit<Tables['pins']['Row'], 'status'> & {
+  status: PinStatusCode | null
+}
+export type PinInsert = Omit<Tables['pins']['Insert'], 'status'> & {
+  status?: PinStatusCode | null
+}
+
 export type LocationInsert = Tables['locations']['Insert']
 export type LocationRow = Tables['locations']['Row']
-
-export type CategoryRow = Tables['categories']['Row']
 
 export type ImageType = Tables['pins']['Row']['images'] extends Json[] ? Json : never
 
@@ -21,15 +37,7 @@ export type GeoJsonPoint = {
   coordinates: [number, number]
 }
 
-export type MapPinRow = {
-  id: string
-  title: string
-  category_id: string
-  get_geojson: GeoJsonPoint | null
-  categories: CategoryRow
-}
-
-export type MarkerRow = Pick<
+export type ResourceRow = Pick<
   PinRow,
   'id' | 'title' | 'description' | 'images' | 'category_id' | 'characteristics_ids' | 'location_id'
 > & {

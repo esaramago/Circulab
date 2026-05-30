@@ -3,7 +3,7 @@ import { checkUser } from './auth/checkUser'
 import { logout } from './auth/logout'
 import { resetPassword } from './auth/resetPassword'
 import { updatePassword } from './auth/updatePassword'
-import { getMapPins, addMarker, getMarkers } from './markers'
+import { getPins, addResource, getResources, getResource } from './resources'
 
 export const server = {
   signIn,
@@ -11,7 +11,8 @@ export const server = {
   updatePassword,
   logout,
   checkUser,
-  getMapPins,
-  addMarker,
-  getMarkers,
+  getPins,
+  addResource,
+  getResources,
+  getResource,
 }

@@ -1,37 +1,29 @@
-<template>
-  <div class="c-map-container">
-    <MapFilters />
-    <div id="map"></div>
-    <MarkerPopup :open="activeMarker !== null" :marker="activeMarker" @close="activeMarker = null" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Map, TileLayer, LayerGroup, Marker, DivIcon } from 'leaflet'
+import { Map, TileLayer, LayerGroup, Marker, DivIcon, type TooltipOptions } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import MarkerPopup from './MarkerPopup.vue'
+import ResourcePopup from './ResourcePopup.vue'
 import MapFilters from './MapFilters.vue'
-import type { MapPin } from '@/types/domain/marker'
+import type { Pin } from '@/types/domain/resource.ts'
 
 const props = defineProps<{
-  markers: MapPin[]
+  pins: Pin[]
 }>()
 
-const activeMarker = ref<MapPin | null>(null)
+const activePin = ref<Pin | null>(null)
 
 const tree = {}
-function ensureGroup(typology: MapPin['typology_id'], category: MapPin['category_id']) {
+/* function ensureGroup(typology: Pin['typology_id'], category: Pin['category_id']) {
   tree[typology] ??= {}
   tree[category] ??= new LayerGroup()
   return tree[category]
-}
+} */
 
 const tooltipSize = 24;
 const tooltipAnchor = tooltipSize / 2;
 
-const pin = new DivIcon({
-  html: `<div class="c-marker">O</div>`,
+const pinIcon = new DivIcon({
+  html: `<div class="c-pin">O</div>`,
   iconSize: [tooltipSize, tooltipSize],
   iconAnchor: [tooltipAnchor, tooltipAnchor]
 })
@@ -40,7 +32,7 @@ const tooltipOptions = {
   direction: 'top',
   offset: [0, -(tooltipAnchor / 1.5)],
   className: 'c-tooltip'
-}
+} as TooltipOptions
 
 onMounted(() => {
   const map = new Map('map', {
@@ -56,33 +48,33 @@ onMounted(() => {
 
   //const markersLayer = new LayerGroup()
   //markersLayer.addTo(map)
-  addMarkers(props.markers, map/* , markersLayer */)
+  addPins(props.pins, map/* , resourcesLayer */)
 })
 
-function addMarkers(markers: MapPin[], map: Map) {
-  markers.forEach(marker => {
+function addPins(pins: Pin[], map: Map) {
+  pins.forEach(pin => {
     //const group = ensureGroup(marker.typology, marker.category, marker.characteristics)
     //group.addTo(map)
-    addMarker(marker, map)
+    addPin(pin, map)
   })
 }
-function addMarker(marker: MapPin, map: Map) {
+function addPin(pin: Pin, map: Map) {
 
-  if (!marker?.coordinates) return
+  if (!pin?.coordinates) return
 
   const markerLayer = new Marker([
-    marker.coordinates.latitude,
-    marker.coordinates.longitude],
-    { icon: pin })
-  .addTo(map).bindTooltip(marker.title, tooltipOptions)
+    pin.coordinates.latitude,
+    pin.coordinates.longitude],
+    { icon: pinIcon })
+  .addTo(map).bindTooltip(pin.title, tooltipOptions)
 
   markerLayer.on('click', () => {
-    showPopup(marker)
+    showPopup(pin)
   })
 }
 
-function showPopup(marker: MapPin) {
-  activeMarker.value = marker // set active marker
+function showPopup(pin: Pin) {
+  activePin.value = pin // set active pin
 }
 </script>
 
@@ -96,6 +88,14 @@ function showPopup(marker: MapPin) {
   }
 }
 </style>
+
+<template>
+  <div class="c-map-container">
+    <MapFilters />
+    <div id="map"></div>
+    <ResourcePopup :open="activePin !== null" :resourceId="activePin?.id ?? null" @close="activePin = null" />
+  </div>
+</template>
 
 <style>
 .c-map-container {
@@ -111,7 +111,7 @@ function showPopup(marker: MapPin) {
   border: none !important;
   background-color: transparent !important;
 }
-.c-marker {
+.c-pin {
   height: 100%;
   position: relative;
   display: flex;

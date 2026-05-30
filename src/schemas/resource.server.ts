@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-export const markerSchema = z.object({
+export const resourceSchema = z.object({
   title: z.string(),
   typology_id: z.string(),
   category_id: z.string(),
@@ -24,4 +24,4 @@ export const markerSchema = z.object({
   phone: z.number().optional(),
 })
 
-export type MarkerType = z.infer<typeof markerSchema>
+export type ResourceType = z.infer<typeof resourceSchema>

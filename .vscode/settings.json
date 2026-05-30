@@ -13,7 +13,8 @@
     "package-lock.json": true,
     ".vscode": true,
     "pnpm-lock.yaml": true,
-    "src/types": true
+    "src/types": true,
+    "supabase": true
   },
   "html.customData": ["./node_modules/@awesome.me/webawesome/dist/vscode.html-custom-data.json"]
 }

@@ -1,21 +1,24 @@
 <template>
-  <div class="l-grid" :style="gridStyle" :class="{ 'l-grid--full-width': fullWidth }">
+  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="{ 'l-grid--full-width': fullWidth }">
     <slot></slot>
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
 import { computed, type CSSProperties } from 'vue'
 import type { Spacing } from '@/types/ui/grid'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+  tag?: keyof HTMLElementTagNameMap
   direction?: 'row' | 'column'
   align?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
   gap?: Spacing
   wrap?: boolean
   fullWidth?: boolean
-}>()
+}>(), {
+  tag: 'div',
+})
 
 const gridStyle = computed<CSSProperties>(() => {
   const style: Record<string, string> = {}
@@ -43,6 +46,7 @@ const gridStyle = computed<CSSProperties>(() => {
   flex-wrap: var(--wrap);
 }
 .l-grid--full-width > * {
+  width: 100%;
   flex: 1;
 }
 </style>

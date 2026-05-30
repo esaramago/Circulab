@@ -1,17 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { actions } from 'astro:actions'
-import type { GeoJsonPoint, Json } from '@/types/database'
-
-const markers = await Astro.callAction(actions.getMarkers, {})
-
-function getLatitude(geojson: GeoJsonPoint | Json) {
-  return (geojson as GeoJsonPoint).coordinates[1]
-}
-
-function getLongitude(geojson: GeoJsonPoint | Json) {
-  return (geojson as GeoJsonPoint).coordinates[0]
-}
+import geojson from '@/utils/geojson'
+const resources = await Astro.callAction(actions.getResources, {})
 ---
 
 <Layout title="Dashboard">
@@ -37,20 +28,20 @@ function getLongitude(geojson: GeoJsonPoint | Json) {
     </thead>
     <tbody>
       {
-        markers.data?.map((marker) => (
+        resources.data?.map((resource) => (
           <tr>
-            <td>{ marker.title }</td>
-            <td>{ marker.description }</td>
-            <td>{ marker.images }</td>
-            <td>{ marker.category_id }</td>
-            <td>{ marker.characteristics_ids?.join(', ') }</td>
-            <td>{ marker.locations.name }</td>
-            <td>{ marker.locations.address }</td>
-            <td>{ marker.locations.postal_code }</td>
-            <td>{ marker.locations.email }</td>
-            <td>{ marker.locations.phone }</td>
-            <td>{ marker.get_geojson ? getLatitude(marker.get_geojson) : '' }</td>
-            <td>{ marker.get_geojson ? getLongitude(marker.get_geojson) : '' }</td>
+            <td>{ resource.title }</td>
+            <td>{ resource.description }</td>
+            <td>{ resource.images }</td>
+            <td>{ resource.category_id }</td>
+            <td>{ resource.characteristics_ids?.join(', ') }</td>
+            <td>{ resource.locations.name }</td>
+            <td>{ resource.locations.address }</td>
+            <td>{ resource.locations.postal_code }</td>
+            <td>{ resource.locations.email }</td>
+            <td>{ resource.locations.phone }</td>
+            <td>{ resource.get_geojson ? geojson.getLatitude(resource.get_geojson) : '' }</td>
+            <td>{ resource.get_geojson ? geojson.getLongitude(resource.get_geojson) : '' }</td>
             <td>
               <wa-button variant="primary">Editar</wa-button>
               <wa-button variant="danger">Apagar</wa-button>

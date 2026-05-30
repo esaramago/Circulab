@@ -175,6 +175,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pin_status: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+          id: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description: string
+          id?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+          id?: number
+        }
+        Relationships: []
+      }
       pins: {
         Row: {
           accepted_by: string | null
@@ -187,6 +208,7 @@ export type Database = {
           id: string
           images: Json
           location_id: string
+          status: string | null
           title: string
           updated_by: string | null
           updated_date: string
@@ -203,6 +225,7 @@ export type Database = {
           id?: string
           images?: Json
           location_id: string
+          status?: string | null
           title: string
           updated_by?: string | null
           updated_date?: string
@@ -218,6 +241,7 @@ export type Database = {
           id?: string
           images?: Json
           location_id?: string
+          status?: string | null
           title?: string
           updated_by?: string | null
           updated_date?: string
@@ -236,6 +260,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "locations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pins_status_fkey"
+            columns: ["status"]
+            isOneToOne: false
+            referencedRelation: "pin_status"
+            referencedColumns: ["code"]
           },
         ]
       }
@@ -658,6 +689,8 @@ export type Database = {
             } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
           }
       gettransactionid: { Args: never; Returns: unknown }
+      is_moderator_or_admin: { Args: never; Returns: boolean }
+      is_registered_user: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
@@ -1431,4 +1464,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

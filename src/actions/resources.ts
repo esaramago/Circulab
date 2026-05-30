@@ -1,20 +1,22 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient, supabase } from '@/utils/supabase'
-import type { LocationInsert, MapPinRow, MarkerRow } from '@/types/database'
-import type { MapPin } from '@/types/domain/marker'
-import type { MarkerType } from '@/schemas/marker.server'
+import { PIN_STATUS } from '@/types/database'
+import type { LocationInsert, ResourceRow } from '@/types/database'
+import type { Pin } from '@/types/domain/resource'
+import type { ResourceType } from '@/schemas/resource.server'
 import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
-import { markerSchema } from '@/schemas/marker.server'
+import { resourceSchema } from '@/schemas/resource.server'
+import { z } from 'astro/zod'
+import geojson from '@/utils/geojson'
 
-
-export const getMapPins = defineAction({
+export const getPins = defineAction({
   handler: async () => {
     try {
       const { data, error } = await supabase.from('pins').select(`
         id,
         title,
         category_id,
-        get_geojson,
+        coordinates: get_geojson,
         categories (
           typology_id
         )
@@ -26,16 +28,15 @@ export const getMapPins = defineAction({
         })
       }
 
-      const pins = [] as MapPin[]
+      const pins = [] as Pin[]
 
-      data.forEach((rawPin) => {
-        const pin = rawPin as MapPinRow
+      data.forEach((pin) => {
         pins.push({
           id: pin.id,
           title: pin.title,
           coordinates: {
-            latitude: pin.get_geojson?.coordinates[1] ?? 0,
-            longitude: pin.get_geojson?.coordinates[0] ?? 0,
+            latitude: geojson.getLatitude(pin.coordinates) ,
+            longitude: geojson.getLongitude(pin.coordinates) ,
           },
           category_id: pin.category_id,
           typology_id: pin.categories.typology_id,
@@ -54,7 +55,67 @@ export const getMapPins = defineAction({
   },
 })
 
-export const getMarkers = defineAction({
+export const getResource = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  handler: async (input: { id: string }) => {
+    try {
+      const { data, error } = await supabase.from('pins').select(`
+        id,
+        title,
+        description,
+        images,
+        category: category_id (
+          name,
+          typology: typology_id (
+            name
+          )
+        ),
+        location: locations (
+          name,
+          address,
+          postal_code,
+          email,
+          phone
+        ),
+        coordinates: get_geojson
+      `).eq('id', input.id).single()
+
+      if (error) {
+        throw new ActionError({
+          message: error.message || 'Failed to get pin',
+          code: error.code as ActionErrorCode
+        })
+      }
+
+      const resource = {
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        images: data.images,
+        category: data.category.name,
+        typology: data.category.typology.name,
+        //characteristics: data.characteristics,
+        location: data.location.name,
+        address: data.location.address,
+        postal_code: data.location.postal_code,
+        email: data.location.email,
+        phone: data.location.phone,
+        coordinates: data.coordinates,
+      }
+
+      return resource
+    } catch (error: any) {
+      throw new ActionError({
+        message: error.message || 'Failed to get resource',
+        code: error.code as ActionErrorCode
+      })
+    }
+  },
+})
+
+export const getResources = defineAction({
   handler: async () => {
     try {
       const { data, error } = await supabase.from('pins').select(`
@@ -76,7 +137,8 @@ export const getMarkers = defineAction({
         categories (
           typology_id
         )
-      `)
+      `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or approved
+
       if (error) {
         throw new ActionError({
           message: error.message || 'Failed to get pins',
@@ -84,19 +146,19 @@ export const getMarkers = defineAction({
         })
       }
 
-      return data as MarkerRow[]
+      return data as ResourceRow[]
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to get markers',
+        message: error.message || 'Failed to get resources',
         code: error.code as ActionErrorCode
       })
     }
   },
 })
 
-export const addMarker = defineAction({
-  input: markerSchema,
-  handler: async (input: MarkerType, { request, cookies }) => {
+export const addResource = defineAction({
+  input: resourceSchema,
+  handler: async (input: ResourceType, { request, cookies }) => {
 
     try {
       const supabase = createClient({ request, cookies })
@@ -158,7 +220,7 @@ export const addMarker = defineAction({
 
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to add marker',
+        message: error.message || 'Failed to add resource',
         code: error.code as ActionErrorCode
       })
     }
