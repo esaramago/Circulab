@@ -39,7 +39,7 @@ export type GeoJsonPoint = {
 
 export type ResourceRow = Pick<
   PinRow,
-  'id' | 'title' | 'description' | 'images' | 'category_id' | 'characteristics_ids' | 'location_id'
+  'id' | 'title' | 'description' | 'images' | 'category_id' | 'characteristics_ids' | 'location_id' | 'status'
 > & {
   get_geojson: Json | null
   locations: Pick<LocationRow, 'name' | 'address' | 'postal_code' | 'email' | 'phone'>

@@ -19,10 +19,13 @@
     "@astrojs/node": "^10.0.5",
     "@astrojs/vue": "^6.0.1",
     "@awesome.me/webawesome": "^3.6.0",
+    "@nanostores/persistent": "^1.3.4",
+    "@nanostores/vue": "^1.1.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "astro": "^6.1.7",
     "leaflet": "^1.9.4",
+    "nanostores": "^1.3.0",
     "vue": "^3.5.33"
   },
   "devDependencies": {

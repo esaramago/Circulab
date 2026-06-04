@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { isStepCompleted } from '@/stores/addResource'
+import type { AddResourceStepCode } from '@/types/add-resource-draft'
 
 const props = defineProps<{
   steps: { path: string; code: string; label: string }[]
@@ -10,8 +12,8 @@ const currentStep = computed(() => {
   return props.currentStep || props.steps[0]?.code
 })
 
-function isStepCompleted(code: string) {
-  return window.localStorage.getItem(`circulab:add:${code}:completed`) === 'true'
+function stepIsCompleted(code: string) {
+  return isStepCompleted(code as AddResourceStepCode)
 }
 
 function isStepActive(code: string) {
@@ -21,7 +23,7 @@ function isStepActive(code: string) {
 
 <template>
   <ul class="c-wizard">
-    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': isStepCompleted(step.code) }">
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': stepIsCompleted(step.code) }">
       <a :href="step.path" class="c-wizard__step-link">
         <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
         <span class="c-wizard__step-label">{{ step.label }}</span>

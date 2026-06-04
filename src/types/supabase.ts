@@ -317,18 +317,21 @@ export type Database = {
       }
       typologies: {
         Row: {
+          code: string
           created_at: string
           description: string | null
           id: string
           name: string
         }
         Insert: {
+          code: string
           created_at?: string
           description?: string | null
           id?: string
           name: string
         }
         Update: {
+          code?: string
           created_at?: string
           description?: string | null
           id?: string

@@ -2,39 +2,19 @@
 import Grid from '@/components/ui/Grid.vue'
 import { ref, onMounted } from 'vue'
 import { actions } from 'astro:actions'
-import type { ImageType } from '@/types/database'
 import type { ResourceType } from '@/schemas/resource.server'
+import { clearAddResourceDraft, getAddResourcePayload } from '@/stores/addResource'
 
 const resumeData = ref<ResourceType | null>(null)
 
-function getLocalStorage() {
-  const description = JSON.parse(
-    window.localStorage.getItem('circulab:add:description') || '{}'
-  )
-  const location = JSON.parse(
-    window.localStorage.getItem('circulab:add:location') || '{}'
-  )
-
-  return {
-    ...description,
-    ...location
-  }
-}
-
 onMounted(() => {
-  resumeData.value = getLocalStorage()
+  resumeData.value = getAddResourcePayload() as ResourceType
 })
 
 async function handleSubmit() {
-  // save resource
-
-  const { data, error } = await actions.addResource({
+  const { error } = await actions.addResource({
     title: resumeData.value?.title || '',
     description: resumeData.value?.description || '',
-    /* images: resumeData.value?.images?.map((image: ImageType) => ({
-      bucket: image.bucket,
-      path: image.path,
-    })) || [], */
     coordinates: {
       latitude: Number(resumeData.value?.latitude) || 0,
       longitude: Number(resumeData.value?.longitude) || 0,
@@ -52,17 +32,9 @@ async function handleSubmit() {
   if (error) {
     console.error(error)
   } else {
-    clearLocalStorage()
+    clearAddResourceDraft()
     window.location.href = '/'
   }
-}
-
-function clearLocalStorage() {
-  window.localStorage.removeItem('circulab:add:description')
-  window.localStorage.removeItem('circulab:add:location')
-  window.localStorage.removeItem('circulab:add:validation')
-  window.localStorage.removeItem('circulab:add:location:completed')
-  window.localStorage.removeItem('circulab:add:description:completed')
 }
 </script>
 

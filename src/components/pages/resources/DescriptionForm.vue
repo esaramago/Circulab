@@ -5,9 +5,12 @@ import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { reactive, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useStore } from '@nanostores/vue'
 import type { Database } from '@/types/supabase'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
+import { $descriptionDraft, setStepCompleted } from '@/stores/addResource'
+import type { DescriptionDraft, DescriptionImageDraft } from '@/types/add-resource-draft'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
@@ -15,14 +18,8 @@ defineProps<{
   typologies: typologiesType | null
 }>()
 
-const form = reactive({
-  title: null,
-  description: null,
-  typology_id: null as string | null,
-  category_id: null as string | null,
-  characteristics_ids: [] as string[],
-  images: [] as { id: string; url: string; alt: string }[],
-})
+const draft = useStore($descriptionDraft)
+const isMounted = ref(false)
 
 const {
   categories,
@@ -31,63 +28,69 @@ const {
   loadCharacteristics,
 } = useTypologyCascade()
 
-onMounted(() => {
-  const description = JSON.parse(window.localStorage.getItem('circulab:add:description') || '{}')
-  form.title = description.title || null
-  form.description = description.description || null
-  form.typology_id = description.typology_id || null
-  form.category_id = description.category_id || null
-  form.characteristics_ids = description.characteristics_ids || []
-  form.images = description.images || []
-
-  if (description.typology_id) {
-    setTypology(description.typology_id)
+onMounted(async () => {
+  if (draft.value.typology_id) {
+    await setTypology(draft.value.typology_id)
   }
-  if (description.category_id) {
-    setCategory(description.category_id)
+  if (draft.value.category_id) {
+    await setCategory(draft.value.category_id)
   }
+  isMounted.value = true
 })
+
+function updateDraft(partial: Partial<DescriptionDraft>) {
+  $descriptionDraft.set({
+    ...$descriptionDraft.get(),
+    ...partial,
+  })
+}
 
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement
-  form[target.name as keyof typeof form] = target.value as never
-  saveOnLocalStorage()
+  updateDraft({ [target.name]: target.value } as Partial<DescriptionDraft>)
 }
 
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
-  form[target.name as keyof typeof form] = target.value as never
   if (target.name === 'typology') {
     setTypology(target.value)
   } else if (target.name === 'category') {
     setCategory(target.value)
+  } else {
+    updateDraft({ [target.name]: target.value } as Partial<DescriptionDraft>)
   }
-  saveOnLocalStorage()
 }
 
-function saveOnLocalStorage() {
-  const data = {
-    title: form.title,
-    description: form.description,
-    typology_id: form.typology_id,
-    category_id: form.category_id,
-    characteristics_ids: form.characteristics_ids,
-    images: form.images
-  }
-  window.localStorage.setItem('circulab:add:description', JSON.stringify(data))
+function handleImagesChange(images: DescriptionImageDraft[]) {
+  updateDraft({ images })
 }
 
 // #region Typology Cascade
 async function setTypology(id: string) {
-  form.typology_id = id
-  form.category_id = null
-  form.characteristics_ids = []
+  updateDraft({
+    typology_id: id,
+  })
+  if (isMounted.value) {
+    // clear category and characteristics if not on load
+    updateDraft({
+      category_id: null,
+      characteristics_ids: [],
+    })
+  }
+
   await loadCategories(id)
 }
 
 async function setCategory(id: string) {
-  form.category_id = id
-  form.characteristics_ids = []
+  updateDraft({
+    category_id: id,
+  })
+  // clear characteristics if not on load
+  if (isMounted.value) {
+    updateDraft({
+      characteristics_ids: [],
+    })
+  }
   await loadCharacteristics(id)
 }
 // #endregion
@@ -99,10 +102,8 @@ function handleBack() {
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
-  if (isCompleted) {
-    window.localStorage.setItem('circulab:add:description:completed', 'true')
-  } else {
-    window.localStorage.removeItem('circulab:add:description:completed')
+  setStepCompleted('description', isCompleted)
+  if (!isCompleted) {
     event.preventDefault()
   }
 }
@@ -120,22 +121,22 @@ function handleSubmit(event: Event) {
       <wa-input
         name="title"
         label="Título"
-        :value="form.title"
+        :value="draft.title"
         required
         @input="handleInput"
       />
       <wa-textarea
         name="description"
         label="Descrição"
-        :value="form.description"
+        :value="draft.description"
         required
         @input="handleInput"
       />
-      <GalleryForm client:only="vue" :images="form.images" @change="form.images = $event" />
+      <GalleryForm client:only="vue" :images="draft.images" @change="handleImagesChange" />
       <wa-select
         name="typology"
         label="Tipologia"
-        :value="form.typology_id"
+        :value="draft.typology_id"
         required
         @input="handleChange"
       >
@@ -144,11 +145,11 @@ function handleSubmit(event: Event) {
         </template>
       </wa-select>
       <wa-select
-        v-if="form.typology_id"
+        v-if="draft.typology_id"
         name="category"
         label="Categoria"
         required
-        :value="form.category_id"
+        :value="draft.category_id"
         @input="handleChange"
       >
         <template v-if="categories.length > 0">
@@ -156,10 +157,10 @@ function handleSubmit(event: Event) {
         </template>
       </wa-select>
       <wa-select
-        v-if="form.category_id"
+        v-if="draft.category_id && characteristics.length > 0"
         name="characteristics"
         label="Características"
-        :value="form.characteristics_ids"
+        :value="draft.characteristics_ids"
         @input="handleChange"
       >
         <template v-if="characteristics.length > 0">

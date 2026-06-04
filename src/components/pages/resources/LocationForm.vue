@@ -5,62 +5,52 @@ import '@webawesome/button/button.js'
 import '@webawesome/checkbox/checkbox.js'
 import '@webawesome/radio/radio.js'
 import '@webawesome/radio-group/radio-group.js'
-import { onMounted, reactive, watch, ref } from 'vue'
+import { onMounted, watch, ref, computed } from 'vue'
+import { useStore } from '@nanostores/vue'
 import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
 import type { Map as LeafletMapType, Marker as LeafletMarkerType } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { weekdays } from '@/config'
+import { $locationDraft, $descriptionDraft, setStepCompleted } from '@/stores/addResource'
+import type { LocationDraft } from '@/types/add-resource-draft'
+import { fetchDB } from '@/utils/fetchDB'
 
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null
 
-
-type OpeningDaysType = (typeof weekdays)[keyof typeof weekdays]
-type OpeningHoursType = {
-  [key in OpeningDaysType['value']]: {
-    start: string
-    end: string
-  }
+const nominatimHeaders = {
+  'Accept-Language': 'pt',
+  'User-Agent': 'Circulab/0.0.1 (https://gitlab.com/emanuelsaramago/circulab)',
 }
 
-const insideSpace = ref(false)
-const openingDays = reactive({
-  monday: false,
-  tuesday: false,
-  wednesday: false,
-  thursday: false,
-  friday: false,
-  saturday: false,
-  sunday: false,
-})
-const form = reactive({
-  location_name: '' as string,
-  address: '' as string,
-  postal_code: '' as string,
-  latitude: undefined as number | undefined,
-  longitude: undefined as number | undefined,
-  accessibility: '' as 'public' | 'private',
-  opening_days: [] as string[],
-  opening_hours: {} as OpeningHoursType,
-  email: '' as string,
-  phone: undefined as number | undefined,
-  website: '' as string,
-  instagram: '' as string,
-  facebook: '' as string,
-  networks: [] as string[],
+const typologyCode = ref<string>('')
+const draft = useStore($locationDraft)
+const isTypologyRepairMap = computed(() => {
+  return typologyCode.value === 'repair-map'
 })
 
-onMounted(() => {
-  getLocalStorage()
+onMounted(async () => {
   initMap()
+  typologyCode.value = await getTypologyCode() || ''
 })
-function getLocalStorage() {
-  const locationForm = JSON.parse(window.localStorage.getItem('circulab:add:location') || '{}')
-  Object.assign(form, locationForm)
+
+async function getTypologyCode() {
+  const typologyId = $descriptionDraft.get().typology_id
+  if (typologyId) {
+    const {data: typology} = await fetchDB('typologies').select('code').eq('id', typologyId).single()
+    return typology?.code
+  }
+  return null
 }
+function updateDraft(partial: Partial<LocationDraft>) {
+  $locationDraft.set({
+    ...$locationDraft.get(),
+    ...partial,
+  })
+}
+
 function initMap() {
-  const initialLat = form.latitude || 38.74
-  const initialLng = form.longitude || -9.14
+  const initialLat = draft.value.latitude || 38.74
+  const initialLng = draft.value.longitude || -9.14
 
   mapInstance = new LeafletMap('map', {
     center: [initialLat, initialLng],
@@ -78,25 +68,28 @@ function initMap() {
   markerInstance.on('dragend', () => {
     const position = markerInstance?.getLatLng()
     if (position) {
-      form.latitude = Number(position.lat.toFixed(6))
-      form.longitude = Number(position.lng.toFixed(6))
-      saveOnLocalStorage()
-      fetchAddress(form.latitude, form.longitude)
+      const latitude = Number(position.lat.toFixed(6))
+      const longitude = Number(position.lng.toFixed(6))
+      updateDraft({ latitude, longitude })
+      fetchAddress(latitude, longitude)
     }
   })
 
-  mapInstance.on('click', (e: any) => {
+  mapInstance.on('click', (e: { latlng: { lat: number, lng: number } }) => {
     markerInstance?.setLatLng(e.latlng)
-    form.latitude = Number(e.latlng.lat.toFixed(6))
-    form.longitude = Number(e.latlng.lng.toFixed(6))
-    saveOnLocalStorage()
-    fetchAddress(form.latitude, form.longitude)
+    const latitude = Number(e.latlng.lat.toFixed(6))
+    const longitude = Number(e.latlng.lng.toFixed(6))
+    updateDraft({ latitude, longitude })
+    fetchAddress(latitude, longitude)
   })
 }
 
 async function fetchAddress(lat: number, lng: number) {
   try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+      { headers: nominatimHeaders },
+    )
     const data = await response.json()
     if (data && data.address) {
       const road = data.address.road || data.address.pedestrian || ''
@@ -108,23 +101,20 @@ async function fetchAddress(lat: number, lng: number) {
       if (!address) {
         address = data.display_name.split(',')[0]
       }
-      form.address = address
-      form.postal_code = data.address.postcode || ''
-      saveOnLocalStorage()
+      updateDraft({
+        address,
+        postal_code: data.address.postcode || '',
+      })
     }
   } catch (error) {
-    console.error('Erro a obter a morada:', error)
+    console.error('Error fetching address:', error)
   }
 }
 
-watch(() => [form.latitude, form.longitude], ([lat, lng]) => {
-  // Update marker position and zoom when coordinates change
+watch(() => [draft.value.latitude, draft.value.longitude], ([lat, lng]) => {
   if (mapInstance && markerInstance) {
-    let numLat = Number(lat)
-    let numLng = Number(lng)
-
-    if (typeof lat === 'string' && (lat as string).includes(',')) numLat = Number((lat as string).replace(',', '.'))
-    if (typeof lng === 'string' && (lng as string).includes(',')) numLng = Number((lng as string).replace(',', '.'))
+    const numLat = Number(lat)
+    const numLng = Number(lng)
 
     if (!isNaN(numLat) && !isNaN(numLng) && numLat >= -90 && numLat <= 90 && numLng >= -180 && numLng <= 180) {
       const currentLatLng = markerInstance.getLatLng()
@@ -136,26 +126,83 @@ watch(() => [form.latitude, form.longitude], ([lat, lng]) => {
   }
 })
 
-function handleInput(event: Event) {
+async function handleInput(event: Event) {
   const field = event.target as HTMLInputElement
-  form[field.name as keyof typeof form] = field.value as never
-  const isFieldValid = field.checkValidity()
-  if (isFieldValid) {
-    saveOnLocalStorage()
+  const name = field.name as keyof LocationDraft
+  let value: LocationDraft[keyof LocationDraft] = field.value as never
+
+  if (name === 'latitude' || name === 'longitude') {
+    value = field.value === '' ? undefined : Number(field.value)
+  } else if (name === 'phone') {
+    value = field.value === '' ? undefined : Number(field.value)
+  } else if (name === 'accessibility') {
+    value = field.value as LocationDraft['accessibility']
+  }
+
+  if (!field.checkValidity()) return
+
+  updateDraft({ [name]: value } as Partial<LocationDraft>)
+}
+
+async function handleChange(event: Event) {
+
+  if (!isTypologyRepairMap.value) return
+
+  const field = event.target as HTMLInputElement
+  const name = field.name as keyof LocationDraft
+
+  if (name !== 'address' && name !== 'postal_code') return
+  if (!field.checkValidity()) return
+
+  if (name === 'postal_code') {
+    updateDraft({ postal_code: field.value })
+  }
+
+  const address = (name === 'address' ? field.value : draft.value.address)?.trim()
+  const postal_code = (name === 'postal_code' ? field.value : draft.value.postal_code)?.trim()
+  if (!address || !postal_code) return
+
+  const coordinates = await guessCoordinates(address, postal_code)
+  if (coordinates) {
+    updateDraft({ latitude: coordinates.latitude, longitude: coordinates.longitude })
   }
 }
 
-/*
-function handleChangeDay(event: Event) {
-  const target = event.target as HTMLInputElement
-  openingDays[target.name as keyof typeof openingDays] = target.checked as never
-  saveOnLocalStorage()
-}*/
-const handleAddNetwork = () => {
-  console.log('add network')
-}
-function saveOnLocalStorage() {
-  window.localStorage.setItem('circulab:add:location', JSON.stringify(form))
+async function guessCoordinates(
+  address: string,
+  postal_code: string
+): Promise<{ latitude: number, longitude: number } | null> {
+  const street = address.trim()
+  const postcode = postal_code.trim()
+  if (!street || !postcode) {
+    return null
+  }
+
+  try {
+    const params = new URLSearchParams({
+      format: 'json',
+      limit: '1',
+      street,
+      postalcode: postcode,
+      countrycodes: 'pt',
+    })
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?${params}`,
+      { headers: nominatimHeaders },
+    )
+    const data = await response.json() as Array<{ lat?: string, lon?: string }>
+    const result = data?.[0]
+    if (!result?.lat || !result?.lon) {
+      return null
+    }
+    return {
+      latitude: Number(parseFloat(result.lat).toFixed(6)),
+      longitude: Number(parseFloat(result.lon).toFixed(6)),
+    }
+  } catch (error) {
+    console.error('Error geocoding address:', error)
+    return null
+  }
 }
 
 function handleBack() {
@@ -164,10 +211,8 @@ function handleBack() {
 
 function handleSubmit(event: Event) {
   const isCompleted = (event.target as HTMLFormElement).checkValidity()
-  if (isCompleted) {
-    window.localStorage.setItem('circulab:add:location:completed', 'true')
-  } else {
-    window.localStorage.removeItem('circulab:add:location:completed')
+  setStepCompleted('location', isCompleted)
+  if (!isCompleted) {
     event.preventDefault()
   }
 }
@@ -182,51 +227,29 @@ function handleSubmit(event: Event) {
   >
     <Grid gap="xl" direction="column">
       <div id="map"></div>
-      <wa-input name="location_name" label="Nome do local" @input="handleInput" :value="form.location_name"></wa-input>
-      <fieldset>
+      <wa-input name="location_name" label="Nome do local" @input="handleInput" :value="draft.location_name"></wa-input>
+      <fieldset :class="{ 'is-hidden': isTypologyRepairMap }">
         <legend appearance="h2">Coordenadas</legend>
         <Grid fullWidth>
-          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="form.latitude"></wa-input>
-          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="form.longitude"></wa-input>
+          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.latitude"></wa-input>
+          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.longitude"></wa-input>
         </Grid>
       </fieldset>
-      <wa-input name="address" label="Morada" required @input="handleInput" :value="form.address"></wa-input>
-      <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleInput" :value="form.postal_code"></wa-input>
+      <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
+      <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
 
-      <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="form.accessibility">
+      <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="draft.accessibility">
         <wa-radio value="public">Acessível ao público</wa-radio>
         <wa-radio value="private">Local privado</wa-radio>
       </wa-radio-group>
 
-      <!---
-      <wa-checkbox name="inside_space" @change="insideSpace = !insideSpace">Está dentro de um espaço?</wa-checkbox>
-      <wa-input v-if="insideSpace" name="space_name" label="Nome do espaço" required @input="handleInput"></wa-input>
-      -->
-
-
-      <!--<h3>Horários</h3>
-      <fieldset>
-        <Grid direction="column">
-          <legend>Dias da semana</legend>
-          <Grid wrap justify="start" direction="column">
-            <Grid direction="column" v-for="day in weekdays" :key="day.value">
-              <wa-checkbox :name="day.value" @change="handleChangeDay" :checked="openingDays[day.value as keyof typeof openingDays]">{{ day.label }}</wa-checkbox>
-              <Grid v-if="openingDays[day.value as keyof typeof openingDays]">
-                <wa-input type="time" :id="`opening_hours_start_${day.value}`" :name="`opening_hours_start_${day.value}`" label="Início" @input="handleInput" />
-                <wa-input type="time" :id="`opening_hours_end_${day.value}`" :name="`opening_hours_end_${day.value}`" label="Fim" @input="handleInput" />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </fieldset>-->
       <h3>Contactos</h3>
-      <wa-input name="email" type="email" label="Email" :value="form.email" @input="handleInput"></wa-input>
-      <wa-input name="phone" type="tel" label="Telefone" pattern="^\+?[0-9\s\-]+$" hint="Ex: +351 912345678" :value="form.phone" @input="handleInput"></wa-input>
+      <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput"></wa-input>
+      <wa-input name="phone" type="tel" label="Telefone" pattern="^\+?[0-9\s\-]+$" hint="Ex: +351 912345678" :value="draft.phone" @input="handleInput"></wa-input>
       <h3>Canais</h3>
-      <wa-input name="website" type="url" label="Website" :value="form.website" @input="handleInput"></wa-input>
-      <wa-input name="instagram" type="url" label="Instagram" :value="form.instagram" @input="handleInput"></wa-input>
-      <wa-input name="facebook" type="url" label="Facebook" :value="form.facebook" @input="handleInput"></wa-input>
-      <!---<wa-button variant="primary" appearance="outlined" @click="handleAddNetwork">Adicionar canal</wa-button>-->
+      <wa-input name="website" type="url" label="Website" :value="draft.website" @input="handleInput"></wa-input>
+      <wa-input name="instagram" type="url" label="Instagram" :value="draft.instagram" @input="handleInput"></wa-input>
+      <wa-input name="facebook" type="url" label="Facebook" :value="draft.facebook" @input="handleInput"></wa-input>
       <Grid justify="end" gap="xs">
         <wa-button variant="primary" appearance="outlined" @click="handleBack">Voltar</wa-button>
         <wa-button variant="primary" type="submit">Continuar</wa-button>

@@ -20,6 +20,12 @@ importers:
       '@awesome.me/webawesome':
         specifier: ^3.6.0
         version: 3.6.0(@floating-ui/utils@0.2.11)(@types/react@19.2.14)
+      '@nanostores/persistent':
+        specifier: ^1.3.4
+        version: 1.3.4(nanostores@1.3.0)
+      '@nanostores/vue':
+        specifier: ^1.1.0
+        version: 1.1.0(nanostores@1.3.0)(vue@3.5.33(typescript@6.0.3))
       '@supabase/ssr':
         specifier: ^0.10.2
         version: 0.10.2(@supabase/supabase-js@2.103.3)
@@ -32,6 +38,9 @@ importers:
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
+      nanostores:
+        specifier: ^1.3.0
+        version: 1.3.0
       vue:
         specifier: ^3.5.33
         version: 3.5.33(typescript@6.0.3)
@@ -656,6 +665,26 @@ packages:
 
   '@lix-js/server-protocol-schema@0.1.1':
     resolution: {integrity: sha512-jBeALB6prAbtr5q4vTuxnRZZv1M2rKe8iNqRQhFJ4Tv7150unEa0vKyz0hs8Gl3fUGsWaNJBh3J8++fpbrpRBQ==}
+
+  '@nanostores/persistent@1.3.4':
+    resolution: {integrity: sha512-fZ42MOredSkqt450XrPxmQ94pSRPTas/rBUVCvEEMCR+rIp8bdo/xoaFFcG2cwpqAzA164PdD6p3D+MXLJYumw==}
+    engines: {node: ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      nanostores: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^1.0.0
+
+  '@nanostores/vue@1.1.0':
+    resolution: {integrity: sha512-14eY8/YA0AbtWkAjk8zHKxbjcuPubF+M7y9afQzg2b5VqRJcashwA0100vprau13BTBSynUmU6ZsU6x03YidjA==}
+    engines: {node: ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      '@nanostores/logger': ^0.4.0 || ^1.0.0
+      '@vue/devtools-api': '>=7.6.2'
+      nanostores: ^0.11.3 || ^1.0.0
+      vue: '>=3.3.1'
+    peerDependenciesMeta:
+      '@nanostores/logger':
+        optional: true
+      '@vue/devtools-api':
+        optional: true
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
@@ -1794,6 +1823,10 @@ packages:
     resolution: {integrity: sha512-ZUvP7KeBLe3OZ1ypw6dI/TzYJuvHP77IM4Ry73waSQTLn8/g8rpdjfyVAh7t1/+FjBtG4lCP42MEbDxOsRpBMw==}
     engines: {node: ^18 || >=20}
     hasBin: true
+
+  nanostores@1.3.0:
+    resolution: {integrity: sha512-XPUa/jz+P1oJvN9VBxw4L9MtdFfaH3DAryqPssqhb2kXjmb9npz0dly6rCsgFWOPr4Yg9mTfM3MDZgZZ+7A3lA==}
+    engines: {node: ^20.0.0 || >=22.0.0}
 
   neotraverse@0.6.18:
     resolution: {integrity: sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA==}
@@ -3158,6 +3191,15 @@ snapshots:
       - babel-plugin-macros
 
   '@lix-js/server-protocol-schema@0.1.1': {}
+
+  '@nanostores/persistent@1.3.4(nanostores@1.3.0)':
+    dependencies:
+      nanostores: 1.3.0
+
+  '@nanostores/vue@1.1.0(nanostores@1.3.0)(vue@3.5.33(typescript@6.0.3))':
+    dependencies:
+      nanostores: 1.3.0
+      vue: 3.5.33(typescript@6.0.3)
 
   '@oslojs/encoding@1.1.0': {}
 
@@ -4542,6 +4584,8 @@ snapshots:
   nanoid@3.3.11: {}
 
   nanoid@5.1.9: {}
+
+  nanostores@1.3.0: {}
 
   neotraverse@0.6.18: {}
 
