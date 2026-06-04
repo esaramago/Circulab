@@ -8,11 +8,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  @media (prefers-color-scheme: light) {
-    background-color: var(--wa-color-neutral-90);
-    color: var(--wa-color-neutral-10);
-  }
 }
 
 main {
