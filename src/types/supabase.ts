@@ -124,6 +124,7 @@ export type Database = {
           location: string | null
           name: string
           phone: string | null
+          phone_area_code: number | null
           postal_code: string | null
           updated_at: string
           get_geojson: Json | null
@@ -137,6 +138,7 @@ export type Database = {
           location?: string | null
           name: string
           phone?: string | null
+          phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
         }
@@ -149,6 +151,7 @@ export type Database = {
           location?: string | null
           name?: string
           phone?: string | null
+          phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
         }

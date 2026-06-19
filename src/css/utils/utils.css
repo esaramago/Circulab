@@ -1,3 +1,7 @@
 .u-width-full {
   width: 100%;
 }
+
+.u-nowrap {
+  white-space: nowrap;
+}

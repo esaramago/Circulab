@@ -22,6 +22,7 @@ export const resourceSchema = z.object({
   location: z.string().optional(),
   email: z.email().optional(),
   phone: z.number().optional(),
+  phone_area_code: z.string().optional(),
 })
 
 export type ResourceType = z.infer<typeof resourceSchema>

@@ -27,6 +27,7 @@ async function handleSubmit() {
     postal_code: resumeData.value?.postal_code,
     email: resumeData.value?.email || undefined,
     phone: resumeData.value?.phone,
+    phone_area_code: resumeData.value?.phone_area_code,
   })
 
   if (error) {
@@ -51,7 +52,7 @@ async function handleSubmit() {
     <li>Morada:{{ resumeData?.address }}</li>
     <li>Código postal:{{ resumeData?.postal_code }}</li>
     <li>Email:{{ resumeData?.email }}</li>
-    <li>Telefone:{{ resumeData?.phone }}</li>
+    <li>Telefone: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
   </ul>
 
   <Grid justify="end">

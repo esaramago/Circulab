@@ -23,7 +23,8 @@ export type LocationDraft = {
   opening_days: string[]
   opening_hours: Record<string, { start: string, end: string }>
   email: string
-  phone: number | undefined
+  phone: number | null
+  phone_area_code: number | null
   website: string
   instagram: string
   facebook: string
@@ -57,7 +58,8 @@ export const initialLocationDraft: LocationDraft = {
   opening_days: [],
   opening_hours: {},
   email: '',
-  phone: undefined,
+  phone: null,
+  phone_area_code: null,
   website: '',
   instagram: '',
   facebook: '',

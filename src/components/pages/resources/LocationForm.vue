@@ -5,6 +5,8 @@ import '@webawesome/button/button.js'
 import '@webawesome/checkbox/checkbox.js'
 import '@webawesome/radio/radio.js'
 import '@webawesome/radio-group/radio-group.js'
+import '@webawesome/select/select.js'
+import '@webawesome/option/option.js'
 import { onMounted, watch, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
@@ -13,6 +15,7 @@ import 'leaflet/dist/leaflet.css'
 import { $locationDraft, $descriptionDraft, setStepCompleted } from '@/stores/addResource'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
+import phoneAreaCodes from '@/data/CountryCodes.json'
 
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null
@@ -168,6 +171,10 @@ async function handleChange(event: Event) {
   }
 }
 
+function handleChangeDialCode(dialCode: number) {
+  updateDraft({ phone_area_code: dialCode })
+}
+
 async function guessCoordinates(
   address: string,
   postal_code: string
@@ -245,7 +252,17 @@ function handleSubmit(event: Event) {
 
       <h3>Contactos</h3>
       <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput"></wa-input>
-      <wa-input name="phone" type="tel" label="Telefone" pattern="^\+?[0-9\s\-]+$" hint="Ex: +351 912345678" :value="draft.phone" @input="handleInput"></wa-input>
+      <fieldset>
+        <legend appearance="p">Telefone</legend>
+        <Grid fullWidth>
+          <wa-select id="phone_area_code" class="phone-area-code" name="phone_area_code" label="Indicativo" :value="draft.phone_area_code" @input="handleInput">
+            <wa-option v-for="code in phoneAreaCodes" :key="code.code" :value="code.dial_code" @select="handleChangeDialCode(code.dial_code)">
+              {{code.name}} <span class="u-nowrap">(+{{code.dial_code}})</span>
+            </wa-option>
+          </wa-select>
+          <wa-input class="phone" name="phone" label="Telefone" :value="draft.phone" @input="handleInput"></wa-input>
+        </Grid>
+      </fieldset>
       <h3>Canais</h3>
       <wa-input name="website" type="url" label="Website" :value="draft.website" @input="handleInput"></wa-input>
       <wa-input name="instagram" type="url" label="Instagram" :value="draft.instagram" @input="handleInput"></wa-input>
@@ -262,5 +279,14 @@ function handleSubmit(event: Event) {
 #map {
   width: 100%;
   height: 400px;
+}
+.phone-area-code {
+  width: 100px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.phone {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 </style>
