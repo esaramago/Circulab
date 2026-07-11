@@ -30,10 +30,42 @@ const draft = useStore($locationDraft)
 const isTypologyRepairMap = computed(() => {
   return typologyCode.value === 'repair-map'
 })
+const sortedPhoneAreaCodes = computed(() => {
+  const sorted = [...phoneAreaCodes].sort((a, b) => a.name.localeCompare(b.name))
+  const portugalIndex = sorted.findIndex(code => code.code === 'PT')
+  if (portugalIndex > -1) {
+    const [portugal] = sorted.splice(portugalIndex, 1)
+    return [portugal, ...sorted]
+  }
+  return sorted
+})
+
+const phoneSelectRef = ref<any>(null)
+
+watch(() => draft.value.phone_area_code, async newVal => {
+  if (typeof window !== 'undefined' && phoneSelectRef.value) {
+    await window.customElements.whenDefined('wa-select')
+    await phoneSelectRef.value.updateComplete
+    const codeNum = Number(newVal)
+    phoneSelectRef.value.displayLabel = (!isNaN(codeNum) && codeNum > 0) ? `+${codeNum}` : ''
+  }
+}, { flush: 'post' })
 
 onMounted(async () => {
   initMap()
   typologyCode.value = await getTypologyCode() || ''
+
+  const currentAreaCode = Number(draft.value.phone_area_code)
+  if (isNaN(currentAreaCode) || currentAreaCode <= 0) {
+    updateDraft({ phone_area_code: null })
+  }
+
+  if (phoneSelectRef.value && draft.value.phone_area_code) {
+    await window.customElements.whenDefined('wa-select')
+    await phoneSelectRef.value.updateComplete
+    const codeNum = Number(draft.value.phone_area_code)
+    phoneSelectRef.value.displayLabel = (!isNaN(codeNum) && codeNum > 0) ? `+${codeNum}` : ''
+  }
 })
 
 async function getTypologyCode() {
@@ -171,8 +203,10 @@ async function handleChange(event: Event) {
   }
 }
 
-function handleChangeDialCode(dialCode: number) {
-  updateDraft({ phone_area_code: dialCode })
+function handleChangeDialCode(event: Event) {
+  const target = event.target as any
+  const value = target.value ? Number(target.value) : null
+  updateDraft({ phone_area_code: value })
 }
 
 async function guessCoordinates(
@@ -254,9 +288,9 @@ function handleSubmit(event: Event) {
       <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput"></wa-input>
       <fieldset>
         <legend appearance="p">Telefone</legend>
-        <Grid fullWidth>
-          <wa-select id="phone_area_code" class="phone-area-code" name="phone_area_code" label="Indicativo" :value="draft.phone_area_code" @input="handleInput">
-            <wa-option v-for="code in phoneAreaCodes" :key="code.code" :value="code.dial_code" @select="handleChangeDialCode(code.dial_code)">
+        <Grid>
+          <wa-select ref="phoneSelectRef" id="phone_area_code" class="phone-area-code" name="phone_area_code" label="Indicativo" :value="draft.phone_area_code ? String(draft.phone_area_code) : ''" @change="handleChangeDialCode">
+            <wa-option v-for="code in sortedPhoneAreaCodes" :key="code.code" :value="String(code.dial_code)">
               {{code.name}} <span class="u-nowrap">(+{{code.dial_code}})</span>
             </wa-option>
           </wa-select>
@@ -281,9 +315,12 @@ function handleSubmit(event: Event) {
   height: 400px;
 }
 .phone-area-code {
-  width: 100px;
+  width: 120px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+}
+.phone-area-code::part(listbox) {
+  min-width: 250px;
 }
 .phone {
   border-top-left-radius: 0;
