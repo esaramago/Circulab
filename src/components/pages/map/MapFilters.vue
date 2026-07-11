@@ -2,12 +2,25 @@
 import '@webawesome/input/input.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { ref } from 'vue'
+import '@webawesome/button/button.js'
+import { ref, watch } from 'vue'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
 
-const typology = ref<string | null>(null)
-const category = ref<string | null>(null)
-const characteristic = ref<string | null>(null)
+const props = defineProps<{
+  modelValue: {
+    typology: string | null
+    category: string | null
+    characteristic: string | null
+    search: string | null
+  }
+}>()
+
+const emit = defineEmits(['update:modelValue'])
+
+const typology = ref<string | null>(props.modelValue.typology)
+const category = ref<string | null>(props.modelValue.category)
+const characteristic = ref<string | null>(props.modelValue.characteristic)
+const search = ref<string | null>(props.modelValue.search)
 
 const {
   typologies,
@@ -15,6 +28,24 @@ const {
   loadCategories,
   loadCharacteristics,
 } = useTypologyCascade()
+
+// Watch for prop changes (e.g., when filters are cleared externally)
+watch(() => props.modelValue, (newVal) => {
+  typology.value = newVal.typology
+  category.value = newVal.category
+  characteristic.value = newVal.characteristic
+  search.value = newVal.search
+}, { deep: true })
+
+// Watch for internal changes and emit updates
+watch([typology, category, characteristic, search], () => {
+  emit('update:modelValue', {
+    typology: typology.value,
+    category: category.value,
+    characteristic: characteristic.value,
+    search: search.value
+  })
+}, { deep: true })
 
 async function setTypology(id: string) {
   typology.value = id
@@ -29,12 +60,24 @@ async function setCategory(id: string) {
   characteristic.value = null
   await loadCharacteristics(id)
 }
+
+function clearFilters() {
+  typology.value = null
+  category.value = null
+  characteristic.value = null
+  search.value = null
+}
 </script>
 
 <template>
-  <form class="c-filters">
+  <form class="c-filters" @submit.prevent="">
     <h2 class="is-visually-hidden">Filtros</h2>
-    <wa-input type="text" placeholder="Pesquisar" size="s" />
+    <wa-input 
+      type="text" 
+      placeholder="Pesquisar" 
+      size="s" 
+      v-model="search"
+    />
     <wa-select
       placeholder="Tipologia"
       size="s"
@@ -54,6 +97,19 @@ async function setCategory(id: string) {
     >
       <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
+    <wa-select
+      v-if="category"
+      placeholder="Característica"
+      size="s"
+      :value="characteristic"
+      @input="characteristic = ($event.target as HTMLSelectElement).value"
+      with-clear
+    >
+      <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+    </wa-select>
+    <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || characteristic || search">
+      Limpar
+    </wa-button>
   </form>
 </template>
 
@@ -64,6 +120,18 @@ async function setCategory(id: string) {
   inset-block-start: 1rem;
   z-index: 1001; /* one more than the map */
   display: flex;
+  flex-wrap: wrap;
   gap: var(--wa-space-s);
+  align-items: center;
+  background-color: var(--wa-color-neutral-10);
+  padding: var(--wa-space-s);
+  border-radius: var(--wa-border-radius-m);
+  box-shadow: var(--wa-shadow-m);
+}
+
+.c-filters wa-input,
+.c-filters wa-select,
+.c-filters wa-button {
+  flex-shrink: 0;
 }
 </style>
