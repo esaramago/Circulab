@@ -15,7 +15,7 @@ import 'leaflet/dist/leaflet.css'
 import { $locationDraft, $descriptionDraft, setStepCompleted } from '@/stores/addResource'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
-import phoneAreaCodes from '@/data/CountryCodes.json'
+import phoneAreaCodes from '@/data/countryCodes.json'
 
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null

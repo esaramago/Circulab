@@ -10,16 +10,15 @@
   ],
   "compilerOptions": {
     "moduleResolution": "bundler",
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
       "@ui/*": [
-        "src/components/ui/*"
+        "./src/components/ui/*"
       ],
       "@webawesome/*": [
-        "node_modules/@awesome.me/webawesome/dist/components/*"
+        "./node_modules/@awesome.me/webawesome/dist/components/*"
       ]
     },
     "jsx": "preserve"
