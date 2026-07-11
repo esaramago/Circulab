@@ -26,8 +26,8 @@ async function handleSubmit() {
     address: resumeData.value?.address,
     postal_code: resumeData.value?.postal_code,
     email: resumeData.value?.email || undefined,
-    phone: resumeData.value?.phone,
-    phone_area_code: resumeData.value?.phone_area_code,
+    phone: resumeData.value?.phone || undefined,
+    phone_area_code: resumeData.value?.phone_area_code || undefined,
   })
 
   if (error) {
@@ -48,7 +48,7 @@ async function handleSubmit() {
     <li>Categoria:{{ resumeData?.category_id }}</li>
     <li>Características:{{ resumeData?.characteristics_ids?.join(', ') }}</li>
     <li>Localização:{{ resumeData?.location_name }}</li>
-    <li>Coordenadas:{{ resumeData?.latitude }}, {{ resumeData?.longitude }}</li>
+    <li>Coordenadas:{{ resumeData?.coordinates.latitude }}, {{ resumeData?.coordinates.longitude }}</li>
     <li>Morada:{{ resumeData?.address }}</li>
     <li>Código postal:{{ resumeData?.postal_code }}</li>
     <li>Email:{{ resumeData?.email }}</li>
