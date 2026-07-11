@@ -14,28 +14,29 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const isLoading = ref(true)
 const resource = ref<ResourcePopup | null>(null)
+const isLoading = ref(true)
 const hasError = ref(false)
 
 watch(() => props.resourceId, async () => {
   hasError.value = false
   if (props.resourceId) {
+    resource.value = null
     isLoading.value = true
     const { data, error } = await actions.getResource({ id: props.resourceId })
     isLoading.value = false
     if (error) {
       console.error(error)
+      hasError.value = true
     } else {
       console.log(data)
       resource.value = data as unknown as ResourcePopup
-      hasError.value = true
     }
   } else {
     hasError.value = true
     isLoading.value = false
   }
-})
+}, { immediate: true })
 </script>
 
 <template>

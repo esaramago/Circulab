@@ -70,7 +70,7 @@ function clearFilters() {
 </script>
 
 <template>
-  <form class="c-filters" @submit.prevent="">
+  <form class="filters" @submit.prevent="">
     <h2 class="is-visually-hidden">Filtros</h2>
     <wa-input 
       type="text" 
@@ -98,7 +98,7 @@ function clearFilters() {
       <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
     <wa-select
-      v-if="category"
+      v-if="category && characteristics.length"
       placeholder="Característica"
       size="s"
       :value="characteristic"
@@ -114,24 +114,18 @@ function clearFilters() {
 </template>
 
 <style scoped>
-.c-filters {
+.filters {
   position: absolute;
   inset-inline-start: 5.5rem;
   inset-block-start: 1rem;
   z-index: 1001; /* one more than the map */
   display: flex;
-  flex-wrap: wrap;
   gap: var(--wa-space-s);
-  align-items: center;
-  background-color: var(--wa-color-neutral-10);
-  padding: var(--wa-space-s);
-  border-radius: var(--wa-border-radius-m);
-  box-shadow: var(--wa-shadow-m);
 }
 
-.c-filters wa-input,
-.c-filters wa-select,
-.c-filters wa-button {
+.filters wa-input,
+.filters wa-select,
+.filters wa-button {
   flex-shrink: 0;
 }
 </style>
