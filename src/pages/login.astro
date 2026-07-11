@@ -21,8 +21,8 @@ const forgotPasswordHref = localizeHref(
 const redirectAfterLogin = getSafeRedirectPath(
   Astro.url.searchParams.get('redirect')
 )
-const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL
-const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD
+const ADMIN_EMAIL = process.env.PUBLIC_ADMIN_EMAIL
+const ADMIN_PASSWORD = process.env.PUBLIC_ADMIN_PASSWORD
 
 if (Astro.request.method === 'POST') {
 
