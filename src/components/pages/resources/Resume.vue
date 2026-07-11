@@ -2,13 +2,13 @@
 import Grid from '@/components/ui/Grid.vue'
 import { ref, onMounted } from 'vue'
 import { actions } from 'astro:actions'
-import type { ResourceType } from '@/schemas/resource.server'
+import type { Resource } from '@/types/domain/resource'
 import { clearAddResourceDraft, getAddResourcePayload } from '@/stores/addResource'
 
-const resumeData = ref<ResourceType | null>(null)
+const resumeData = ref<Resource | null>(null)
 
 onMounted(() => {
-  resumeData.value = getAddResourcePayload() as ResourceType
+  resumeData.value = getAddResourcePayload() as Resource
 })
 
 async function handleSubmit() {

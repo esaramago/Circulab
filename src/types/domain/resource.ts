@@ -1,49 +1,29 @@
 import type {
+  PinRow,
   TypologyRow,
   CategoryRow,
-  CharacteristicRow,
   LocationRow,
   ImageType,
   GeoJsonPoint
 } from '@/types/database'
+import { z } from 'astro/zod'
+import { resourceSchema } from '@/schemas/resource.server'
 
-export type Pin = {
-  id: string
-  title: string
+export type Resource = z.infer<typeof resourceSchema>
+
+export type Pin = Pick<PinRow, 'id' | 'title' | 'category_id'> & {
   coordinates: {
     latitude: number
     longitude: number
   }
-  category_id: string
-  typology_id: string
+  typology_id: CategoryRow['typology_id']
 }
 
-export type Resource = {
-  title: string
-  images?: ImageType[]
-  category_id?: string
-  typology_id?: string
-  characteristics_ids?: string[]
-  location?: string
-  address?: string
-  postal_code?: string
-  coordinates?: {
-    latitude: number
-    longitude: number
-  }
-  email?: string
-  phone?: string
-  description?: string
-}
-
-export type ResourcePopup = {
-  id: string
-  title: string
-  description: string
+export type ResourcePopup = Pick<PinRow, 'id' | 'title' | 'description'> & {
   images: ImageType[]
-  typology: TypologyRow
-  category: CategoryRow
-  characteristics: CharacteristicRow[]
-  location: LocationRow
+  category: CategoryRow['name']
+  typology: TypologyRow['name']
+  characteristics: CategoryRow['name']
+  location: LocationRow['name']
   coordinates: GeoJsonPoint
-}
+} & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone'>

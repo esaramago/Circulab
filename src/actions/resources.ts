@@ -3,7 +3,7 @@ import { createClient, supabase } from '@/utils/supabase'
 import { PIN_STATUS } from '@/types/database'
 import type { LocationInsert, ResourceRow } from '@/types/database'
 import type { Pin } from '@/types/domain/resource'
-import type { ResourceType } from '@/schemas/resource.server'
+import type { Resource } from '@/types/domain/resource'
 import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
 import { resourceSchema } from '@/schemas/resource.server'
 import { z } from 'astro/zod'
@@ -159,7 +159,7 @@ export const getResources = defineAction({
 
 export const addResource = defineAction({
   input: resourceSchema,
-  handler: async (input: ResourceType, { request, cookies }) => {
+  handler: async (input: Resource, { request, cookies }) => {
 
     try {
       const supabase = createClient({ request, cookies })

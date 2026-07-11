@@ -73,6 +73,7 @@ The `src` folder contains the source code of the project.
 - Do not user tailwind or other css frameworks.
 - Components specific styles should be in the component file (.vue or .astro).
 - Global styles should be in the `src/css/global` folder.
+- Always use CSS Logical Properties (e.g. `margin-block-start`) instead of `margin-top` and `margin-bottom`.
 
 ## DevOps
 - The project uses Docker and docker-compose for the development environment.

@@ -24,5 +24,3 @@ export const resourceSchema = z.object({
   phone: z.number().optional(),
   phone_area_code: z.string().optional(),
 })
-
-export type ResourceType = z.infer<typeof resourceSchema>

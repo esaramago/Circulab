@@ -3,6 +3,7 @@ import { CONFIG } from '@/config'
 import type { ResourcePopup } from '@/types/domain/resource'
 import { ref, watch } from 'vue'
 import { actions } from 'astro:actions'
+import Grid from '@/components/ui/Grid.vue'
 
 const props = defineProps<{
   resourceId: string | null
@@ -13,55 +14,89 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+const isLoading = ref(true)
 const resource = ref<ResourcePopup | null>(null)
+const hasError = ref(false)
 
 watch(() => props.resourceId, async () => {
+  hasError.value = false
   if (props.resourceId) {
+    isLoading.value = true
     const { data, error } = await actions.getResource({ id: props.resourceId })
+    isLoading.value = false
     if (error) {
       console.error(error)
     } else {
       console.log(data)
       resource.value = data as unknown as ResourcePopup
+      hasError.value = true
     }
+  } else {
+    hasError.value = true
+    isLoading.value = false
   }
 })
 </script>
 
 <template>
-  <div class="c-popup" :open="open || null" id="marker-popup">
-    <div class="c-popup__wrapper">
-      <div class="c-popup__header">
-        <h2>{{ resource?.title }}</h2>
-        <wa-button class="c-popup__close" variant="neutral" @click="emit('close')" pill size="xs">
+  <div class="popup" :open="open || null" id="marker-popup">
+    <div class="popup__wrapper">
+      <template v-if="resource">
+        <wa-button class="popup__close" variant="neutral" @click="emit('close')" pill size="xs">
           <wa-icon name="close"></wa-icon>
         </wa-button>
-      </div>
-      <div class="c-popup__body">
+        <Grid gap="l" direction="column">
 
-        <img v-if="resource?.images?.[0]" class="c-popup__image" :src="CONFIG.images_url + resource?.images?.[0]?.url" :alt="resource?.title" />
-        <p>{{ resource?.category }} ({{ resource?.typology }})</p>
-        <p>{{ resource?.characteristics }}</p>
+          <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + resource?.images?.[0]?.url" :alt="resource?.title" />
+          <div>
+            <h2>{{ resource?.title }}</h2>
+            <p>{{ resource?.category }} ({{ resource?.typology }})</p>
+            <p v-if="resource?.characteristics">{{ resource?.characteristics }}</p>
+          </div>
 
-        <ul>
-          <li>{{ resource?.location }}</li>
-          <li>{{ resource?.location.address }}, {{ resource?.location.postal_code }}</li>
-          <li>{{ resource?.coordinates.coordinates[1] }}, {{ resource?.coordinates.coordinates[0] }}</li>
-          <li v-if="resource?.location.email">{{ resource?.location.email }}</li>
-          <li v-if="resource?.location.phone">{{ resource?.location.phone }}</li>
-        </ul>
+          <Grid gap="xs" direction="column">
+            <div>
+              <wa-icon name="location-dot"></wa-icon>
+              {{resource?.location}}, {{ resource?.address }}, {{ resource?.postal_code }}
+            </div>
+            <div v-if="resource?.coordinates">
+              <wa-icon name="map"></wa-icon>
+              <a
+                :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
+                target="_blank"
+                title="Abrir no Google Maps"
+              >
+                {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
+              </a>
+            </div>
+            <div v-if="resource?.email">
+              <wa-icon name="email"></wa-icon>
+              {{ resource.email }}
+            </div>
+            <div v-if="resource?.phone">
+              <wa-icon name="phone"></wa-icon>
+              {{ resource.phone }}
+            </div>
+          </Grid>
 
-        <p>{{ resource?.description }}</p>
+          <p>{{ resource?.description }}</p>
 
-        <wa-button appearance="outlined">Sugerir edição</wa-button>
+          <wa-button appearance="outlined">Sugerir edição</wa-button>
 
-      </div>
+        </Grid>
+      </template>
+      <template v-else-if="isLoading">
+        LOADING...
+      </template>
+      <template v-else-if="hasError">
+        ERRO
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped>
-.c-popup {
+.popup {
   --inset: var(--wa-space-m);
   --padding: var(--wa-space-m);
   --border-radius: var(--wa-border-radius-m);
@@ -81,30 +116,29 @@ watch(() => props.resourceId, async () => {
     inset: auto var(--inset) var(--inset) var(--inset);
   }
 }
-.c-popup__wrapper {
+.popup__close {
+  position: absolute;
+  inset-block-start: var(--wa-space-l);
+  inset-inline-end: var(--wa-space-l);
+}
+.popup__wrapper {
   display: flex;
   flex-direction: column;
   gap: var(--wa-space-s);
   max-height: 100%;
   box-sizing: border-box;
-  padding: var(--padding) 0 var(--padding) var(--padding);
+  padding: var(--padding);
   background-color: var(--wa-color-neutral-20);
   border-radius: calc(var(--border-radius) + var(--padding) / 2);
   @media (max-width: 600px) {
     max-height: 50vh;
   }
 }
-.c-popup__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-inline-end: var(--padding);
-}
-.c-popup__body {
+.popup__body {
   overflow: auto;
   padding-inline-end: var(--padding);
 }
-.c-popup__image {
+.popup__image {
   width: 100%;
   height: 20rem;
   object-fit: cover;

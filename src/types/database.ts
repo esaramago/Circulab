@@ -2,7 +2,7 @@ import type { Database, Json } from '@/types/supabase'
 
 export type { Json } from '@/types/supabase'
 
-type Tables = Database['public']['Tables']
+export type Tables = Database['public']['Tables']
 
 export type UserRow = Tables['users']['Row']
 export type RoleRow = Tables['roles']['Row']
