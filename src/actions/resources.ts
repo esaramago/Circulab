@@ -183,6 +183,7 @@ export const addResource = defineAction({
         ),
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
+        phone_area_code: input.phone_area_code || null,
       }
 
       const { data: locationsData, error: locationsError } = await supabase
@@ -199,9 +200,10 @@ export const addResource = defineAction({
       }
 
       const { data: pinsData, error: pinsError } = await supabase.from('pins').insert({
+        id: input.id,
         title: input.title || '',
         description: input.description || '',
-        images: [],
+        images: input.images || [],
         coordinates: geographyPointEwkt(
           Number(input.coordinates.longitude),
           Number(input.coordinates.latitude),

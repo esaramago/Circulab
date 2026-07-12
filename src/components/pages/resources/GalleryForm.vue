@@ -34,6 +34,7 @@ import Gallery from '@/components/ui/Gallery.vue'
 import GalleryItem from '@/components/ui/GalleryItem.vue'
 import Grid from '@/components/ui/Grid.vue'
 import type { DescriptionImageDraft } from '@/types/add-resource-draft'
+import { saveImage, deleteImage } from '@/utils/imageStore'
 
 const props = defineProps<{
   images: DescriptionImageDraft[]
@@ -43,20 +44,29 @@ const emit = defineEmits<{
   change: [images: DescriptionImageDraft[]]
 }>()
 
-const handleImagesChange = (files: FileList) => {
+const handleImagesChange = async (files: FileList) => {
   if (!files) return
   const next = [...props.images]
   for (const file of files) {
+    const id = crypto.randomUUID()
+    const url = URL.createObjectURL(file)
+    await saveImage(id, file)
     next.push({
-      id: crypto.randomUUID(),
-      url: URL.createObjectURL(file),
+      id,
+      url,
       alt: file.name || '',
     })
   }
   emit('change', next)
 }
 
-const handleRemoveImage = (image: { src: string, alt: string }) => {
-  emit('change', props.images.filter((i) => i.url !== image.src))
+const handleRemoveImage = async (image: { src: string, alt: string }) => {
+  const matched = props.images.find((i) => i.url === image.src)
+  if (matched) {
+    await deleteImage(matched.id)
+    emit('change', props.images.filter((i) => i.id !== matched.id))
+  } else {
+    emit('change', props.images.filter((i) => i.url !== image.src))
+  }
 }
 </script>

@@ -11,6 +11,7 @@ import type { Database } from '@/types/supabase'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
 import { $descriptionDraft, setStepCompleted } from '@/stores/addResource'
 import type { DescriptionDraft, DescriptionImageDraft } from '@/types/add-resource-draft'
+import { getImage } from '@/utils/imageStore'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
@@ -29,6 +30,22 @@ const {
 } = useTypologyCascade()
 
 onMounted(async () => {
+  if (draft.value.images && draft.value.images.length > 0) {
+    const updatedImages: DescriptionImageDraft[] = []
+    for (const img of draft.value.images) {
+      const blob = await getImage(img.id)
+      if (blob) {
+        updatedImages.push({
+          ...img,
+          url: URL.createObjectURL(blob),
+        })
+      } else {
+        updatedImages.push(img)
+      }
+    }
+    updateDraft({ images: updatedImages })
+  }
+
   if (draft.value.typology_id) {
     await setTypology(draft.value.typology_id)
   }
