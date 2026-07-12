@@ -41,17 +41,17 @@ async function handleSubmit() {
 
 <template>
   <ul>
-    <li>Título:{{ resumeData?.title }}</li>
-    <li>Descrição:{{ resumeData?.description }}</li>
-    <li>Imagem:{{ resumeData?.images?.length }}</li>
-    <li>Tipologia:{{ resumeData?.typology_id }}</li>
-    <li>Categoria:{{ resumeData?.category_id }}</li>
-    <li>Características:{{ resumeData?.characteristics_ids?.join(', ') }}</li>
-    <li>Localização:{{ resumeData?.location_name }}</li>
-    <li>Coordenadas:{{ resumeData?.coordinates.latitude }}, {{ resumeData?.coordinates.longitude }}</li>
-    <li>Morada:{{ resumeData?.address }}</li>
-    <li>Código postal:{{ resumeData?.postal_code }}</li>
-    <li>Email:{{ resumeData?.email }}</li>
+    <li>Título: {{ resumeData?.title }}</li>
+    <li>Descrição: {{ resumeData?.description }}</li>
+    <li>Imagem: {{ resumeData?.images?.length }}</li>
+    <li>Tipologia: {{ resumeData?.typology_id }}</li>
+    <li>Categoria: {{ resumeData?.category_id }}</li>
+    <li>Características: {{ resumeData?.characteristics_ids?.join(', ') }}</li>
+    <li>Localização: {{ resumeData?.location_name }}</li>
+    <li>Coordenadas: {{ resumeData?.coordinates.latitude }}, {{ resumeData?.coordinates.longitude }}</li>
+    <li>Morada: {{ resumeData?.address }}</li>
+    <li>Código postal: {{ resumeData?.postal_code }}</li>
+    <li>Email: {{ resumeData?.email }}</li>
     <li>Telefone: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
   </ul>
 

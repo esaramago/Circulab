@@ -84,8 +84,8 @@ function updateDraft(partial: Partial<LocationDraft>) {
 }
 
 function initMap() {
-  const initialLat = draft.value.latitude || 38.74
-  const initialLng = draft.value.longitude || -9.14
+  const initialLat = draft.value.coordinates.latitude || 38.74
+  const initialLng = draft.value.coordinates.longitude || -9.14
 
   mapInstance = new LeafletMap('map', {
     center: [initialLat, initialLng],
@@ -105,7 +105,7 @@ function initMap() {
     if (position) {
       const latitude = Number(position.lat.toFixed(6))
       const longitude = Number(position.lng.toFixed(6))
-      updateDraft({ latitude, longitude })
+      updateDraft({ coordinates: { latitude, longitude } })
       fetchAddress(latitude, longitude)
     }
   })
@@ -114,7 +114,7 @@ function initMap() {
     markerInstance?.setLatLng(e.latlng)
     const latitude = Number(e.latlng.lat.toFixed(6))
     const longitude = Number(e.latlng.lng.toFixed(6))
-    updateDraft({ latitude, longitude })
+    updateDraft({ coordinates: { latitude, longitude } })
     fetchAddress(latitude, longitude)
   })
 }
@@ -146,7 +146,7 @@ async function fetchAddress(lat: number, lng: number) {
   }
 }
 
-watch(() => [draft.value.latitude, draft.value.longitude], ([lat, lng]) => {
+watch(() => [draft.value.coordinates.latitude, draft.value.coordinates.longitude], ([lat, lng]) => {
   if (mapInstance && markerInstance) {
     const numLat = Number(lat)
     const numLng = Number(lng)
@@ -199,7 +199,12 @@ async function handleChange(event: Event) {
 
   const coordinates = await guessCoordinates(address, postal_code)
   if (coordinates) {
-    updateDraft({ latitude: coordinates.latitude, longitude: coordinates.longitude })
+    updateDraft({
+      coordinates: {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude
+      }
+    })
   }
 }
 
@@ -272,8 +277,8 @@ function handleSubmit(event: Event) {
       <fieldset :class="{ 'is-hidden': isTypologyRepairMap }">
         <legend appearance="h2">Coordenadas</legend>
         <Grid fullWidth>
-          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.latitude"></wa-input>
-          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.longitude"></wa-input>
+          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.coordinates.latitude"></wa-input>
+          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.coordinates.longitude"></wa-input>
         </Grid>
       </fieldset>
       <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>

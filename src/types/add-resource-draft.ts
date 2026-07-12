@@ -17,8 +17,10 @@ export type LocationDraft = {
   location_name: string
   address: string
   postal_code: string
-  latitude: number | undefined
-  longitude: number | undefined
+  coordinates: {
+    latitude: number
+    longitude: number
+  }
   accessibility: '' | 'public' | 'private'
   opening_days: string[]
   opening_hours: Record<string, { start: string, end: string }>
@@ -52,8 +54,10 @@ export const initialLocationDraft: LocationDraft = {
   location_name: '',
   address: '',
   postal_code: '',
-  latitude: undefined,
-  longitude: undefined,
+  coordinates: {
+    latitude: 0,
+    longitude: 0,
+  },
   accessibility: '',
   opening_days: [],
   opening_hours: {},
