@@ -18,10 +18,11 @@ The [README](README.md) provides more context and instructions.
 - **Astro**: is the meta-framework in SSR mode.
 - **Vue**: For the specific components and interactivity.
 - **WebAwesome**: Is the library for the generic components.
-- **Supabase**: For the database.
+- **Supabase**: For the database and storage.
 - **Leaflet**: For the maps.
 - **Paraglide**: For the internationalization.
 - **Nanostores**: For the state management.
+- **PWA**: It is a Progressive Web App
 
 ## Components
 ### WebAwesome
@@ -37,10 +38,12 @@ Allways use WebAwesome components when possible.
 - Astro components should be used only for pages and layouts.
 
 ## Business rules
-- The documentation in the `src/pages/docs`
+- The documentation of the project is in the `docs` folder.
 - The documentation should be in English.
 
 ## Project structure
+### docs
+The `docs` folder contains the documentation of the project.
 ### `src`
 The `src` folder contains the source code of the project.
 - `src/actions`: contains the Astro Actions (server actions)

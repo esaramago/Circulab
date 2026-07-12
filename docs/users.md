@@ -1,17 +1,11 @@
----
-title: Users
-layout: '@/layouts/DocsLayout.astro'
-order: 3
----
-
 # Users
 
 ## User roles
 
 There is an users table in the database.
 Users can have the following roles:
-* **contributor**: Can add pins and suggest edits. Can self-register.
-* **moderator**: Can accept new pins or edits. Invited by admins.
+* **contributor**: Can add resources and suggest edits. Can self-register.
+* **moderator**: Can accept new resources or edits. Invited by admins.
 * **admin**: Can manage moderators or block users.
 
 ## Contributors
