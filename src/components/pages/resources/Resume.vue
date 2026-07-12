@@ -5,29 +5,32 @@ import { actions } from 'astro:actions'
 import type { Resource } from '@/types/domain/resource'
 import { clearAddResourceDraft, getAddResourcePayload } from '@/stores/addResource'
 
-const resumeData = ref<Resource | null>(null)
+const resumeData = ref<ReturnType<typeof getAddResourcePayload> | null>(null)
 
 onMounted(() => {
-  resumeData.value = getAddResourcePayload() as Resource
+  resumeData.value = getAddResourcePayload()
 })
 
 async function handleSubmit() {
+  const payload = resumeData.value
+  if (!payload) return
+
   const { error } = await actions.addResource({
-    title: resumeData.value?.title || '',
-    description: resumeData.value?.description || '',
+    title: payload.title || '',
+    description: payload.description || '',
     coordinates: {
-      latitude: Number(resumeData.value?.latitude) || 0,
-      longitude: Number(resumeData.value?.longitude) || 0,
+      latitude: Number(payload.coordinates?.latitude) || 0,
+      longitude: Number(payload.coordinates?.longitude) || 0,
     },
-    typology_id: resumeData.value?.typology_id || '',
-    category_id: resumeData.value?.category_id || '',
-    characteristics_ids: resumeData.value?.characteristics_ids || [],
-    location_name: resumeData.value?.location_name,
-    address: resumeData.value?.address,
-    postal_code: resumeData.value?.postal_code,
-    email: resumeData.value?.email || undefined,
-    phone: resumeData.value?.phone || undefined,
-    phone_area_code: resumeData.value?.phone_area_code || undefined,
+    typology_id: payload.typology_id || '',
+    category_id: payload.category_id || '',
+    characteristics_ids: payload.characteristics_ids || [],
+    location_name: payload.location_name,
+    address: payload.address,
+    postal_code: payload.postal_code,
+    email: payload.email || undefined,
+    phone: payload.phone || undefined,
+    phone_area_code: payload.phone_area_code ? String(payload.phone_area_code) : undefined,
   })
 
   if (error) {

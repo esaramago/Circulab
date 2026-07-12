@@ -161,22 +161,32 @@ watch(() => [draft.value.coordinates.latitude, draft.value.coordinates.longitude
   }
 })
 
-async function handleInput(event: Event) {
-  const field = event.target as HTMLInputElement
-  const name = field.name as keyof LocationDraft
-  let value: LocationDraft[keyof LocationDraft] = field.value as never
+function handleInput(event: Event) {
+  const field = event.target as HTMLInputElement & { checkValidity?: () => boolean }
+  const name = field.name
 
   if (name === 'latitude' || name === 'longitude') {
-    value = field.value === '' ? undefined : Number(field.value)
-  } else if (name === 'phone') {
-    value = field.value === '' ? undefined : Number(field.value)
-  } else if (name === 'accessibility') {
-    value = field.value as LocationDraft['accessibility']
+    const numValue = field.value === '' ? undefined : Number(field.value)
+    updateDraft({ coordinates: { ...draft.value.coordinates, [name]: numValue } })
+    return
   }
 
-  if (!field.checkValidity()) return
+  const key = name as keyof LocationDraft
 
-  updateDraft({ [name]: value } as Partial<LocationDraft>)
+  if (name === 'phone') {
+    const phoneValue = field.value === '' ? undefined : Number(field.value)
+    updateDraft({ [key]: phoneValue })
+    return
+  }
+
+  if (name === 'accessibility') {
+    updateDraft({ [key]: field.value as LocationDraft['accessibility'] })
+    return
+  }
+
+  if (field.checkValidity && !field.checkValidity()) return
+
+  updateDraft({ [key]: field.value } as Partial<LocationDraft>)
 }
 
 async function handleChange(event: Event) {
