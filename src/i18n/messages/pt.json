@@ -4,13 +4,10 @@
 	"map": {
     "title": "Mapa"
   },
-  "contacts": {
-    "title": "Contactos"
-  },
   "about": {
     "title": "Sobre"
   },
-  "docs": {
-    "title": "Documentação"
+  "contacts": {
+    "title": "Contactos"
   }
 }
