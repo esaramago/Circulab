@@ -1,6 +1,6 @@
 <template>
   <Grid gap="s" direction="column">
-    <h3 appearance="p">Imagens do pin</h3>
+    <h3 appearance="p">Imagens do recurso</h3>
     <Gallery>
       <template v-if="images.length > 0">
         <GalleryItem v-for="image in images" :key="image.id" :src="image.url" :alt="image.alt" @remove="handleRemoveImage" />
@@ -8,18 +8,21 @@
       <InputFile
         id="images"
         multiple
-        label="Imagens do pin"
+        label="Imagens ao recurso"
         hiddenLabel
         accept="image/*"
         :filesNumber="images.length"
         @change="handleImagesChange"
       >
         <template #label>
-          <span v-if="images.length > 0">{{ images.length }} imagens adicionadas</span>
-          <span v-else>Adicione imagens do pin</span>
+          <span>Adicione imagens ao recurso</span>
         </template>
       </InputFile>
     </Gallery>
+    <p class="u-text-small">
+      <template v-if="images.length === 1">1 imagen adicionada</template>
+      <template v-else-if="images.length > 1">{{ images.length }} imagens adicionadas</template>
+    </p>
   </Grid>
 </template>
 

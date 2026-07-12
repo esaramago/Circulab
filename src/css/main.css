@@ -8,4 +8,5 @@
 @import './elements/headings.css';
 
 @import './utils/utils.css';
+@import './utils/text.css';
 @import './utils/visibility.css';
