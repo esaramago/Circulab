@@ -40,12 +40,15 @@ const navItems = [
 
 <header>
   <Grid gap="xl" align="center">
-    <a href={localizeHref('/')} class="header__logo">
-      <span>{m.site_title()}</span>
-    </a>
+    <div>
+      <a href={localizeHref('/')} class="header__logo">
+        <span>{m.site_title()}</span>
+      </a>
+      <p class="header__subtitle">Mapa colaborativo para a agroecologia circularidade</p>
+    </div>
     <nav>
       <ul class="nav-list">
-        {navItems.filter((item) => !item.loggedInOnly || user).map((item) => (
+        {navItems.map((item) => (
           <li>
             <a href={localizeHref(item.path)} class:list={item.path === currentPath ? 'is-active' : ''}>{item.label}</a>
           </li>
@@ -182,6 +185,10 @@ const navItems = [
       border-radius: var(--wa-border-radius-circle);
       background-color: currentColor;
     }
+  }
+  .header__subtitle {
+    font-size: var(--wa-font-size-s);
+    color: var(--wa-color-neutral-80);
   }
 
   .nav-toggle {
