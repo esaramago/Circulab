@@ -1,7 +1,7 @@
 import { defineMiddleware } from 'astro:middleware'
 import { paraglideMiddleware } from './paraglide/server.js'
 import { deLocalizeHref, getLocale, localizeHref } from './paraglide/runtime.js'
-import { actions } from 'astro:actions'
+import { checkUser } from '@/actions/auth/checkUser'
 import { buildLoginRedirectUrl, localizeRedirectPath } from '@/utils/authRedirect'
 import { userHasAccess } from './utils/userHasAccess.js'
 
@@ -13,7 +13,7 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     // Fill Astro.locals.user with the session user, if the user is logged in
     const getUser = async () => {
       try {
-        const { data: user } = await callAction(actions.checkUser, {})
+        const { data: user } = await callAction(checkUser, {})
         return user || undefined
       } catch (error) {
         return undefined

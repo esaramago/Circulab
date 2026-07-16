@@ -2,9 +2,9 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
-import { actions } from 'astro:actions'
+import { getPins } from '@/actions/resources'
 
-const { data: mapPins } = await Astro.callAction(actions.getPins, {})
+const { data: mapPins } = await Astro.callAction(getPins, {})
 ---
 
 <Layout title={m.site_title()} fullWidth={true}>
