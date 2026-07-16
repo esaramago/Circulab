@@ -14,7 +14,18 @@ AS $$
   );
 $$;
 
+-- Enable Row Level Security on categories.
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+-- Allow anyone (authenticated and anonymous) to read categories.
+DROP POLICY IF EXISTS categories_select_all ON public.categories;
+CREATE POLICY categories_select_all
+  ON public.categories
+  FOR SELECT
+  USING (true);
+
 -- Allow administrators to insert new categories.
+DROP POLICY IF EXISTS categories_insert_admin ON public.categories;
 CREATE POLICY categories_insert_admin
   ON public.categories
   FOR INSERT
@@ -22,6 +33,7 @@ CREATE POLICY categories_insert_admin
   WITH CHECK (public.is_admin());
 
 -- Allow administrators to update existing categories.
+DROP POLICY IF EXISTS categories_update_admin ON public.categories;
 CREATE POLICY categories_update_admin
   ON public.categories
   FOR UPDATE
@@ -30,6 +42,7 @@ CREATE POLICY categories_update_admin
   WITH CHECK (public.is_admin());
 
 -- Allow administrators to delete categories.
+DROP POLICY IF EXISTS categories_delete_admin ON public.categories;
 CREATE POLICY categories_delete_admin
   ON public.categories
   FOR DELETE

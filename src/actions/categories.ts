@@ -6,12 +6,11 @@ import { z } from 'astro/zod'
 export const addCategory = defineAction({
   input: z.any(),
   handler: async (rawInput, { request, cookies }) => {
-    console.log('[Actions] addCategory rawInput:', rawInput)
     const result = categorySchema.safeParse(rawInput)
     if (!result.success) {
       console.error('[Actions] addCategory validation failed:', result.error.format())
       throw new ActionError({
-        message: 'Invalid input: ' + JSON.stringify(result.error.format()),
+        message: 'Não foi possível adicionar a categoria.',
         code: 'BAD_REQUEST'
       })
     }
@@ -50,9 +49,8 @@ export const addCategory = defineAction({
         .single()
 
       if (error) {
-        console.log('[Actions] addCategory error:', error)
         throw new ActionError({
-          message: error.message || 'Failed to add category',
+          message: error.message || 'Não foi possível adicionar a categoria.',
           code: error.code as ActionErrorCode
         })
       }
@@ -60,7 +58,6 @@ export const addCategory = defineAction({
       return { success: true, category: data }
 
     } catch (error: any) {
-      console.log('[Actions] addCategory error:', error)
       if (error instanceof ActionError) throw error
       throw new ActionError({
         message: error.message || 'Internal server error',
@@ -78,7 +75,7 @@ export const updateCategory = defineAction({
     if (!result.success) {
       console.error('[Actions] updateCategory validation failed:', result.error.format())
       throw new ActionError({
-        message: 'Invalid input: ' + JSON.stringify(result.error.format()),
+        message: 'Não foi possível atualizar a categoria.',
         code: 'BAD_REQUEST'
       })
     }

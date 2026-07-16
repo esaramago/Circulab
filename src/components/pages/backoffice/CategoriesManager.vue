@@ -27,6 +27,7 @@ const saving = ref(false)
 const deleting = ref(false)
 
 const feedback = ref<{ type: 'success' | 'danger'; message: string } | null>(null)
+const dialogError = ref<string | null>(null)
 
 const form = ref({
   id: '',
@@ -35,7 +36,7 @@ const form = ref({
   typology_id: '',
 })
 
-const categoryToDelete = ref<Category | null>(null)
+const categoryToDelete = ref<CategoryRow | null>(null)
 
 const filteredCategories = computed(() => {
   if (!selectedTypologyId.value) return []
@@ -64,10 +65,11 @@ function openCreateDialog() {
     typology_id: selectedTypologyId.value || (props.typologies.length > 0 ? props.typologies[0].id : ''),
   }
   feedback.value = null
+  dialogError.value = null
   dialogOpen.value = true
 }
 
-function openEditDialog(category: Category) {
+function openEditDialog(category: CategoryRow) {
   isEditing.value = true
   form.value = {
     id: category.id,
@@ -76,11 +78,18 @@ function openEditDialog(category: Category) {
     typology_id: category.typology_id,
   }
   feedback.value = null
+  dialogError.value = null
   dialogOpen.value = true
+}
+
+function closeDialog() {
+  dialogOpen.value = false
+  dialogError.value = null
 }
 
 async function saveCategory() {
   saving.value = true
+  dialogError.value = null
   feedback.value = null
   try {
     if (isEditing.value) {
@@ -124,13 +133,13 @@ async function saveCategory() {
     }
   } catch (err: any) {
     console.error(err)
-    feedback.value = { type: 'danger', message: err.message || 'Ocorreu um erro ao guardar a categoria.' }
+    dialogError.value = err.message || 'Ocorreu um erro ao guardar a categoria.'
   } finally {
     saving.value = false
   }
 }
 
-function confirmDelete(category: Category) {
+function confirmDelete(category: CategoryRow) {
   categoryToDelete.value = category
   feedback.value = null
   deleteDialogOpen.value = true
@@ -245,9 +254,12 @@ async function deleteCategory() {
       id="category-dialog"
       :label="isEditing ? 'Editar categoria' : 'Adicionar categoria'"
       :open="dialogOpen ? '' : null"
-      @wa-after-hide="dialogOpen = false"
+      @wa-after-hide="closeDialog"
     >
       <form @submit.prevent="saveCategory" class="dialog-form">
+        <wa-callout v-if="dialogError" variant="danger">
+          {{ dialogError }}
+        </wa-callout>
         <div class="form-group">
           <wa-input
             label="Nome"
