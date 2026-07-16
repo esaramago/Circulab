@@ -78,14 +78,31 @@ async function getTypologyCode() {
 }
 function updateDraft(partial: Partial<LocationDraft>) {
   $locationDraft.set({
-    ...$locationDraft.get(),
+    ...draft.value,
     ...partial,
-  })
+  } as LocationDraft)
+}
+
+function updateMarker(lat: number, lng: number) {
+  if (mapInstance && markerInstance) {
+    const currentLatLng = markerInstance.getLatLng()
+    if (currentLatLng.lat !== lat || currentLatLng.lng !== lng) {
+      markerInstance.setLatLng([lat, lng])
+      mapInstance.setView([lat, lng])
+    }
+  }
 }
 
 function initMap() {
-  const initialLat = draft.value.coordinates.latitude || 38.74
-  const initialLng = draft.value.coordinates.longitude || -9.14
+  const storeValue = $locationDraft.get()
+  let initialLat = storeValue.coordinates.latitude
+  let initialLng = storeValue.coordinates.longitude
+
+  // Se for o valor inicial (0,0), use coordenadas padrão de Lisboa
+  if (initialLat === 0 && initialLng === 0) {
+    initialLat = 38.74
+    initialLng = -9.14
+  }
 
   mapInstance = new LeafletMap('map', {
     center: [initialLat, initialLng],
@@ -99,6 +116,7 @@ function initMap() {
   }).addTo(mapInstance)
 
   markerInstance = new LeafletMarker([initialLat, initialLng], { draggable: true }).addTo(mapInstance)
+  updateMarker(initialLat, initialLng)
 
   markerInstance.on('dragend', () => {
     const position = markerInstance?.getLatLng()
@@ -106,15 +124,16 @@ function initMap() {
       const latitude = Number(position.lat.toFixed(6))
       const longitude = Number(position.lng.toFixed(6))
       updateDraft({ coordinates: { latitude, longitude } })
+      updateMarker(latitude, longitude)
       fetchAddress(latitude, longitude)
     }
   })
 
   mapInstance.on('click', (e: { latlng: { lat: number, lng: number } }) => {
-    markerInstance?.setLatLng(e.latlng)
     const latitude = Number(e.latlng.lat.toFixed(6))
     const longitude = Number(e.latlng.lng.toFixed(6))
     updateDraft({ coordinates: { latitude, longitude } })
+    updateMarker(latitude, longitude)
     fetchAddress(latitude, longitude)
   })
 }
@@ -146,28 +165,15 @@ async function fetchAddress(lat: number, lng: number) {
   }
 }
 
-watch(() => [draft.value.coordinates.latitude, draft.value.coordinates.longitude], ([lat, lng]) => {
-  if (mapInstance && markerInstance) {
-    const numLat = Number(lat)
-    const numLng = Number(lng)
-
-    if (!isNaN(numLat) && !isNaN(numLng) && numLat >= -90 && numLat <= 90 && numLng >= -180 && numLng <= 180) {
-      const currentLatLng = markerInstance.getLatLng()
-      if (currentLatLng.lat !== numLat || currentLatLng.lng !== numLng) {
-        markerInstance.setLatLng([numLat, numLng])
-        mapInstance.setView([numLat, numLng])
-      }
-    }
-  }
-})
-
 function handleInput(event: Event) {
   const field = event.target as HTMLInputElement & { checkValidity?: () => boolean }
   const name = field.name
 
   if (name === 'latitude' || name === 'longitude') {
-    const numValue = field.value === '' ? undefined : Number(field.value)
-    updateDraft({ coordinates: { ...draft.value.coordinates, [name]: numValue } })
+    const numValue = field.value === '' ? draft.value.coordinates[name as 'latitude' | 'longitude'] : Number(field.value)
+    const newCoords = { ...draft.value.coordinates, [name as 'latitude' | 'longitude']: numValue }
+    updateDraft({ coordinates: newCoords })
+    updateMarker(newCoords.latitude, newCoords.longitude)
     return
   }
 
@@ -215,6 +221,7 @@ async function handleChange(event: Event) {
         longitude: coordinates.longitude
       }
     })
+    updateMarker(coordinates.latitude, coordinates.longitude)
   }
 }
 
