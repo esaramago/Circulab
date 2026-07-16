@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          icon: string | null
           id: string
           name: string
           typology_id: string
@@ -25,6 +26,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: string
           name: string
           typology_id: string
@@ -32,6 +34,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: string
           name?: string
           typology_id?: string
@@ -321,6 +324,7 @@ export type Database = {
       typologies: {
         Row: {
           code: string
+          color: string | null
           created_at: string
           description: string | null
           id: string
@@ -328,6 +332,7 @@ export type Database = {
         }
         Insert: {
           code: string
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -335,6 +340,7 @@ export type Database = {
         }
         Update: {
           code?: string
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -695,6 +701,7 @@ export type Database = {
             } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
           }
       gettransactionid: { Args: never; Returns: unknown }
+      is_admin: { Args: never; Returns: boolean }
       is_moderator_or_admin: { Args: never; Returns: boolean }
       is_registered_user: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }

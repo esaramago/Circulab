@@ -43,7 +43,8 @@ export const addCategory = defineAction({
         .insert({
           name: input.name,
           description: input.description || null,
-          typology_id: input.typology_id
+          typology_id: input.typology_id,
+          icon: input.icon || null
         })
         .select('*')
         .single()
@@ -109,7 +110,8 @@ export const updateCategory = defineAction({
         .update({
           name: input.name,
           description: input.description || null,
-          typology_id: input.typology_id
+          typology_id: input.typology_id,
+          icon: input.icon || null
         })
         .eq('id', input.id)
         .select('*')

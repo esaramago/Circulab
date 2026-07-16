@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { actions } from 'astro:actions'
+import { supabase } from '@/utils/supabase'
+import { CONFIG } from '@/config'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue'
 import '@webawesome/button/button.js'
 import '@webawesome/dialog/dialog.js'
@@ -34,7 +36,48 @@ const form = ref({
   name: '',
   description: '',
   typology_id: '',
+  icon: '',
 })
+
+const selectedFile = ref<File | null>(null)
+const selectedFileUrl = ref<string | null>(null)
+
+onMounted(async () => {
+  // Ensure the client-side supabase client is authenticated with the session
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    const { data: sessionData, error: sessionError } = await actions.getSession()
+    if (sessionError) {
+      console.error('[CategoriesManager] Failed to get session:', sessionError)
+      return
+    }
+    if (sessionData) {
+      const { error: setSessionError } = await supabase.auth.setSession({
+        access_token: sessionData.access_token,
+        refresh_token: sessionData.refresh_token,
+      })
+      if (setSessionError) {
+        console.error('[CategoriesManager] Failed to set session:', setSessionError)
+      }
+    }
+  }
+})
+
+function onFileChange(event: any) {
+  const file = event.target?.files?.[0]
+  if (file) {
+    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')
+    if (isSvg) {
+      selectedFile.value = file
+      selectedFileUrl.value = URL.createObjectURL(file)
+      dialogError.value = null
+    } else {
+      dialogError.value = 'Por favor, selecione um ficheiro SVG válido.'
+      selectedFile.value = null
+      selectedFileUrl.value = null
+    }
+  }
+}
 
 const categoryToDelete = ref<CategoryRow | null>(null)
 
@@ -63,7 +106,10 @@ function openCreateDialog() {
     name: '',
     description: '',
     typology_id: selectedTypologyId.value || (props.typologies.length > 0 ? props.typologies[0].id : ''),
+    icon: '',
   }
+  selectedFile.value = null
+  selectedFileUrl.value = null
   feedback.value = null
   dialogError.value = null
   dialogOpen.value = true
@@ -76,7 +122,10 @@ function openEditDialog(category: CategoryRow) {
     name: category.name,
     description: category.description || '',
     typology_id: category.typology_id,
+    icon: category.icon || '',
   }
+  selectedFile.value = null
+  selectedFileUrl.value = null
   feedback.value = null
   dialogError.value = null
   dialogOpen.value = true
@@ -92,12 +141,34 @@ async function saveCategory() {
   dialogError.value = null
   feedback.value = null
   try {
+    let iconPath = form.value.icon
+
+    if (selectedFile.value) {
+      const file = selectedFile.value
+      const extension = 'svg'
+      const filename = `${crypto.randomUUID()}.${extension}`
+      const path = `category-icons/${filename}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('pin-images')
+        .upload(path, file, {
+          cacheControl: '3600',
+          upsert: true,
+        })
+
+      if (uploadError) {
+        throw new Error(`Erro ao carregar o ícone: ${uploadError.message}`)
+      }
+      iconPath = path
+    }
+
     if (isEditing.value) {
       const { data, error } = await actions.updateCategory({
         id: form.value.id,
         name: form.value.name,
         description: form.value.description,
         typology_id: form.value.typology_id,
+        icon: iconPath,
       })
 
       if (error) {
@@ -118,6 +189,7 @@ async function saveCategory() {
         name: form.value.name,
         description: form.value.description,
         typology_id: form.value.typology_id,
+        icon: iconPath,
       })
 
       if (error) {
@@ -217,6 +289,7 @@ async function deleteCategory() {
         <table class="manager__table">
           <thead>
             <tr>
+              <th>Ícone</th>
               <th>Nome</th>
               <th>Descrição</th>
               <th>Tipologia</th>
@@ -225,6 +298,10 @@ async function deleteCategory() {
           </thead>
           <tbody>
             <tr v-for="category in filteredCategories" :key="category.id">
+              <td>
+                <img v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon" alt="Ícone" />
+                <span v-else class="no-icon">-</span>
+              </td>
               <td><strong>{{ category.name }}</strong></td>
               <td>{{ category.description || '-' }}</td>
               <td>
@@ -242,7 +319,7 @@ async function deleteCategory() {
               </td>
             </tr>
             <tr v-if="filteredCategories.length === 0">
-              <td colspan="4" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
+              <td colspan="5" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
             </tr>
           </tbody>
         </table>
@@ -280,6 +357,38 @@ async function deleteCategory() {
             placeholder="Breve descrição da categoria"
             rows="3"
           ></wa-textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ícone (ficheiro SVG)</label>
+          <div class="file-upload-wrapper">
+            <input
+              type="file"
+              id="icon-upload"
+              accept=".svg"
+              @change="onFileChange"
+              class="file-input-hidden"
+            />
+            <label for="icon-upload" class="file-upload-btn">
+              <wa-icon name="upload"></wa-icon>
+              <span>Selecionar ficheiro SVG</span>
+            </label>
+            <div v-if="selectedFile || form.icon" class="file-upload-preview-area">
+              <img
+                v-if="selectedFileUrl"
+                :src="selectedFileUrl"
+                class="category-icon-preview"
+                alt="Novo ícone"
+              />
+              <img
+                v-else-if="form.icon"
+                :src="CONFIG.images_url + 'pin-images/' + form.icon"
+                class="category-icon-preview"
+                alt="Ícone atual"
+              />
+              <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
+            </div>
+          </div>
         </div>
 
         <div slot="footer" class="dialog-footer">
@@ -433,5 +542,87 @@ async function deleteCategory() {
   justify-content: flex-end;
   gap: var(--wa-space-s);
   margin-block-start: var(--wa-space-l);
+}
+
+.category-icon-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--wa-color-neutral-700);
+}
+
+.category-icon-preview :deep(svg) {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.no-icon {
+  color: var(--wa-color-neutral-400);
+  font-style: italic;
+}
+
+.form-label {
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-semibold);
+  color: var(--wa-color-neutral-700);
+  margin-block-end: var(--wa-space-2xs);
+}
+
+.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wa-space-xs);
+  padding: var(--wa-space-s) var(--wa-space-m);
+  border: 1px dashed var(--wa-color-neutral-300);
+  border-radius: var(--wa-border-radius-m);
+  background-color: var(--wa-color-neutral-50);
+  cursor: pointer;
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-medium);
+  transition: all 0.2s ease;
+}
+
+.file-upload-btn:hover {
+  border-color: var(--wa-color-brand-50);
+  background-color: var(--wa-color-neutral-100);
+}
+
+.file-upload-preview-area {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+  padding: var(--wa-space-xs) var(--wa-space-s);
+  border: 1px solid var(--wa-color-neutral-200);
+  border-radius: var(--wa-border-radius-m);
+  background-color: var(--wa-color-neutral-0);
+}
+
+.file-name {
+  font-size: var(--wa-font-size-xs);
+  color: var(--wa-color-neutral-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

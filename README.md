@@ -24,6 +24,10 @@ Update the supabase types:
 ```bash
 pnpm run gen:supabase
 ```
+Update migrations:
+```bash
+pnpm supabase db push
+```
 
 ### Start the project
 In VSCode, press F5 or click the Run button.

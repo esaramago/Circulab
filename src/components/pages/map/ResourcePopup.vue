@@ -48,7 +48,7 @@ watch(() => props.resourceId, async () => {
         </wa-button>
         <Grid gap="l" direction="column">
 
-          <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + resource?.images?.[0]?.url" :alt="resource?.title" />
+          <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0]?.url" :alt="resource?.title" />
           <div>
             <h2>{{ resource?.title }}</h2>
             <p>{{ resource?.category }} ({{ resource?.typology }})</p>
