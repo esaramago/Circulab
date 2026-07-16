@@ -62,14 +62,21 @@ The `src` folder contains the source code of the project.
 - `src/middleware.ts` is where we check user authentication and page access.
 
 ## Coding conventions
-- Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
 - Keep changes scoped to the request: avoid broad refactors or unrelated files.
 - Check `.editorconfig` and `.vscode/settings.json` for coding conventions.
-- Add type definitions to `src/types/` when needed.
+
+### Typescript
+- All type definitions should be in `src/types`.
+- Check if types are already available before creating new ones.
 - Use the `@/` alias for all imports.
 - Don't use semicolons at the end of the lines.
 
-## CSS
+### HTML and Components
+- Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
+- Before creating a new component, check if it is already available in the WebAwesome library.
+- Use the Grid component for the layout. Do not create new css for it.
+
+### CSS
 - Use WebAwesome custom properties instead of hardcoded values.
 - Keep styles aligned with tokens in `src/css/base/variables.css`.
 - Do not use inline styles.
@@ -78,6 +85,6 @@ The `src` folder contains the source code of the project.
 - Global styles should be in the `src/css/global` folder.
 - Always use CSS Logical Properties (e.g. `margin-block-start`) instead of `margin-top` and `margin-bottom`.
 
-## DevOps
+### DevOps
 - The project uses Docker and docker-compose for the development environment.
 - The project uses the Supabase CLI for the database.

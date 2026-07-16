@@ -13,7 +13,8 @@ export function getSafeRedirectPath(path: string | null | undefined): string {
 
   const delocalized = deLocalizeHref(path.split('?')[0] ?? path)
 
-  if (!delocalized.startsWith('/dashboard')) {
+  const isAllowed = delocalized.startsWith('/dashboard') || delocalized.startsWith('/backoffice')
+  if (!isAllowed) {
     return DEFAULT_REDIRECT
   }
 

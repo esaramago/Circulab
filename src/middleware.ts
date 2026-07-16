@@ -27,16 +27,25 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     const isLoginRoute = pathname.startsWith('/login')
     const isDashboardRoute = pathname.startsWith('/dashboard')
     const isResourceRoute = pathname.startsWith('/recursos')
-    const isPrivateRoute = isDashboardRoute || isResourceRoute
+    const isBackofficeRoute = pathname.startsWith('/backoffice')
+    const isPrivateRoute = isDashboardRoute || isResourceRoute || isBackofficeRoute
 
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
       const redirectParam = new URL(request.url).searchParams.get('redirect')
-      return redirect(localizeRedirectPath(redirectParam, locals.locale))
+      const target = localizeRedirectPath(redirectParam, locals.locale)
+      console.log(`[Middleware] Logged in user on login route. Redirecting to: ${target}`)
+      return redirect(target)
     } else if (isPrivateRoute && !locals.user) {
       const returnPath = pathname + new URL(request.url).search
-      return redirect(buildLoginRedirectUrl(returnPath, locals.locale))
+      const target = buildLoginRedirectUrl(returnPath, locals.locale)
+      console.log(`[Middleware] Guest user on private route. Redirecting to login: ${target}`)
+      return redirect(target)
     } else if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
+      console.log('[Middleware] User not authorized for dashboard. Redirecting to /')
+      return redirect(localizeHref('/'))
+    } else if (isBackofficeRoute && locals.user && !userHasAccess(locals.user, 'backoffice')) {
+      console.log('[Middleware] User not authorized for backoffice. Redirecting to /')
       return redirect(localizeHref('/'))
     }
 

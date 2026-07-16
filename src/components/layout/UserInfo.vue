@@ -18,6 +18,10 @@ async function logout() {
     window.location.href = localizeHref('/', { locale: props.locale })
   }
 }
+
+function goto(route: string) {
+  window.location.href = localizeHref(route, props.locale ? { locale: props.locale } : undefined)
+}
 </script>
 
 <template>
@@ -26,7 +30,8 @@ async function logout() {
       <wa-icon name="user" label="User"></wa-icon>
       {{ user?.email }}
     </wa-button>
-    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" :href="localizeHref('/dashboard', { locale: props.locale })">Dashboard</wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/dashboard')">Dashboard</wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'backoffice')" @click="goto('/backoffice')">Backoffice</wa-dropdown-item>
     <wa-dropdown-item @click="logout">Logout</wa-dropdown-item>
   </wa-dropdown>
 </template>

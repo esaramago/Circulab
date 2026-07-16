@@ -9,6 +9,9 @@ import vue from '@astrojs/vue'
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
+  devToolbar: {
+    enabled: false,
+  },
 
   adapter: node({
     mode: 'standalone',
