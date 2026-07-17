@@ -168,7 +168,7 @@ function showPopup(pin: Pin) {
   background-color: var(--wa-color-neutral-50);
   border: 1px solid var(--wa-color-brand-30);
   box-sizing: border-box;
-  padding: var(--wa-space-3xs);
+  padding: var(--wa-space-2xs);
   border-radius: var(--wa-border-radius-circle);
   font-size: var(--wa-font-size-s);
   font-weight: var(--wa-font-weight-semibold);
