@@ -20,6 +20,8 @@ export type Pin = Pick<PinRow, 'id' | 'title' | 'category_id'> & {
   typology: TypologyRow['name']
   category: CategoryRow['name']
   color?: TypologyRow['color'] | null
+  category_color?: CategoryRow['color'] | null
+  typology_color?: TypologyRow['color'] | null
   icon?: CategoryRow['icon'] | null
 }
 

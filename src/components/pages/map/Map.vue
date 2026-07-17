@@ -133,7 +133,8 @@ function addPins(pins: Pin[], map: Map, layer: LayerGroup) {
 function addPin(pin: Pin, map: Map, layer: LayerGroup) {
   if (!pin?.coordinates) return
 
-  const customStyle = pin.color ? `background-color: ${pin.color};` : ''
+  const pinColor = (filters.value.typology && pin.category_color) ? pin.category_color : pin.typology_color
+  const customStyle = pinColor ? `background-color: ${pinColor};` : ''
   const pinImage = pin.icon ? `<img src="${CONFIG.images_url + 'pin-images/' + pin.icon}" alt="${pin.title}" class="c-pin__image" />` : ''
   const pinIcon = new DivIcon({
     html: `<div class="c-pin" style="${customStyle}">${pinImage}</div>`,
