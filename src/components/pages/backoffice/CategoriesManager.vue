@@ -18,10 +18,11 @@ import type { CategoryRow, TypologyRow } from '@/types/database'
 const props = defineProps<{
   initialCategories: CategoryRow[]
   typologies: TypologyRow[]
+  initialSelectedTypologyId?: string
 }>()
 
 const categories = ref<CategoryRow[]>([...props.initialCategories])
-const selectedTypologyId = ref('')
+const selectedTypologyId = ref(props.initialSelectedTypologyId || '')
 const dialogOpen = ref(false)
 const deleteDialogOpen = ref(false)
 const isEditing = ref(false)
@@ -90,14 +91,13 @@ const filteredCategories = computed(() => {
   return list
 })
 
+const selectedTypology = computed(() => {
+  return props.typologies.find(t => t.id === selectedTypologyId.value)
+})
+
 function getTypologyName(typologyId: string) {
   const typology = props.typologies.find(t => t.id === typologyId)
   return typology ? typology.name : 'Desconhecida'
-}
-
-function onTypologyChange(event: any) {
-  const val = event.target?.value
-  selectedTypologyId.value = val || ''
 }
 
 function openCreateDialog() {
@@ -157,13 +157,16 @@ async function saveCategory() {
         .upload(path, file, {
           cacheControl: '3600',
           upsert: true,
-        })
+          })
 
       if (uploadError) {
         throw new Error(`Erro ao carregar o ícone: ${uploadError.message}`)
       }
       iconPath = path
     }
+
+    const hasCategoryColor = selectedTypology.value?.has_category_color !== false
+    const finalColor = hasCategoryColor ? (form.value.color || null) : null
 
     if (isEditing.value) {
       const { data, error } = await actions.updateCategory({
@@ -172,7 +175,7 @@ async function saveCategory() {
         description: form.value.description,
         typology_id: form.value.typology_id,
         icon: iconPath,
-        color: form.value.color || null,
+        color: finalColor,
       })
 
       if (error) {
@@ -194,7 +197,7 @@ async function saveCategory() {
         description: form.value.description,
         typology_id: form.value.typology_id,
         icon: iconPath,
-        color: form.value.color || null,
+        color: finalColor,
       })
 
       if (error) {
@@ -248,99 +251,68 @@ async function deleteCategory() {
 
 <template>
   <Grid direction="column" gap="l">
-    <!-- Selection Stage if no typology selected -->
-    <div v-if="!selectedTypologyId" class="typology-selector-card">
-      <h3>Selecione uma tipologia</h3>
-      <p>Selecione uma das tipologias abaixo para ver e gerir as respetivas categorias.</p>
-      <wa-select
-        placeholder="Selecione uma tipologia..."
-        @change="onTypologyChange"
-      >
-        <wa-option v-for="t in typologies" :key="t.id" :value="t.id">
-          {{ t.name }}
-        </wa-option>
-      </wa-select>
+    <!-- Feedback Message -->
+    <wa-callout v-if="feedback" :variant="feedback.type" class="manager__feedback">
+      {{ feedback.message }}
+    </wa-callout>
+
+    <div class="manager__header">
+      <div class="header-title-area">
+        <h2>Gestão de categorias &mdash; <span class="typology-title">{{ getTypologyName(selectedTypologyId) }}</span></h2>
+      </div>
+      <wa-button variant="primary" @click="openCreateDialog">
+        <wa-icon name="plus"></wa-icon>
+        Adicionar categoria
+      </wa-button>
     </div>
 
-    <!-- Full manager if typology is selected -->
-    <template v-else>
-      <div class="manager__header">
-        <div class="header-title-area">
-          <h2>Gestão de categorias</h2>
-          <wa-select
-            size="s"
-            :value="selectedTypologyId"
-            @change="onTypologyChange"
-            class="header-typology-select"
-          >
-            <wa-option v-for="t in typologies" :key="t.id" :value="t.id">
-              {{ t.name }}
-            </wa-option>
-          </wa-select>
-        </div>
-        <wa-button variant="primary" @click="openCreateDialog">
-          <wa-icon name="plus"></wa-icon>
-          Adicionar categoria
-        </wa-button>
-      </div>
-
-      <!-- Feedback Message -->
-      <wa-callout v-if="feedback" :variant="feedback.type" class="manager__feedback">
-        {{ feedback.message }}
-      </wa-callout>
-
-      <!-- Table -->
-      <div class="table-container">
-        <table class="manager__table">
-          <thead>
-            <tr>
-              <th>Ícone</th>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th>Tipologia</th>
-              <th>Cor</th>
-              <th class="text-end">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="category in filteredCategories" :key="category.id">
-              <td>
-                <img v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon" alt="Ícone" />
-                <span v-else class="no-icon">-</span>
-              </td>
-              <td><strong>{{ category.name }}</strong></td>
-              <td>{{ category.description || '-' }}</td>
-              <td>
-                <span class="badge">{{ getTypologyName(category.typology_id) }}</span>
-              </td>
-              <td>
-                <div v-if="category.color" class="color-preview-cell">
-                  <span 
-                    class="color-dot" 
-                    :style="{ backgroundColor: category.color }"
-                  ></span>
-                  <span class="color-text">{{ category.color }}</span>
-                </div>
-                <span v-else class="no-icon">-</span>
-              </td>
-              <td class="text-end actions-cell">
-                <wa-button size="s" @click="openEditDialog(category)">
-                  <wa-icon name="pen"></wa-icon>
-                  Editar
-                </wa-button>
-                <wa-button variant="danger" size="s" @click="confirmDelete(category)">
-                  <wa-icon name="trash"></wa-icon>
-                  Eliminar
-                </wa-button>
-              </td>
-            </tr>
-            <tr v-if="filteredCategories.length === 0">
-              <td colspan="6" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </template>
+    <!-- Table -->
+    <div class="table-container">
+      <table class="manager__table">
+        <thead>
+          <tr>
+            <th>Ícone</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th v-if="selectedTypology?.has_category_color !== false">Cor</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="category in filteredCategories" :key="category.id">
+            <td>
+              <img v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon" alt="Ícone" />
+              <span v-else class="no-icon">-</span>
+            </td>
+            <td><strong>{{ category.name }}</strong></td>
+            <td>{{ category.description || '-' }}</td>
+            <td v-if="selectedTypology?.has_category_color !== false">
+              <div v-if="category.color" class="color-preview-cell">
+                <span 
+                  class="color-dot" 
+                  :style="{ backgroundColor: category.color }"
+                ></span>
+                <span class="color-text">{{ category.color }}</span>
+              </div>
+              <span v-else class="no-icon">-</span>
+            </td>
+            <td class="text-end actions-cell">
+              <wa-button size="s" @click="openEditDialog(category)">
+                <wa-icon name="pen"></wa-icon>
+                Editar
+              </wa-button>
+              <wa-button variant="danger" size="s" @click="confirmDelete(category)">
+                <wa-icon name="trash"></wa-icon>
+                Eliminar
+              </wa-button>
+            </td>
+          </tr>
+          <tr v-if="filteredCategories.length === 0">
+            <td :colspan="selectedTypology?.has_category_color !== false ? 5 : 4" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Create/Edit Dialog -->
     <wa-dialog
@@ -407,7 +379,7 @@ async function deleteCategory() {
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="selectedTypology?.has_category_color !== false">
           <label class="form-label">Cor do pin (opcional)</label>
           <div class="color-input-wrapper">
             <input
@@ -529,16 +501,6 @@ async function deleteCategory() {
 
 .manager__table tbody tr:hover {
   background-color: var(--wa-color-neutral-100);
-}
-
-.badge {
-  display: inline-block;
-  padding: var(--wa-space-2xs) var(--wa-space-xs);
-  font-size: var(--wa-font-size-xs);
-  font-weight: var(--wa-font-weight-semibold);
-  border-radius: var(--wa-border-radius-pill);
-  background-color: var(--wa-color-brand-90);
-  color: var(--wa-color-brand-20);
 }
 
 .text-end {
@@ -711,5 +673,9 @@ async function deleteCategory() {
 
 .color-text-input {
   flex-grow: 1;
+}
+
+.typology-title {
+  color: var(--wa-color-brand-50);
 }
 </style>

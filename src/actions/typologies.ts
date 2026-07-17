@@ -44,7 +44,8 @@ export const updateTypology = defineAction({
         .update({
           name: input.name,
           description: input.description || null,
-          color: input.color || null
+          color: input.color || null,
+          has_category_color: input.has_category_color ?? true
         })
         .eq('id', input.id)
         .select('*')

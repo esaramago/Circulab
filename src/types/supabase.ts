@@ -330,6 +330,7 @@ export type Database = {
           color: string | null
           created_at: string
           description: string | null
+          has_category_color: boolean
           id: string
           name: string
         }
@@ -338,6 +339,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          has_category_color?: boolean
           id?: string
           name: string
         }
@@ -346,6 +348,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          has_category_color?: boolean
           id?: string
           name?: string
         }

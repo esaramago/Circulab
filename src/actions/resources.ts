@@ -24,7 +24,8 @@ export const getPins = defineAction({
           typology_id,
           typology: typology_id (
             color,
-            name
+            name,
+            has_category_color
           )
         )
       `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or 'approved'
@@ -38,6 +39,7 @@ export const getPins = defineAction({
       const pins = [] as Pin[]
 
       data.forEach((pin) => {
+        const hasCategoryColor = pin.categories?.typology?.has_category_color !== false
         pins.push({
           id: pin.id,
           title: pin.title,
@@ -49,8 +51,8 @@ export const getPins = defineAction({
           typology: pin.categories.typology.name,
           category_id: pin.category_id,
           typology_id: pin.categories.typology_id,
-          color: pin.categories?.color ?? pin.categories?.typology?.color ?? null,
-          category_color: pin.categories?.color ?? null,
+          color: (hasCategoryColor && pin.categories?.color) ? pin.categories.color : (pin.categories?.typology?.color ?? null),
+          category_color: (hasCategoryColor && pin.categories?.color) ? pin.categories.color : null,
           typology_color: pin.categories?.typology?.color ?? null,
           icon: pin.categories?.icon ?? null,
         })

@@ -5,4 +5,5 @@ export const updateTypologySchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   description: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
+  has_category_color: z.boolean().optional(),
 })

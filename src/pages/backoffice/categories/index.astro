@@ -1,6 +1,5 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import CategoriesManager from '@/components/pages/backoffice/CategoriesManager.vue'
 import { fetchDB } from '@/utils/fetchDB'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
@@ -13,33 +12,45 @@ if (!user || !userHasAccess(user, 'backoffice')) {
   return Astro.redirect('/')
 }
 
-// Fetch categories and typologies
-const { data: categoriesData } = await fetchDB('categories')
-  .select('*')
-  .order('created_at', { ascending: false })
-
+// Fetch typologies for selection
 const { data: typologiesData } = await fetchDB('typologies')
   .select('*')
   .order('name', { ascending: true })
 
-const categories = categoriesData || []
 const typologies = typologiesData || []
 ---
 
-<Layout title="Gestão de Categorias">
-  <Grid direction="column">
+<Layout title="Selecionar Tipologia">
+  <Grid direction="column" gap="l">
     <div class="backoffice-page__nav">
       <a class="back-link" href={localizeHref('/backoffice')}>
         <wa-icon name="arrow-left"></wa-icon>
         Voltar ao painel
       </a>
     </div>
-    
-    <CategoriesManager
-      client:only="vue"
-      initialCategories={categories}
-      typologies={typologies}
-    />
+
+    <div class="typology-selection">
+      <h2>Selecionar tipologia</h2>
+      <p class="subtitle">Escolha uma tipologia para gerir as suas categorias correspondentes.</p>
+
+      <div class="typology-grid">
+        {
+          typologies.map((t) => (
+            <a class="typology-card" href={localizeHref(`/backoffice/categories/${t.id}`)}>
+              <div class="typology-card__header">
+                <span class="color-indicator" style={`background-color: ${t.color || '#cccccc'}`}></span>
+                <h3>{t.name}</h3>
+              </div>
+              <p>{t.description || 'Sem descrição definida.'}</p>
+              <div class="typology-card__footer">
+                <span>Gerir categorias</span>
+                <wa-icon name="arrow-right"></wa-icon>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
   </Grid>
 </Layout>
 
@@ -62,5 +73,78 @@ const typologies = typologiesData || []
       color: var(--wa-color-brand-50);
       text-decoration: underline;
     }
+  }
+
+  .typology-selection {
+    margin-block-start: var(--wa-space-s);
+  }
+
+  .subtitle {
+    font-size: var(--wa-font-size-m);
+    color: var(--wa-color-neutral-600);
+    margin-block-end: var(--wa-space-xl);
+    margin-block-start: var(--wa-space-xs);
+  }
+
+  .typology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--wa-space-l);
+  }
+
+  .typology-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--wa-space-l);
+    border: 1px solid var(--wa-color-neutral-200);
+    border-radius: var(--wa-border-radius-l);
+    background-color: var(--wa-color-surface-default);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--wa-shadow-m);
+      border-color: var(--wa-color-brand-50);
+    }
+  }
+
+  .typology-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--wa-space-s);
+    margin-block-end: var(--wa-space-s);
+  }
+
+  .color-indicator {
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--wa-border-radius-circle);
+    flex-shrink: 0;
+  }
+
+  .typology-card h3 {
+    margin: 0;
+    font-size: var(--wa-font-size-m);
+    font-weight: var(--wa-font-weight-bold);
+  }
+
+  .typology-card p {
+    margin: 0;
+    font-size: var(--wa-font-size-s);
+    color: var(--wa-color-neutral-600);
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-block-end: var(--wa-space-l);
+  }
+
+  .typology-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+    color: var(--wa-color-brand-50);
   }
 </style>

@@ -7,6 +7,7 @@ import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
+import '@webawesome/checkbox/checkbox.js'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow } from '@/types/database'
 
@@ -26,6 +27,7 @@ const form = ref({
   name: '',
   description: '',
   color: '',
+  has_category_color: true,
 })
 
 function openEditDialog(typology: TypologyRow) {
@@ -34,6 +36,7 @@ function openEditDialog(typology: TypologyRow) {
     name: typology.name,
     description: typology.description || '',
     color: typology.color || '#ffffff',
+    has_category_color: typology.has_category_color !== false,
   }
   feedback.value = null
   dialogError.value = null
@@ -55,6 +58,7 @@ async function saveTypology() {
       name: form.value.name,
       description: form.value.description,
       color: form.value.color,
+      has_category_color: form.value.has_category_color,
     })
 
     if (error) {
@@ -99,6 +103,7 @@ async function saveTypology() {
             <th>Nome</th>
             <th>Descrição</th>
             <th>Cor</th>
+            <th>Cor nas categorias</th>
             <th class="text-end">Ações</th>
           </tr>
         </thead>
@@ -118,6 +123,10 @@ async function saveTypology() {
                 <span class="color-text">{{ typology.color || '-' }}</span>
               </div>
             </td>
+            <td>
+              <wa-icon v-if="typology.has_category_color" name="check" style="color: var(--wa-color-success-50);"></wa-icon>
+              <wa-icon v-else name="xmark" style="color: var(--wa-color-neutral-400);"></wa-icon>
+            </td>
             <td class="text-end actions-cell">
               <wa-button size="s" @click="openEditDialog(typology)">
                 <wa-icon name="pen"></wa-icon>
@@ -126,7 +135,7 @@ async function saveTypology() {
             </td>
           </tr>
           <tr v-if="typologies.length === 0">
-            <td colspan="5" class="text-center">Nenhuma tipologia encontrada.</td>
+            <td colspan="6" class="text-center">Nenhuma tipologia encontrada.</td>
           </tr>
         </tbody>
       </table>
@@ -183,6 +192,16 @@ async function saveTypology() {
               class="color-text-input"
             ></wa-input>
           </div>
+        </div>
+
+        <div class="form-group">
+          <wa-checkbox
+            name="has_category_color"
+            :checked="form.has_category_color"
+            @change="form.has_category_color = $event.target.checked"
+          >
+            <strong>Permitir cor nas categorias</strong>
+          </wa-checkbox>
         </div>
 
         <div slot="footer" class="dialog-footer">

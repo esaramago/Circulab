@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from 'vue'
+import { onMounted, ref, watch, computed, shallowRef } from 'vue'
 import { Map, TileLayer, LayerGroup, Marker, DivIcon, type TooltipOptions } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import ResourcePopup from './ResourcePopup.vue'
@@ -20,9 +20,9 @@ const props = defineProps<{
 }>()
 
 const activePin = ref<Pin | null>(null)
-const mapInstance = ref<Map | null>(null)
-const markersLayer = ref<LayerGroup | null>(null)
-const activeTileLayer = ref<TileLayer | null>(null)
+const mapInstance = shallowRef<Map | null>(null)
+const markersLayer = shallowRef<LayerGroup | null>(null)
+const activeTileLayer = shallowRef<TileLayer | null>(null)
 
 // Filter state
 const filters = ref({
