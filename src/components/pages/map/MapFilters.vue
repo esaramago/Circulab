@@ -98,14 +98,14 @@ function clearFilters() {
       <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
     <wa-select
-      v-if="category && characteristics.length"
+      v-if="category && characteristic?.length"
       placeholder="Característica"
       size="s"
       :value="characteristic"
       @input="characteristic = ($event.target as HTMLSelectElement).value"
       with-clear
     >
-      <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+      <wa-option v-for="item in characteristic" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
     <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || characteristic || search">
       Limpar
