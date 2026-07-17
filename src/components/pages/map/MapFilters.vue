@@ -5,6 +5,7 @@ import '@webawesome/option/option.js'
 import '@webawesome/button/button.js'
 import { ref, watch } from 'vue'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
+import { selectLayer } from '@/stores/map'
 
 const props = defineProps<{
   modelValue: {
@@ -46,6 +47,20 @@ watch([typology, category, characteristic, search], () => {
     search: search.value
   })
 }, { deep: true })
+
+// Auto-select "cartodb-positron" layer when "Lisboa Repair Map" typology is selected
+watch([typology, () => typologies.value], ([newTypologyId, list]) => {
+  if (newTypologyId && list && list.length > 0) {
+    const selectedTypology = list.find(t => t.id === newTypologyId)
+    if (selectedTypology) {
+      if (selectedTypology.code === 'repair-map') {
+        selectLayer('cartodb-positron')
+      } else if (selectedTypology.code === 'organic') {
+        selectLayer('voyager')
+      }
+    }
+  }
+}, { immediate: true })
 
 async function setTypology(id: string) {
   typology.value = id
