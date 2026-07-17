@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import ResourcePopup from './ResourcePopup.vue'
 import MapFilters from './MapFilters.vue'
 import type { Pin } from '@/types/domain/resource.ts'
+import { CONFIG } from '@/config'
 
 const props = defineProps<{
   pins: Pin[]
@@ -46,11 +47,7 @@ const filteredPins = computed(() => {
 const tooltipSize = 24;
 const tooltipAnchor = tooltipSize / 2;
 
-const pinIcon = new DivIcon({
-  html: `<div class="c-pin">O</div>`,
-  iconSize: [tooltipSize, tooltipSize],
-  iconAnchor: [tooltipAnchor, tooltipAnchor]
-})
+
 
 const tooltipOptions = {
   direction: 'top',
@@ -101,11 +98,23 @@ function addPins(pins: Pin[], map: Map, layer: LayerGroup) {
 function addPin(pin: Pin, map: Map, layer: LayerGroup) {
   if (!pin?.coordinates) return
 
+  const customStyle = pin.color ? `background-color: ${pin.color};` : ''
+  const pinImage = pin.icon ? `<img src="${CONFIG.images_url + 'pin-images/' + pin.icon}" alt="${pin.title}" class="c-pin__image" />` : ''
+  const pinIcon = new DivIcon({
+    html: `<div class="c-pin" style="${customStyle}">${pinImage}</div>`,
+    iconSize: [tooltipSize, tooltipSize],
+    iconAnchor: [tooltipAnchor, tooltipAnchor]
+  })
+
+  const tooltipContent = `
+    ${pin.title}<br>
+    <small>${pin.typology} - ${pin.category}</small>
+  `
   const markerLayer = new Marker([
     pin.coordinates.latitude,
     pin.coordinates.longitude],
     { icon: pinIcon })
-  .addTo(layer).bindTooltip(pin.title, tooltipOptions)
+  .addTo(layer).bindTooltip(tooltipContent, tooltipOptions)
 
   markerLayer.on('click', () => {
     showPopup(pin)
@@ -156,18 +165,25 @@ function showPopup(pin: Pin) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--wa-color-brand-50);
-  border: 2px solid var(--wa-color-brand-20);
+  background-color: var(--wa-color-neutral-50);
+  border: 1px solid var(--wa-color-brand-30);
   box-sizing: border-box;
+  padding: var(--wa-space-3xs);
   border-radius: var(--wa-border-radius-circle);
   font-size: var(--wa-font-size-s);
   font-weight: var(--wa-font-weight-semibold);
   text-align: center;
   line-height: 1;
   transition: transform 160ms ease;
+  color: var(--wa-color-neutral-30);
   &:hover {
     transform: scale(1.2);
   }
+}
+.c-pin__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .c-tooltip {
   padding: var(--wa-space-2xs) var(--wa-space-xs);

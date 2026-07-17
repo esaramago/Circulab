@@ -18,7 +18,13 @@ export const getPins = defineAction({
         category_id,
         coordinates: get_geojson,
         categories (
-          typology_id
+          icon,
+          name,
+          typology_id,
+          typology: typology_id (
+            color,
+            name
+          )
         )
       `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or 'approved'
       if (error) {
@@ -38,13 +44,16 @@ export const getPins = defineAction({
             latitude: geojson.getLatitude(pin.coordinates) ,
             longitude: geojson.getLongitude(pin.coordinates) ,
           },
+          category: pin.categories.name,
+          typology: pin.categories.typology.name,
           category_id: pin.category_id,
           typology_id: pin.categories.typology_id,
+          color: pin.categories?.typology?.color ?? null,
+          icon: pin.categories?.icon ?? null,
         })
       })
 
       return pins
-
 
     } catch (error: any) {
       throw new ActionError({

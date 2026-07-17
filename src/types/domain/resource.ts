@@ -17,6 +17,10 @@ export type Pin = Pick<PinRow, 'id' | 'title' | 'category_id'> & {
     longitude: number
   }
   typology_id: CategoryRow['typology_id']
+  typology: TypologyRow['name']
+  category: CategoryRow['name']
+  color?: TypologyRow['color'] | null
+  icon?: CategoryRow['icon'] | null
 }
 
 export type ResourcePopup = Pick<PinRow, 'id' | 'title' | 'description'> & {
