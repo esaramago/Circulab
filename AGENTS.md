@@ -75,6 +75,7 @@ The `src` folder contains the source code of the project.
 - Prefer **Astro components** for static markup; use client islands only when client-side JS is required.
 - Before creating a new component, check if it is already available in the WebAwesome library.
 - Use the Grid component for the layout. Do not create new css for it.
+- Do not set default values on the attributes of the components (ex: `<wa-button size="m">`).
 
 ### CSS
 - Use WebAwesome custom properties instead of hardcoded values.

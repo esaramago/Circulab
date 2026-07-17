@@ -24,3 +24,4 @@ export type { Resource } from '@/types/domain/resource'
 export type { ResourceType } from '@/schemas/resource.server'
 
 export type { Spacing } from '@/types/ui/grid'
+export type { MapLayer } from '@/types/domain/map'

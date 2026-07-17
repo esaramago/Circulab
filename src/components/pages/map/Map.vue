@@ -6,6 +6,14 @@ import ResourcePopup from './ResourcePopup.vue'
 import MapFilters from './MapFilters.vue'
 import type { Pin } from '@/types/domain/resource.ts'
 import { CONFIG } from '@/config'
+import { useStore } from '@nanostores/vue'
+import { $selectedLayerId, MAP_LAYERS, selectLayer } from '@/stores/map'
+import '@webawesome/button/button.js'
+import '@webawesome/dropdown/dropdown.js'
+import '@webawesome/dropdown-item/dropdown-item.js'
+import '@webawesome/icon/icon.js'
+
+const selectedLayerId = useStore($selectedLayerId)
 
 const props = defineProps<{
   pins: Pin[]
@@ -14,6 +22,7 @@ const props = defineProps<{
 const activePin = ref<Pin | null>(null)
 const mapInstance = ref<Map | null>(null)
 const markersLayer = ref<LayerGroup | null>(null)
+const activeTileLayer = ref<TileLayer | null>(null)
 
 // Filter state
 const filters = ref({
@@ -55,6 +64,36 @@ const tooltipOptions = {
   className: 'c-tooltip'
 } as TooltipOptions
 
+function updateTileLayer(layerId: string) {
+  if (!mapInstance.value) return
+
+  const layerSettings = MAP_LAYERS.find(l => l.id === layerId) || MAP_LAYERS[0]
+
+  if (activeTileLayer.value) {
+    mapInstance.value.removeLayer(activeTileLayer.value)
+  }
+
+  const options: Record<string, any> = {
+    attribution: layerSettings.attribution,
+    maxNativeZoom: 19,
+    maxZoom: 22,
+  }
+
+  if (layerSettings.subdomains) {
+    options.subdomains = layerSettings.subdomains
+  }
+
+  const newTileLayer = new TileLayer(layerSettings.url, options)
+
+  newTileLayer.addTo(mapInstance.value)
+  activeTileLayer.value = newTileLayer
+}
+
+// Watch for layer changes in the store
+watch(selectedLayerId, (newLayerId) => {
+  updateTileLayer(newLayerId)
+})
+
 // Watch for filter changes and update markers
 watch(filteredPins, (newPins) => {
   if (mapInstance.value && markersLayer.value) {
@@ -71,14 +110,10 @@ onMounted(() => {
     zoom: 14,
   })
   
-  new TileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxNativeZoom: 19,
-    maxZoom: 22,
-  }).addTo(map)
-
   mapInstance.value = map
+  
+  // Initialize the active tile layer
+  updateTileLayer(selectedLayerId.value)
   
   // Create markers layer
   const layer = new LayerGroup()
@@ -126,39 +161,33 @@ function showPopup(pin: Pin) {
 }
 </script>
 
-<style scoped>
-#map {
-  position: relative;
-  flex: 1;
-  overflow: hidden;
-  @media (min-width: 768px) {
-    border-radius: var(--wa-border-radius-l);
-  }
-}
-</style>
-
 <template>
   <div class="c-map-container">
     <MapFilters v-model="filters" />
     <div id="map"></div>
+    
+    <div class="map-actions">
+      <wa-dropdown placement="bottom-end">
+        <wa-button slot="trigger" size="s" variant="neutral">
+          <wa-icon name="layer-group" label="Layers"></wa-icon>
+        </wa-button>
+        <wa-dropdown-item
+          v-for="layer in MAP_LAYERS"
+          :key="layer.id"
+          :checked="selectedLayerId === layer.id"
+          @click="selectLayer(layer.id)"
+          :class="{ 'is-active': selectedLayerId === layer.id }"
+        >
+          {{ layer.name }}
+        </wa-dropdown-item>
+      </wa-dropdown>
+    </div>
+
     <ResourcePopup :open="activePin !== null" :resourceId="activePin?.id ?? null" @close="activePin = null" />
   </div>
 </template>
 
 <style>
-.c-map-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-.leaflet-container {
-  font-family: inherit;
-}
-.leaflet-marker-icon {
-  border: none !important;
-  background-color: transparent !important;
-}
 .c-pin {
   height: 100%;
   position: relative;
@@ -185,6 +214,13 @@ function showPopup(pin: Pin) {
   height: 100%;
   object-fit: cover;
 }
+.leaflet-container {
+  font-family: inherit;
+}
+.leaflet-marker-icon {
+  border: none !important;
+  background-color: transparent !important;
+}
 .c-tooltip {
   padding: var(--wa-space-2xs) var(--wa-space-xs);
   font-size: var(--wa-font-size-xs);
@@ -198,5 +234,36 @@ function showPopup(pin: Pin) {
   &::before {
     display: none;
   }
+}
+</style>
+<style scoped>
+#map {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  @media (min-width: 768px) {
+    border-radius: var(--wa-border-radius-l);
+  }
+}
+.map-actions {
+  position: absolute;
+  inset-inline-start: 1rem;
+  inset-block-start: 10rem;
+  z-index: 1001;
+
+  wa-button::part(base) {
+    border-radius: var(--wa-border-radius-xs);
+    border-color: var(--wa-color-neutral-60);
+  }
+  .is-active {
+    color: var(--wa-color-neutral-20);
+    background-color: var(--wa-color-neutral-90);
+  }
+}
+.c-map-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 </style>
