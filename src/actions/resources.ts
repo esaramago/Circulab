@@ -20,6 +20,7 @@ export const getPins = defineAction({
         categories (
           icon,
           name,
+          color,
           typology_id,
           typology: typology_id (
             color,
@@ -48,7 +49,7 @@ export const getPins = defineAction({
           typology: pin.categories.typology.name,
           category_id: pin.category_id,
           typology_id: pin.categories.typology_id,
-          color: pin.categories?.typology?.color ?? null,
+          color: pin.categories?.color ?? pin.categories?.typology?.color ?? null,
           icon: pin.categories?.icon ?? null,
         })
       })

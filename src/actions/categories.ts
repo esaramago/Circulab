@@ -44,7 +44,8 @@ export const addCategory = defineAction({
           name: input.name,
           description: input.description || null,
           typology_id: input.typology_id,
-          icon: input.icon || null
+          icon: input.icon || null,
+          color: input.color || null
         })
         .select('*')
         .single()
@@ -111,7 +112,8 @@ export const updateCategory = defineAction({
           name: input.name,
           description: input.description || null,
           typology_id: input.typology_id,
-          icon: input.icon || null
+          icon: input.icon || null,
+          color: input.color || null
         })
         .eq('id', input.id)
         .select('*')

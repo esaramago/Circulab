@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       categories: {
         Row: {
+          color: string | null
           created_at: string
           description: string | null
           icon: string | null
@@ -24,6 +25,7 @@ export type Database = {
           typology_id: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
           description?: string | null
           icon?: string | null
@@ -32,6 +34,7 @@ export type Database = {
           typology_id: string
         }
         Update: {
+          color?: string | null
           created_at?: string
           description?: string | null
           icon?: string | null

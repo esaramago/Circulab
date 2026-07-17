@@ -37,6 +37,7 @@ const form = ref({
   description: '',
   typology_id: '',
   icon: '',
+  color: '',
 })
 
 const selectedFile = ref<File | null>(null)
@@ -107,6 +108,7 @@ function openCreateDialog() {
     description: '',
     typology_id: selectedTypologyId.value || (props.typologies.length > 0 ? props.typologies[0].id : ''),
     icon: '',
+    color: '',
   }
   selectedFile.value = null
   selectedFileUrl.value = null
@@ -123,6 +125,7 @@ function openEditDialog(category: CategoryRow) {
     description: category.description || '',
     typology_id: category.typology_id,
     icon: category.icon || '',
+    color: category.color || '',
   }
   selectedFile.value = null
   selectedFileUrl.value = null
@@ -169,6 +172,7 @@ async function saveCategory() {
         description: form.value.description,
         typology_id: form.value.typology_id,
         icon: iconPath,
+        color: form.value.color || null,
       })
 
       if (error) {
@@ -190,6 +194,7 @@ async function saveCategory() {
         description: form.value.description,
         typology_id: form.value.typology_id,
         icon: iconPath,
+        color: form.value.color || null,
       })
 
       if (error) {
@@ -293,6 +298,7 @@ async function deleteCategory() {
               <th>Nome</th>
               <th>Descrição</th>
               <th>Tipologia</th>
+              <th>Cor</th>
               <th class="text-end">Ações</th>
             </tr>
           </thead>
@@ -307,6 +313,16 @@ async function deleteCategory() {
               <td>
                 <span class="badge">{{ getTypologyName(category.typology_id) }}</span>
               </td>
+              <td>
+                <div v-if="category.color" class="color-preview-cell">
+                  <span 
+                    class="color-dot" 
+                    :style="{ backgroundColor: category.color }"
+                  ></span>
+                  <span class="color-text">{{ category.color }}</span>
+                </div>
+                <span v-else class="no-icon">-</span>
+              </td>
               <td class="text-end actions-cell">
                 <wa-button size="s" @click="openEditDialog(category)">
                   <wa-icon name="pen"></wa-icon>
@@ -319,7 +335,7 @@ async function deleteCategory() {
               </td>
             </tr>
             <tr v-if="filteredCategories.length === 0">
-              <td colspan="5" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
+              <td colspan="6" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
             </tr>
           </tbody>
         </table>
@@ -374,7 +390,7 @@ async function deleteCategory() {
               <span>Selecionar ficheiro SVG</span>
             </label>
             <div v-if="selectedFile || form.icon" class="file-upload-preview-area">
-              <img
+               <img
                 v-if="selectedFileUrl"
                 :src="selectedFileUrl"
                 class="category-icon-preview"
@@ -388,6 +404,25 @@ async function deleteCategory() {
               />
               <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
             </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cor do pin (opcional)</label>
+          <div class="color-input-wrapper">
+            <input
+              type="color"
+              :value="form.color || '#ffffff'"
+              @input="form.color = $event.target.value"
+              class="color-picker"
+            />
+            <wa-input
+              name="color"
+              :value="form.color"
+              @input="form.color = $event.target.value"
+              placeholder="#FFFFFF"
+              class="color-text-input"
+            ></wa-input>
           </div>
         </div>
 
@@ -624,5 +659,57 @@ async function deleteCategory() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.color-preview-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
+}
+
+.color-dot {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--wa-border-radius-circle);
+  border: 1px solid var(--wa-color-neutral-300);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.color-text {
+  font-family: monospace;
+  font-size: var(--wa-font-size-s);
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+}
+
+.color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 3.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--wa-color-neutral-300);
+  border-radius: var(--wa-border-radius-m);
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--wa-border-radius-m) - 1px);
+}
+
+.color-text-input {
+  flex-grow: 1;
 }
 </style>

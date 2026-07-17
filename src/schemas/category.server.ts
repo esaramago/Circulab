@@ -6,4 +6,5 @@ export const categorySchema = z.object({
   description: z.string().optional().nullable(),
   typology_id: z.string().min(1, 'Tipologia é obrigatória'),
   icon: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
 })
