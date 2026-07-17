@@ -72,7 +72,6 @@ export const addCategory = defineAction({
 export const updateCategory = defineAction({
   input: z.any(),
   handler: async (rawInput, { request, cookies }) => {
-    console.log('[Actions] updateCategory rawInput:', rawInput)
     const result = categorySchema.extend({ id: z.string().min(1) }).safeParse(rawInput)
     if (!result.success) {
       console.error('[Actions] updateCategory validation failed:', result.error.format())

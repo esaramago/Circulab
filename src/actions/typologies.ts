@@ -51,9 +51,14 @@ export const updateTypology = defineAction({
         .single()
 
       if (error) {
+        let code: ActionErrorCode = 'INTERNAL_SERVER_ERROR'
+        if (error.code === '42501') code = 'FORBIDDEN'
+        else if (error.code === 'PGRST116') code = 'NOT_FOUND'
+        else if (error.code === '23505') code = 'CONFLICT'
+
         throw new ActionError({
           message: error.message || 'Failed to update typology',
-          code: error.code as ActionErrorCode
+          code
         })
       }
 
