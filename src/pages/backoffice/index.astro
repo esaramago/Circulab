@@ -28,11 +28,26 @@ if (!user || !userHasAccess(user, 'backoffice')) {
     <Grid gap="l">
       <wa-card class="admin-card">
         <div class="admin-card__icon">
+          <wa-icon name="layer-group"></wa-icon>
+        </div>
+        <div class="admin-card__content">
+          <h3>Tipologias</h3>
+          <p>Gerir as tipologias de recursos no mapa.</p>
+        </div>
+        <div slot="footer">
+          <wa-button variant="primary" href={localizeHref('/backoffice/typologies')} size="s">
+            Gerir tipologias
+            <wa-icon name="arrow-right" slot="suffix"></wa-icon>
+          </wa-button>
+        </div>
+      </wa-card>
+      <wa-card class="admin-card">
+        <div class="admin-card__icon">
           <wa-icon name="tags"></wa-icon>
         </div>
         <div class="admin-card__content">
           <h3>Categorias</h3>
-          <p>Gerir as categorias e typologias de recursos no mapa.</p>
+          <p>Gerir as categorias de recursos no mapa.</p>
         </div>
         <div slot="footer">
           <wa-button variant="primary" href={localizeHref('/backoffice/categories')} size="s">
@@ -41,8 +56,6 @@ if (!user || !userHasAccess(user, 'backoffice')) {
           </wa-button>
         </div>
       </wa-card>
-
-      <!-- Placeholder cards for future backoffice sections can be added here -->
     </Grid>
   </div>
 </Layout>

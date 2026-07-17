@@ -6,6 +6,7 @@ import { updatePassword } from './auth/updatePassword'
 import { getSession } from './auth/getSession'
 import { getPins, addResource, getResources, getResource } from './resources'
 import { addCategory, updateCategory, deleteCategory } from './categories'
+import { updateTypology } from './typologies'
 
 export const server = {
   signIn,
@@ -21,4 +22,5 @@ export const server = {
   addCategory,
   updateCategory,
   deleteCategory,
+  updateTypology,
 }
