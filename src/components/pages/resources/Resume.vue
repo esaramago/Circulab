@@ -99,8 +99,8 @@ async function handleSubmit() {
       title: resumeData.value?.title || '',
       description: resumeData.value?.description || '',
       coordinates: {
-        latitude: Number(resumeData.value?.coordinates?.latitude) || 0,
-        longitude: Number(resumeData.value?.coordinates?.longitude) || 0,
+        latitude: Number(resumeData.value?.coordinates?.latitude),
+        longitude: Number(resumeData.value?.coordinates?.longitude),
       },
       typology_id: resumeData.value?.typology_id || '',
       category_id: resumeData.value?.category_id || '',

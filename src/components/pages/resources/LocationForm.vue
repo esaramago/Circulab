@@ -40,6 +40,10 @@ const sortedPhoneAreaCodes = computed(() => {
   return sorted
 })
 
+const hasCoordinates = computed(() => {
+  return draft.value.coordinates && draft.value.coordinates.latitude && draft.value.coordinates.longitude
+})
+
 const phoneSelectRef = ref<any>(null)
 
 watch(() => draft.value.phone_area_code, async newVal => {
@@ -99,7 +103,7 @@ function initMap() {
   let initialLng = storeValue.coordinates?.longitude
 
   // Se for o valor inicial (0,0), use coordenadas padrão de Lisboa
-  if (initialLat === 0 && initialLng === 0) {
+  if (!initialLat || !initialLng) {
     initialLat = 38.74
     initialLng = -9.14
   }
@@ -279,6 +283,8 @@ function handleSubmit(event: Event) {
     event.preventDefault()
   }
 }
+
+
 </script>
 
 <template>
@@ -289,15 +295,17 @@ function handleSubmit(event: Event) {
     @submit="handleSubmit"
   >
     <Grid gap="xl" direction="column">
-      <div id="map"></div>
+      <Grid gap="xs" direction="column">
+        <div id="map"></div>
+        <p class="u-text-small">
+          Coordenadas:
+          <template v-if="hasCoordinates"><span class="u-font-monospace">{{ draft.coordinates?.latitude }}</span>, <span class="u-font-monospace">{{ draft.coordinates?.longitude }}</span></template>
+          <template v-else>Sem coordenadas</template>
+        </p>
+      </Grid>
+      <input name="latitude" label="Latitude" type="hidden" required :value="draft.coordinates?.latitude">
+      <input name="longitude" label="Longitude" type="hidden" required :value="draft.coordinates?.longitude">
       <wa-input name="location_name" label="Nome do local" @input="handleInput" :value="draft.location_name"></wa-input>
-      <fieldset :class="{ 'is-hidden': isTypologyRepairMap }">
-        <legend appearance="h2">Coordenadas</legend>
-        <Grid fullWidth>
-          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.coordinates?.latitude"></wa-input>
-          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.coordinates?.longitude"></wa-input>
-        </Grid>
-      </fieldset>
       <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
       <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
 

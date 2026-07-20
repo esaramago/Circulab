@@ -2,3 +2,7 @@
   font-size: var(--wa-font-size-s);
   color: var(--wa-color-neutral-70);
 }
+
+.u-font-monospace {
+  font-family: monospace;
+}
