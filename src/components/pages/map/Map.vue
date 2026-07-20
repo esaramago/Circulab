@@ -56,7 +56,7 @@ const filteredPins = computed(() => {
   })
 })
 
-const tooltipSize = 32
+const tooltipSize = 24
 const tooltipAnchor = tooltipSize / 2
 
 const tooltipOptions = {
@@ -221,9 +221,8 @@ function showPopup(pin: Pin) {
   align-items: center;
   justify-content: center;
   padding: var(--wa-space-2xs);
-  box-sizing: border-box;
   box-shadow: var(--wa-shadow-s);
-  background-color: var(--wa-color-neutral-50);
+  background-color: var(--wa-color-neutral-20);
   border-radius: var(--wa-border-radius-circle);
   border: 2px solid #FFF;
   font-size: var(--wa-font-size-xs);
@@ -238,9 +237,9 @@ function showPopup(pin: Pin) {
   }
 }
 .c-pin--cluster {
-  opacity: 0.7;
-  border: 3px solid var(--wa-color-neutral-60);
-  outline: 3px solid var(--wa-color-neutral-70);
+  opacity: 0.4;
+  border: 3px solid var(--wa-color-neutral-40);
+  outline: 3px solid var(--wa-color-neutral-60);
 }
 .c-pin--cluster--l {
   border-width: 4px;

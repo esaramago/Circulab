@@ -243,3 +243,56 @@ export const addResource = defineAction({
     }
   },
 })
+
+export const deleteResource = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  handler: async (input: { id: string }, { request, cookies }) => {
+    try {
+      const supabase = createClient({ request, cookies })
+      const { data: auth, error: authError } = await supabase.auth.getUser()
+
+      if (authError || !auth.user) {
+        throw new ActionError({
+          message: 'Not authenticated',
+          code: 'UNAUTHORIZED',
+        })
+      }
+
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('*, roles(*)')
+        .eq('id', auth.user.id)
+        .single()
+
+      if (profileError || !['admin', 'moderator'].includes(userProfile?.roles?.code || '')) {
+        throw new ActionError({
+          message: 'Not authorized',
+          code: 'UNAUTHORIZED',
+        })
+      }
+
+      const { error } = await supabase
+        .from('pins')
+        .delete()
+        .eq('id', input.id)
+
+      if (error) {
+        throw new ActionError({
+          message: error.message || 'Failed to delete resource',
+          code: error.code as ActionErrorCode,
+        })
+      }
+
+      return { success: true }
+    } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      throw new ActionError({
+        message: error.message || 'Failed to delete resource',
+        code: 'INTERNAL_SERVER_ERROR',
+      })
+    }
+  },
+})
+
