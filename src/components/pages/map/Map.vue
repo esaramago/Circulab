@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, computed, shallowRef } from 'vue'
-import { Map, TileLayer, LayerGroup, Marker, DivIcon, type TooltipOptions } from 'leaflet'
+import L, { Map, TileLayer, Marker, DivIcon, type TooltipOptions } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import ResourcePopup from './ResourcePopup.vue'
 import MapFilters from './MapFilters.vue'
 import type { Pin } from '@/types/domain/resource.ts'
@@ -21,7 +24,7 @@ const props = defineProps<{
 
 const activePin = ref<Pin | null>(null)
 const mapInstance = shallowRef<Map | null>(null)
-const markersLayer = shallowRef<LayerGroup | null>(null)
+const markersLayer = shallowRef<L.MarkerClusterGroup | null>(null)
 const activeTileLayer = shallowRef<TileLayer | null>(null)
 
 // Filter state
@@ -53,10 +56,8 @@ const filteredPins = computed(() => {
   })
 })
 
-const tooltipSize = 24;
-const tooltipAnchor = tooltipSize / 2;
-
-
+const tooltipSize = 32
+const tooltipAnchor = tooltipSize / 2
 
 const tooltipOptions = {
   direction: 'top',
@@ -115,8 +116,25 @@ onMounted(() => {
   // Initialize the active tile layer
   updateTileLayer(selectedLayerId.value)
   
-  // Create markers layer
-  const layer = new LayerGroup()
+  // Create markers cluster layer with custom aggregated pin template
+  const layer = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    iconCreateFunction: (cluster) => {
+      const childCount = cluster.getChildCount()
+      let sizeClass = ''
+      if (childCount >= 100) {
+        sizeClass = 'c-pin--cluster--xl'
+      } else if (childCount >= 10) {
+        sizeClass = 'c-pin--cluster--l'
+      }
+
+      return new DivIcon({
+        html: `<div class="c-pin c-pin--cluster ${sizeClass}"><span>${childCount}</span></div>`,
+        iconSize: [tooltipSize, tooltipSize],
+        iconAnchor: [tooltipAnchor, tooltipAnchor]
+      })
+    }
+  })
   layer.addTo(map)
   markersLayer.value = layer
   
@@ -124,14 +142,19 @@ onMounted(() => {
   addPins(filteredPins.value, map, layer)
 })
 
-function addPins(pins: Pin[], map: Map, layer: LayerGroup) {
+function addPins(pins: Pin[], map: Map, layer: L.MarkerClusterGroup) {
+  const markers: Marker[] = []
   pins.forEach(pin => {
-    addPin(pin, map, layer)
+    const marker = createPinMarker(pin)
+    if (marker) {
+      markers.push(marker)
+    }
   })
+  layer.addLayers(markers)
 }
 
-function addPin(pin: Pin, map: Map, layer: LayerGroup) {
-  if (!pin?.coordinates) return
+function createPinMarker(pin: Pin): Marker | null {
+  if (!pin?.coordinates) return null
 
   const pinColor = (filters.value.typology && pin.category_color) ? pin.category_color : pin.typology_color
   const customStyle = pinColor ? `background-color: ${pinColor};` : ''
@@ -146,17 +169,18 @@ function addPin(pin: Pin, map: Map, layer: LayerGroup) {
     ${pin.title}<br>
     <small>${pin.typology} - ${pin.category}</small>
   `
-  const markerLayer = new Marker([
+  const marker = new Marker([
     pin.coordinates?.latitude,
     pin.coordinates?.longitude],
     { icon: pinIcon })
-  .addTo(layer).bindTooltip(tooltipContent, tooltipOptions)
+  .bindTooltip(tooltipContent, tooltipOptions)
 
-  markerLayer.on('click', () => {
+  marker.on('click', () => {
     showPopup(pin)
   })
-}
 
+  return marker
+}
 function showPopup(pin: Pin) {
   activePin.value = pin // set active pin
 }
@@ -190,33 +214,49 @@ function showPopup(pin: Pin) {
 
 <style>
 .c-pin {
-  height: 100%;
   position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--wa-color-neutral-50);
-  border: 1px solid var(--wa-color-brand-30);
-  box-sizing: border-box;
   padding: var(--wa-space-2xs);
+  box-sizing: border-box;
+  box-shadow: var(--wa-shadow-s);
+  background-color: var(--wa-color-neutral-50);
   border-radius: var(--wa-border-radius-circle);
-  font-size: var(--wa-font-size-s);
+  border: 2px solid #FFF;
+  font-size: var(--wa-font-size-xs);
   font-weight: var(--wa-font-weight-semibold);
+  color: var(--wa-color-neutral-30);
   text-align: center;
   line-height: 1;
   transition: transform 160ms ease;
-  color: var(--wa-color-neutral-30);
+  color: #FFF;
   &:hover {
     transform: scale(1.2);
   }
+}
+.c-pin--cluster {
+  opacity: 0.7;
+  border: 3px solid var(--wa-color-neutral-60);
+  outline: 3px solid var(--wa-color-neutral-70);
+}
+.c-pin--cluster--l {
+  border-width: 4px;
+  outline-width: 4px;
+}
+.c-pin--cluster--xl {
+  border-width: 6px;
+  outline-width: 6px;
+}
+.leaflet-container {
+  font-family: inherit;
 }
 .c-pin__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.leaflet-container {
-  font-family: inherit;
 }
 .leaflet-marker-icon {
   border: none !important;

@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.110.6",
     "astro": "^6.4.8",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "nanostores": "^1.4.0",
     "vue": "^3.5.39"
   },
@@ -32,6 +33,7 @@
     "@inlang/cli": "^3.1.15",
     "@inlang/paraglide-js": "^2.22.0",
     "@types/leaflet": "^1.9.21",
+    "@types/leaflet.markercluster": "^1.5.5",
     "supabase": "^2.109.1",
     "typescript": "^6.0.3"
   }
