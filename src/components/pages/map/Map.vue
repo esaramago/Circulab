@@ -147,8 +147,8 @@ function addPin(pin: Pin, map: Map, layer: LayerGroup) {
     <small>${pin.typology} - ${pin.category}</small>
   `
   const markerLayer = new Marker([
-    pin.coordinates.latitude,
-    pin.coordinates.longitude],
+    pin.coordinates?.latitude,
+    pin.coordinates?.longitude],
     { icon: pinIcon })
   .addTo(layer).bindTooltip(tooltipContent, tooltipOptions)
 

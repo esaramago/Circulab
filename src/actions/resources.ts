@@ -192,8 +192,8 @@ export const addResource = defineAction({
         postal_code: input.postal_code || '',
         location: input.location || null,
         coordinates: geographyPointEwkt(
-          Number(input.coordinates.longitude),
-          Number(input.coordinates.latitude),
+          Number(input.coordinates?.longitude),
+          Number(input.coordinates?.latitude),
         ),
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
@@ -219,8 +219,8 @@ export const addResource = defineAction({
         description: input.description || '',
         images: input.images || [],
         coordinates: geographyPointEwkt(
-          Number(input.coordinates.longitude),
-          Number(input.coordinates.latitude),
+          Number(input.coordinates?.longitude),
+          Number(input.coordinates?.latitude),
         ),
         category_id: input.category_id,
         characteristics_ids: input.characteristics_ids,

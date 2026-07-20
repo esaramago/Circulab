@@ -99,8 +99,8 @@ async function handleSubmit() {
       title: resumeData.value?.title || '',
       description: resumeData.value?.description || '',
       coordinates: {
-        latitude: Number(resumeData.value?.coordinates.latitude) || 0,
-        longitude: Number(resumeData.value?.coordinates.longitude) || 0,
+        latitude: Number(resumeData.value?.coordinates?.latitude) || 0,
+        longitude: Number(resumeData.value?.coordinates?.longitude) || 0,
       },
       typology_id: resumeData.value?.typology_id || '',
       category_id: resumeData.value?.category_id || '',
@@ -144,7 +144,7 @@ async function handleSubmit() {
     <li>Categoria: {{ resumeData?.category_id }}</li>
     <li>Características: {{ resumeData?.characteristics_ids?.join(', ') }}</li>
     <li>Localização: {{ resumeData?.location_name }}</li>
-    <li>Coordenadas: {{ resumeData?.coordinates.latitude }}, {{ resumeData?.coordinates.longitude }}</li>
+    <li>Coordenadas: {{ resumeData?.coordinates?.latitude }}, {{ resumeData?.coordinates?.longitude }}</li>
     <li>Morada: {{ resumeData?.address }}</li>
     <li>Código postal: {{ resumeData?.postal_code }}</li>
     <li>Email: {{ resumeData?.email }}</li>

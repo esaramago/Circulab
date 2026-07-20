@@ -95,8 +95,8 @@ function updateMarker(lat: number, lng: number) {
 
 function initMap() {
   const storeValue = $locationDraft.get()
-  let initialLat = storeValue.coordinates.latitude
-  let initialLng = storeValue.coordinates.longitude
+  let initialLat = storeValue.coordinates?.latitude
+  let initialLng = storeValue.coordinates?.longitude
 
   // Se for o valor inicial (0,0), use coordenadas padrão de Lisboa
   if (initialLat === 0 && initialLng === 0) {
@@ -173,7 +173,7 @@ function handleInput(event: Event) {
     const numValue = field.value === '' ? draft.value.coordinates[name as 'latitude' | 'longitude'] : Number(field.value)
     const newCoords = { ...draft.value.coordinates, [name as 'latitude' | 'longitude']: numValue }
     updateDraft({ coordinates: newCoords })
-    updateMarker(newCoords.latitude, newCoords.longitude)
+    updateMarker(newCoords?.latitude, newCoords?.longitude)
     return
   }
 
@@ -217,11 +217,11 @@ async function handleChange(event: Event) {
   if (coordinates) {
     updateDraft({
       coordinates: {
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude
+        latitude: coordinates?.latitude,
+        longitude: coordinates?.longitude
       }
     })
-    updateMarker(coordinates.latitude, coordinates.longitude)
+    updateMarker(coordinates?.latitude, coordinates?.longitude)
   }
 }
 
@@ -294,8 +294,8 @@ function handleSubmit(event: Event) {
       <fieldset :class="{ 'is-hidden': isTypologyRepairMap }">
         <legend appearance="h2">Coordenadas</legend>
         <Grid fullWidth>
-          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.coordinates.latitude"></wa-input>
-          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.coordinates.longitude"></wa-input>
+          <wa-input name="latitude" type="number" step="any" label="Latitude" required @input="handleInput" hint="Formato: 38,730000" :value="draft.coordinates?.latitude"></wa-input>
+          <wa-input name="longitude" type="number" step="any" label="Longitude" required @input="handleInput" hint="Formato: -9,130000" :value="draft.coordinates?.longitude"></wa-input>
         </Grid>
       </fieldset>
       <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
