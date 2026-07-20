@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, computed, shallowRef } from 'vue'
-import L, { Map, TileLayer, Marker, DivIcon, type TooltipOptions } from 'leaflet'
+import L, { type Map as LeafletMap, TileLayer, Marker, DivIcon, type TooltipOptions } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -22,8 +22,9 @@ const props = defineProps<{
   pins: Pin[]
 }>()
 
+const mapContainer = ref<HTMLElement | null>(null)
 const activePin = ref<Pin | null>(null)
-const mapInstance = shallowRef<Map | null>(null)
+const mapInstance = shallowRef<LeafletMap | null>(null)
 const markersLayer = shallowRef<L.MarkerClusterGroup | null>(null)
 const activeTileLayer = shallowRef<TileLayer | null>(null)
 
@@ -98,15 +99,59 @@ watch(selectedLayerId, (newLayerId) => {
 // Watch for filter changes and update markers
 watch(filteredPins, (newPins) => {
   if (mapInstance.value && markersLayer.value) {
-    // Clear existing markers
-    markersLayer.value.clearLayers()
-    // Add new markers
     addPins(newPins, mapInstance.value, markersLayer.value)
   }
 }, { deep: true })
 
+const svgCache = new Map<string, string>()
+const pendingSvgFetches = new Map<string, Promise<string>>()
+
+async function getSvgContent(iconName: string): Promise<string> {
+  if (!iconName) return ''
+  if (iconName.trim().startsWith('<svg')) {
+    return iconName
+  }
+  if (svgCache.has(iconName)) {
+    return svgCache.get(iconName)!
+  }
+  if (pendingSvgFetches.has(iconName)) {
+    return pendingSvgFetches.get(iconName)!
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const url = `${CONFIG.images_url}pin-images/${iconName}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const svgText = await res.text()
+      svgCache.set(iconName, svgText)
+      return svgText
+    } catch (err) {
+      console.error(`Failed to fetch SVG icon: ${iconName}`, err)
+      return ''
+    } finally {
+      pendingSvgFetches.delete(iconName)
+    }
+  })()
+
+  pendingSvgFetches.set(iconName, fetchPromise)
+  return fetchPromise
+}
+
+async function fetchSvgIcons(pins: Pin[]) {
+  const uniqueIcons = Array.from(new Set(pins.map(p => p.icon).filter(Boolean))) as string[]
+  await Promise.all(uniqueIcons.map(icon => getSvgContent(icon)))
+}
+
+function getSvgFromCache(iconName: string | null | undefined): string {
+  if (!iconName) return ''
+  return svgCache.get(iconName) || (iconName.trim().startsWith('<svg') ? iconName : '')
+}
+
 onMounted(() => {
-  const map = new Map('map', {
+  if (!mapContainer.value) return
+
+  const map = new L.Map(mapContainer.value, {
     center: [38.74, -9.14], // Lisboa coordinates
     zoom: 14,
   })
@@ -142,7 +187,9 @@ onMounted(() => {
   addPins(filteredPins.value, map, layer)
 })
 
-function addPins(pins: Pin[], map: Map, layer: L.MarkerClusterGroup) {
+async function addPins(pins: Pin[], map: LeafletMap, layer: L.MarkerClusterGroup) {
+  await fetchSvgIcons(pins)
+  layer.clearLayers()
   const markers: Marker[] = []
   pins.forEach(pin => {
     const marker = createPinMarker(pin)
@@ -158,9 +205,9 @@ function createPinMarker(pin: Pin): Marker | null {
 
   const pinColor = (filters.value.typology && pin.category_color) ? pin.category_color : pin.typology_color
   const customStyle = pinColor ? `background-color: ${pinColor};` : ''
-  const pinImage = pin.icon ? `<img src="${CONFIG.images_url + 'pin-images/' + pin.icon}" alt="${pin.title}" class="c-pin__image" />` : ''
+  const pinSvg = pin.icon ? getSvgFromCache(pin.icon) : ''
   const pinIcon = new DivIcon({
-    html: `<div class="c-pin" style="${customStyle}">${pinImage}</div>`,
+    html: `<div class="c-pin" style="${customStyle}">${pinSvg}</div>`,
     iconSize: [tooltipSize, tooltipSize],
     iconAnchor: [tooltipAnchor, tooltipAnchor]
   })
@@ -189,7 +236,7 @@ function showPopup(pin: Pin) {
 <template>
   <div class="c-map-container">
     <MapFilters v-model="filters" />
-    <div id="map"></div>
+    <div ref="mapContainer" id="map"></div>
     
     <div class="map-actions">
       <wa-dropdown placement="bottom-end">
@@ -252,10 +299,12 @@ function showPopup(pin: Pin) {
 .leaflet-container {
   font-family: inherit;
 }
+.c-pin svg,
 .c-pin__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 .leaflet-marker-icon {
   border: none !important;
