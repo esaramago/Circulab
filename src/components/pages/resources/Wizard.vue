@@ -19,14 +19,22 @@ function stepIsCompleted(code: string) {
 function isStepActive(code: string) {
   return currentStep.value === code
 }
-function arePreviousStepsCompleted() {
-  
+function arePreviousStepsCompleted(code: string) {
+  const currentIndex = props.steps.findIndex(step => step.code === code)
+  if (currentIndex <= 0) return true
+
+  for (let i = 0; i < currentIndex; i++) {
+    if (!stepIsCompleted(props.steps[i].code)) {
+      return false
+    }
+  }
+  return true
 }
 </script>
 
 <template>
   <ul class="c-wizard">
-    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': stepIsCompleted(step.code) }">
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': stepIsCompleted(step.code), 'is-disabled': !arePreviousStepsCompleted(step.code) }">
       <a :href="step.path" class="c-wizard__step-link">
         <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
         <span class="c-wizard__step-label">{{ step.label }}</span>
@@ -59,6 +67,10 @@ function arePreviousStepsCompleted() {
     width: 6rem;
     height: 1px;
     background-color: var(--wa-color-neutral-60);
+  }
+  &.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
   &.is-active {
     .c-wizard__step-number {
