@@ -39,7 +39,7 @@ export type ValidationDraft = {
   notRepeated: boolean
 }
 
-export type AddResourceStepCode = 'description' | 'location' | 'validation'
+export type AddResourceStepCode = 'description' | 'location' | 'contacts' | 'summary' | 'validation'
 
 export const initialDescriptionDraft: DescriptionDraft = {
   title: null,

@@ -7,7 +7,10 @@ wa-textarea,
 wa-select,
 wa-checkbox,
 wa-radio {
-  &:invalid::part(base) {
+  &:user-invalid::part(base) {
     border-color: var(--wa-color-danger-500, red);
+  }
+  &:user-value::part(base) {
+    border-color: var(--wa-color-success-500, green);
   }
 }

@@ -156,7 +156,7 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      href="/recursos/novo/localizacao">Voltar</wa-button
+      href="/recursos/novo/contactos">Voltar</wa-button
     >
     <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">Adicionar</wa-button>
   </Grid>

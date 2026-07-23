@@ -19,6 +19,9 @@ function stepIsCompleted(code: string) {
 function isStepActive(code: string) {
   return currentStep.value === code
 }
+function arePreviousStepsCompleted() {
+  
+}
 </script>
 
 <template>

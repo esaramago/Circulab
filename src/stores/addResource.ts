@@ -31,6 +31,8 @@ export const $validationDraft = persistentJSON<ValidationDraft>(
 const STEP_COMPLETED_KEYS: Record<AddResourceStepCode, string> = {
   description: `${STORAGE_PREFIX}:description:completed`,
   location: `${STORAGE_PREFIX}:location:completed`,
+  contacts: `${STORAGE_PREFIX}:contacts:completed`,
+  summary: `${STORAGE_PREFIX}:summary:completed`,
   validation: `${STORAGE_PREFIX}:validation:completed`,
 }
 

@@ -2,6 +2,14 @@
   font-size: var(--wa-font-size-s);
   color: var(--wa-color-neutral-70);
 }
+.u-text-error {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-danger-60);
+}
+.u-text-success {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-success-60);
+}
 
 .u-font-monospace {
   font-family: monospace;

@@ -5,9 +5,7 @@ import '@webawesome/button/button.js'
 import '@webawesome/checkbox/checkbox.js'
 import '@webawesome/radio/radio.js'
 import '@webawesome/radio-group/radio-group.js'
-import '@webawesome/select/select.js'
-import '@webawesome/option/option.js'
-import { onMounted, watch, ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
 import type { Map as LeafletMapType, Marker as LeafletMarkerType } from 'leaflet'
@@ -15,61 +13,29 @@ import 'leaflet/dist/leaflet.css'
 import { $locationDraft, $descriptionDraft, setStepCompleted } from '@/stores/addResource'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
-import phoneAreaCodes from '@/data/countryCodes.json'
+import { guessCoordinates, guessAdress } from '@/utils/nominatim'
 
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null
 
-const nominatimHeaders = {
-  'Accept-Language': 'pt',
-  'User-Agent': 'Circulab/0.0.1 (https://gitlab.com/emanuelsaramago/circulab)',
-}
+const postCodeRegex = /^\d{4}-\d{3}$/
 
+const isAdressValid = ref(false)
+const isAdressInvalid = ref(false)
 const typologyCode = ref<string>('')
 const draft = useStore($locationDraft)
+
 const isTypologyRepairMap = computed(() => {
   return typologyCode.value === 'repair-map'
 })
-const sortedPhoneAreaCodes = computed(() => {
-  const sorted = [...phoneAreaCodes].sort((a, b) => a.name.localeCompare(b.name))
-  const portugalIndex = sorted.findIndex(code => code.code === 'PT')
-  if (portugalIndex > -1) {
-    const [portugal] = sorted.splice(portugalIndex, 1)
-    return [portugal, ...sorted]
-  }
-  return sorted
-})
 
 const hasCoordinates = computed(() => {
-  return draft.value.coordinates && draft.value.coordinates.latitude && draft.value.coordinates.longitude
+  return draft.value.coordinates && !!draft.value.coordinates.latitude && !!draft.value.coordinates.longitude
 })
-
-const phoneSelectRef = ref<any>(null)
-
-watch(() => draft.value.phone_area_code, async newVal => {
-  if (typeof window !== 'undefined' && phoneSelectRef.value) {
-    await window.customElements.whenDefined('wa-select')
-    await phoneSelectRef.value.updateComplete
-    const codeNum = Number(newVal)
-    phoneSelectRef.value.displayLabel = (!isNaN(codeNum) && codeNum > 0) ? `+${codeNum}` : ''
-  }
-}, { flush: 'post' })
 
 onMounted(async () => {
   initMap()
   typologyCode.value = await getTypologyCode() || ''
-
-  const currentAreaCode = Number(draft.value.phone_area_code)
-  if (isNaN(currentAreaCode) || currentAreaCode <= 0) {
-    updateDraft({ phone_area_code: null })
-  }
-
-  if (phoneSelectRef.value && draft.value.phone_area_code) {
-    await window.customElements.whenDefined('wa-select')
-    await phoneSelectRef.value.updateComplete
-    const codeNum = Number(draft.value.phone_area_code)
-    phoneSelectRef.value.displayLabel = (!isNaN(codeNum) && codeNum > 0) ? `+${codeNum}` : ''
-  }
 })
 
 async function getTypologyCode() {
@@ -128,8 +94,8 @@ function initMap() {
       const latitude = Number(position.lat.toFixed(6))
       const longitude = Number(position.lng.toFixed(6))
       updateDraft({ coordinates: { latitude, longitude } })
+      updateAddress(latitude, longitude)
       updateMarker(latitude, longitude)
-      fetchAddress(latitude, longitude)
     }
   })
 
@@ -137,41 +103,32 @@ function initMap() {
     const latitude = Number(e.latlng.lat.toFixed(6))
     const longitude = Number(e.latlng.lng.toFixed(6))
     updateDraft({ coordinates: { latitude, longitude } })
+    updateAddress(latitude, longitude)
     updateMarker(latitude, longitude)
-    fetchAddress(latitude, longitude)
   })
 }
 
-async function fetchAddress(lat: number, lng: number) {
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
-      { headers: nominatimHeaders },
-    )
-    const data = await response.json()
-    if (data && data.address) {
-      const road = data.address.road || data.address.pedestrian || ''
-      const houseNumber = data.address.house_number || ''
-      let address = road
-      if (houseNumber) {
-        address += `, ${houseNumber}`
-      }
-      if (!address) {
-        address = data.display_name.split(',')[0]
-      }
-      updateDraft({
-        address,
-        postal_code: data.address.postcode || '',
-      })
-    }
-  } catch (error) {
-    console.error('Error fetching address:', error)
+async function updateAddress(latitude: number, longitude: number) {
+  const address = await guessAdress(latitude, longitude)
+  if (address) {
+    isAdressValid.value = true
+    isAdressInvalid.value = false
+    updateDraft({
+      address: address.address,
+      postal_code: address.postal_code,
+    })
   }
 }
 
 function handleInput(event: Event) {
   const field = event.target as HTMLInputElement & { checkValidity?: () => boolean }
   const name = field.name
+  const key = name as keyof LocationDraft
+
+  if (name === 'address') {
+    isAdressValid.value = false
+    isAdressInvalid.value = false
+  }
 
   if (name === 'latitude' || name === 'longitude') {
     const numValue = field.value === '' ? draft.value.coordinates[name as 'latitude' | 'longitude'] : Number(field.value)
@@ -181,16 +138,14 @@ function handleInput(event: Event) {
     return
   }
 
-  const key = name as keyof LocationDraft
-
-  if (name === 'phone') {
-    const phoneValue = field.value === '' ? undefined : Number(field.value)
-    updateDraft({ [key]: phoneValue })
-    return
-  }
 
   if (name === 'accessibility') {
     updateDraft({ [key]: field.value as LocationDraft['accessibility'] })
+    return
+  }
+
+  if (!field.value) {
+    updateDraft({ [key]: '' })
     return
   }
 
@@ -200,8 +155,6 @@ function handleInput(event: Event) {
 }
 
 async function handleChange(event: Event) {
-
-  if (!isTypologyRepairMap.value) return
 
   const field = event.target as HTMLInputElement
   const name = field.name as keyof LocationDraft
@@ -215,60 +168,29 @@ async function handleChange(event: Event) {
 
   const address = (name === 'address' ? field.value : draft.value.address)?.trim()
   const postal_code = (name === 'postal_code' ? field.value : draft.value.postal_code)?.trim()
-  if (!address || !postal_code) return
+  if (!address) return
 
   const coordinates = await guessCoordinates(address, postal_code)
   if (coordinates) {
     updateDraft({
       coordinates: {
-        latitude: coordinates?.latitude,
-        longitude: coordinates?.longitude
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude
       }
     })
-    updateMarker(coordinates?.latitude, coordinates?.longitude)
-  }
-}
-
-function handleChangeDialCode(event: Event) {
-  const target = event.target as any
-  const value = target.value ? Number(target.value) : null
-  updateDraft({ phone_area_code: value })
-}
-
-async function guessCoordinates(
-  address: string,
-  postal_code: string
-): Promise<{ latitude: number, longitude: number } | null> {
-  const street = address.trim()
-  const postcode = postal_code.trim()
-  if (!street || !postcode) {
-    return null
-  }
-
-  try {
-    const params = new URLSearchParams({
-      format: 'json',
-      limit: '1',
-      street,
-      postalcode: postcode,
-      countrycodes: 'pt',
+    updateMarker(coordinates.latitude, coordinates.longitude)
+  } else {
+    updateDraft({
+      coordinates: {
+        latitude: 0,
+        longitude: 0,
+      }
     })
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?${params}`,
-      { headers: nominatimHeaders },
-    )
-    const data = await response.json() as Array<{ lat?: string, lon?: string }>
-    const result = data?.[0]
-    if (!result?.lat || !result?.lon) {
-      return null
-    }
-    return {
-      latitude: Number(parseFloat(result.lat).toFixed(6)),
-      longitude: Number(parseFloat(result.lon).toFixed(6)),
-    }
-  } catch (error) {
-    console.error('Error geocoding address:', error)
-    return null
+  }
+
+  if (draft.value.address && postCodeRegex.test(draft.value.postal_code) && !hasCoordinates.value) {
+    isAdressValid.value = false
+    isAdressInvalid.value = true
   }
 }
 
@@ -277,19 +199,21 @@ function handleBack() {
 }
 
 function handleSubmit(event: Event) {
-  const isCompleted = (event.target as HTMLFormElement).checkValidity()
+  const isCompleted = (event.target as HTMLFormElement).checkValidity() && hasCoordinates.value
   setStepCompleted('location', isCompleted)
   if (!isCompleted) {
     event.preventDefault()
+    if (!hasCoordinates.value) {
+      isAdressValid.value = false
+      isAdressInvalid.value = true
+    }
   }
 }
-
-
 </script>
 
 <template>
   <form
-    action="/recursos/novo/resumo"
+    action="/recursos/novo/contactos"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
@@ -305,32 +229,20 @@ function handleSubmit(event: Event) {
       </Grid>
       <input name="latitude" label="Latitude" type="hidden" required :value="draft.coordinates?.latitude">
       <input name="longitude" label="Longitude" type="hidden" required :value="draft.coordinates?.longitude">
-      <wa-input name="location_name" label="Nome do local" @input="handleInput" :value="draft.location_name"></wa-input>
-      <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
-      <wa-input name="postal_code" required label="Código postal" pattern="^(\d{4})-(\d{3})$" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
+      <Grid direction="column" gap="xs">
+        <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
+        <p v-if="isAdressInvalid" class="u-text-error">Morada não encontrada. Por favor, verifique se o endereço está correto.</p>
+        <p v-else-if="isAdressValid" class="u-text-success">Morada válida</p>
+      </Grid>
+      <wa-input name="postal_code" required label="Código postal" :pattern="postCodeRegex.source" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
+      
+      <wa-input v-if="!isTypologyRepairMap" name="location_name" label="Nome do local" hint="Preencha apenas se o recurso estiver dentro de um local específico" @input="handleInput" :value="draft.location_name"></wa-input>
 
       <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="draft.accessibility">
-        <wa-radio value="public">Acessível ao público</wa-radio>
-        <wa-radio value="private">Local privado</wa-radio>
+        <wa-radio value="public">Local com acesso livre</wa-radio>
+        <wa-radio value="private">Local com acesso limitado</wa-radio>
       </wa-radio-group>
 
-      <h3>Contactos</h3>
-      <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput"></wa-input>
-      <fieldset>
-        <legend appearance="p">Telefone</legend>
-        <Grid>
-          <wa-select ref="phoneSelectRef" id="phone_area_code" class="phone-area-code" name="phone_area_code" label="Indicativo" :value="draft.phone_area_code ? String(draft.phone_area_code) : ''" @change="handleChangeDialCode">
-            <wa-option v-for="code in sortedPhoneAreaCodes" :key="code.code" :value="String(code.dial_code)">
-              {{code.name}} <span class="u-nowrap">(+{{code.dial_code}})</span>
-            </wa-option>
-          </wa-select>
-          <wa-input class="phone" name="phone" label="Telefone" :value="draft.phone" @input="handleInput"></wa-input>
-        </Grid>
-      </fieldset>
-      <h3>Canais</h3>
-      <wa-input name="website" type="url" label="Website" :value="draft.website" @input="handleInput"></wa-input>
-      <wa-input name="instagram" type="url" label="Instagram" :value="draft.instagram" @input="handleInput"></wa-input>
-      <wa-input name="facebook" type="url" label="Facebook" :value="draft.facebook" @input="handleInput"></wa-input>
       <Grid justify="end" gap="xs">
         <wa-button variant="primary" appearance="outlined" @click="handleBack">Voltar</wa-button>
         <wa-button variant="primary" type="submit">Continuar</wa-button>
@@ -343,17 +255,5 @@ function handleSubmit(event: Event) {
 #map {
   width: 100%;
   height: 400px;
-}
-.phone-area-code {
-  width: 120px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.phone-area-code::part(listbox) {
-  min-width: 250px;
-}
-.phone {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
 }
 </style>

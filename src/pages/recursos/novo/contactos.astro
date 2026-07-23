@@ -1,0 +1,11 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import ContactsForm from '@/components/pages/resources/ContactsForm.vue'
+---
+
+<AddLayout currentStep="contacts">
+  <h2>Contacto e Canais</h2>
+  <ContactsForm
+    client:only="vue"
+  />
+</AddLayout>
