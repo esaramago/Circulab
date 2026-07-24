@@ -34,7 +34,7 @@ function arePreviousStepsCompleted(code: string) {
 
 <template>
   <ul class="c-wizard">
-    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': stepIsCompleted(step.code), 'is-disabled': !arePreviousStepsCompleted(step.code) || step.path === '#' }">
+    <li v-for="(step, index) in steps" :key="step.code" class="c-wizard__step" :class="{ 'is-active': isStepActive(step.code), 'is-done': stepIsCompleted(step.code), 'is-disabled': (!isStepActive(step.code) && !stepIsCompleted(step.code)) && (!arePreviousStepsCompleted(step.code) || step.path === '#') }">
       <a :href="step.path" class="c-wizard__step-link">
         <span class="c-wizard__step-number" :id="`step-${step.code}`">{{ index + 1 }}</span>
         <span class="c-wizard__step-label">{{ step.label }}</span>

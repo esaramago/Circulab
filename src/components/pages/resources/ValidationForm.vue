@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useStore } from '@nanostores/vue'
 import Grid from '@/components/ui/Grid.vue'
 import '@webawesome/checkbox/checkbox.js'
 import '@webawesome/button/button.js'
 import '@webawesome/callout/callout.js'
-import { $validationDraft, setStepCompleted } from '@/stores/addResource'
+import { $validationDraft, $editingResourceId, clearAddResourceDraft, setStepCompleted } from '@/stores/addResource'
 import type { ValidationDraft } from '@/types/add-resource-draft'
 
 const draft = useStore($validationDraft)
 const errorMessage = ref<string>('')
+
+onMounted(() => {
+  if ($editingResourceId.get() !== null) {
+    clearAddResourceDraft()
+  }
+})
 
 const handleSubmit = (event: Event) => {
   const isCompleted = draft.value.exists && draft.value.permanent && draft.value.notRepeated
