@@ -273,15 +273,22 @@ export const deleteResource = defineAction({
         })
       }
 
-      const { error } = await supabase
+      const { error, count } = await supabase
         .from('pins')
-        .delete()
+        .delete({ count: 'exact' })
         .eq('id', input.id)
 
       if (error) {
         throw new ActionError({
           message: error.message || 'Failed to delete resource',
           code: error.code as ActionErrorCode,
+        })
+      }
+
+      if (count === 0) {
+        throw new ActionError({
+          message: 'Resource not found or you do not have permission to delete it.',
+          code: 'NOT_FOUND',
         })
       }
 
