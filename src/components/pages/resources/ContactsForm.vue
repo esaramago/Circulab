@@ -113,7 +113,7 @@ function handleSubmit(event: Event) {
   >
     <Grid gap="xl" direction="column">
       <h3>Contactos</h3>
-      <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput"></wa-input>
+      <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"></wa-input>
       <fieldset>
         <legend appearance="p">Telefone</legend>
         <Grid>
