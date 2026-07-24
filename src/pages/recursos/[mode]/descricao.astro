@@ -4,12 +4,18 @@ import DescriptionForm from '@/components/pages/resources/DescriptionForm.vue'
 import { fetchDB } from '@/utils/fetchDB'
 import { localizeHref } from '@/paraglide/runtime.js'
 
+const { mode } = Astro.params
+if (mode !== 'novo' && mode !== 'editar') {
+  return new Response('Not Found', { status: 404 })
+}
+
 let errorMessage = ''
 
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
-  if (formData.get('name') && formData.get('description') && formData.get('typology') && formData.get('category')) {
-    return Astro.redirect(localizeHref('/recursos/novo/localizacao'))
+  const idQuery = mode === 'editar' ? `?id=${Astro.url.searchParams.get('id') || ''}` : ''
+  if ((formData.get('title') || formData.get('name')) && formData.get('description') && formData.get('typology') && formData.get('category')) {
+    return Astro.redirect(localizeHref(`/recursos/${mode}/localizacao${idQuery}`))
   } else {
     errorMessage = 'Tens de preencher todos os assinalados para continuar'
   }
@@ -17,7 +23,6 @@ if (Astro.request.method === 'POST') {
 
 const { data: typologies, error } = await fetchDB('typologies').select('*')
 ---
-
 
 <AddLayout currentStep="description">
   <h2>Informação base</h2>

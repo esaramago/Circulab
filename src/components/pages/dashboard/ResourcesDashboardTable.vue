@@ -7,6 +7,8 @@ import type { ResourceRow } from '@/types/database'
 import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
+import { localizeHref } from '@/paraglide/runtime.js'
+import { clearAddResourceDraft } from '@/stores/addResource'
 
 const props = defineProps<{
   initialResources: ResourceRow[]
@@ -97,7 +99,7 @@ async function handleDelete() {
             </td>
             <td>{{ resource.status || '-' }}</td>
             <td class="text-end actions-cell">
-              <wa-button size="s" variant="primary">
+              <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar/descricao?id=${resource.id}`)" @click="clearAddResourceDraft">
                 <wa-icon name="pen"></wa-icon>
                 Editar
               </wa-button>

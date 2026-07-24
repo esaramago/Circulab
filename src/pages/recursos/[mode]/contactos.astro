@@ -1,6 +1,11 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import ContactsForm from '@/components/pages/resources/ContactsForm.vue'
+
+const { mode } = Astro.params
+if (mode !== 'novo' && mode !== 'editar') {
+  return new Response('Not Found', { status: 404 })
+}
 ---
 
 <AddLayout currentStep="contacts">

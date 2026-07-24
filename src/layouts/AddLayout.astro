@@ -3,42 +3,50 @@ import Layout from '@/layouts/Layout.astro'
 import Wizard from '@/components/pages/resources/Wizard.vue'
 import Container from '@/components/ui/Container.vue'
 import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+const { mode } = Astro.params
+const isEdit = mode === 'editar'
+const id = Astro.url.searchParams.get('id') || ''
+const idQuery = isEdit ? `?id=${id}` : ''
 
 const steps = [
   {
-    path: '/recursos/novo',
+    path: isEdit ? '#' : localizeHref(`/recursos/${mode}`),
     code: 'validation',
     label: 'Validação'
   },
   {
-    path: '/recursos/novo/descricao',
+    path: localizeHref(`/recursos/${mode}/descricao${idQuery}`),
     code: 'description',
     label: 'Descrição'
   },
   {
-    path: '/recursos/novo/localizacao',
+    path: localizeHref(`/recursos/${mode}/localizacao${idQuery}`),
     code: 'location',
     label: 'Localização'
   },
   {
-    path: '/recursos/novo/contactos',
+    path: localizeHref(`/recursos/${mode}/contactos${idQuery}`),
     code: 'contacts',
     label: 'Contactos'
   },
   {
-    path: '/recursos/novo/resumo',
+    path: localizeHref(`/recursos/${mode}/resumo${idQuery}`),
     code: 'summary',
     label: 'Resumo'
   }
 ]
 
 const currentStep = Astro.props.currentStep || 'validation'
+const title = isEdit ? 'Editar recurso' : 'Adicionar recurso'
+const description = isEdit ? 'Edite as informações do recurso.' : 'Adicione um novo recurso para partilhar com a comunidade.'
 ---
 
-<Layout title="Adicionar recurso">
+<Layout title={title}>
   <Grid gap="xs" direction="column">
-    <h1>Adicionar recurso</h1>
-    <p>Adicione um novo recurso para partilhar com a comunidade.</p>
+    <h1>{title}</h1>
+    <p>{description}</p>
   </Grid>
   <Wizard client:only="vue" steps={steps} currentStep={currentStep} />
   <Container width="xs">

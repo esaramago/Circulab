@@ -1,0 +1,20 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import ValidationForm from '@/components/pages/resources/ValidationForm.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+const { mode } = Astro.params
+if (mode !== 'novo' && mode !== 'editar') {
+  return new Response('Not Found', { status: 404 })
+}
+
+if (mode === 'editar') {
+  const url = new URL(Astro.request.url)
+  return Astro.redirect(localizeHref(`/recursos/editar/descricao${url.search}`))
+}
+---
+
+<AddLayout>
+  <h2>Validação</h2>
+  <ValidationForm client:only="vue" />
+</AddLayout>

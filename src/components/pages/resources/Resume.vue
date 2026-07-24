@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import Grid from '@/components/ui/Grid.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useStore } from '@nanostores/vue'
 import { actions } from 'astro:actions'
-import { clearAddResourceDraft, getAddResourcePayload } from '@/stores/addResource'
+import { clearAddResourceDraft, getAddResourcePayload, ensureDraftLoaded, $editingResourceId } from '@/stores/addResource'
 import { supabase } from '@/utils/supabase'
 import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
 import '@webawesome/callout/callout.js'
+import { localizeHref } from '@/paraglide/runtime.js'
 
 type AddResourcePayload = DescriptionDraft & LocationDraft
 
 const resumeData = ref<AddResourcePayload | null>(null)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const editingResourceId = useStore($editingResourceId)
+const isEdit = computed(() => !!editingResourceId.value)
 
 onMounted(async () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const id = urlParams.get('id')
+  if (id) {
+    await ensureDraftLoaded(id)
+  }
+
   const payload = getAddResourcePayload() as AddResourcePayload
   if (payload.images && payload.images.length > 0) {
     const updatedImages = []
@@ -64,7 +74,7 @@ async function handleSubmit() {
       throw new Error('Utilizador não autenticado.')
     }
 
-    const pinId = crypto.randomUUID()
+    const pinId = isEdit.value ? editingResourceId.value! : crypto.randomUUID()
     const uploadedImages: { url: string; alt: string }[] = []
 
     // 1. Upload files from IndexedDB to Supabase Storage
@@ -90,11 +100,17 @@ async function handleSubmit() {
           url: path,
           alt: img.alt,
         })
+      } else {
+        // It's an existing image - keep its path!
+        uploadedImages.push({
+          url: img.id,
+          alt: img.alt,
+        })
       }
     }
 
-    // 2. Call actions.addResource with pre-generated pin ID and images array
-    const { error } = await actions.addResource({
+    // 2. Call actions.addResource or actions.editResource
+    const payload = {
       id: pinId,
       title: resumeData.value?.title || '',
       description: resumeData.value?.description || '',
@@ -112,7 +128,11 @@ async function handleSubmit() {
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
       images: uploadedImages,
-    })
+    }
+
+    const { error } = isEdit.value
+      ? await actions.editResource(payload)
+      : await actions.addResource(payload)
 
     if (error) {
       throw new Error(error.message || 'Erro ao guardar o recurso.')
@@ -121,7 +141,7 @@ async function handleSubmit() {
     // 3. Clear local storage/IndexedDB on success
     clearAddResourceDraft()
     await clearImages()
-    window.location.href = '/'
+    window.location.href = localizeHref(isEdit.value ? '/dashboard' : '/')
   } catch (err: any) {
     console.error(err)
     errorMessage.value = err.message || 'Ocorreu um erro ao submeter o recurso.'
@@ -156,8 +176,10 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      href="/recursos/novo/contactos">Voltar</wa-button
+      :href="localizeHref(isEdit ? `/recursos/editar/contactos?id=${editingResourceId}` : '/recursos/novo/contactos')">Voltar</wa-button
     >
-    <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">Adicionar</wa-button>
+    <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">
+      {{ isEdit ? 'Guardar' : 'Adicionar' }}
+    </wa-button>
   </Grid>
 </template>

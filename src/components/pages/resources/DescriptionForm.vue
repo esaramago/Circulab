@@ -5,13 +5,14 @@ import '@webawesome/input/input.js'
 import '@webawesome/textarea/textarea.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import type { Database } from '@/types/supabase'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
-import { $descriptionDraft, setStepCompleted } from '@/stores/addResource'
+import { $descriptionDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded, clearAddResourceDraft } from '@/stores/addResource'
 import type { DescriptionDraft, DescriptionImageDraft } from '@/types/add-resource-draft'
 import { getImage } from '@/utils/imageStore'
+import { localizeHref } from '@/paraglide/runtime.js'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
@@ -20,6 +21,8 @@ defineProps<{
 }>()
 
 const draft = useStore($descriptionDraft)
+const editingResourceId = useStore($editingResourceId)
+const isEdit = computed(() => !!editingResourceId.value)
 const isMounted = ref(false)
 
 const {
@@ -30,9 +33,19 @@ const {
 } = useTypologyCascade()
 
 onMounted(async () => {
-  if (draft.value.images && draft.value.images.length > 0) {
+  const urlParams = new URLSearchParams(window.location.search)
+  const id = urlParams.get('id')
+  if (id) {
+    await ensureDraftLoaded(id)
+  } else if ($editingResourceId.get() !== null) {
+    clearAddResourceDraft()
+  }
+
+  const currentDescription = $descriptionDraft.get()
+
+  if (currentDescription.images && currentDescription.images.length > 0) {
     const updatedImages: DescriptionImageDraft[] = []
-    for (const img of draft.value.images) {
+    for (const img of currentDescription.images) {
       const blob = await getImage(img.id)
       if (blob) {
         updatedImages.push({
@@ -46,11 +59,11 @@ onMounted(async () => {
     updateDraft({ images: updatedImages })
   }
 
-  if (draft.value.typology_id) {
-    await setTypology(draft.value.typology_id)
+  if (currentDescription.typology_id) {
+    await setTypology(currentDescription.typology_id)
   }
-  if (draft.value.category_id) {
-    await setCategory(draft.value.category_id)
+  if (currentDescription.category_id) {
+    await setCategory(currentDescription.category_id)
   }
   isMounted.value = true
 })
@@ -114,7 +127,7 @@ async function setCategory(id: string) {
 
 // #region Handle Events
 function handleBack() {
-  window.location.href = '/recursos/novo'
+  window.location.href = localizeHref(isEdit.value ? '/dashboard' : '/recursos/novo')
 }
 
 function handleSubmit(event: Event) {
@@ -129,7 +142,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/recursos/novo/localizacao"
+    :action="localizeHref(isEdit ? `/recursos/editar/localizacao?id=${editingResourceId}` : '/recursos/novo/localizacao')"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

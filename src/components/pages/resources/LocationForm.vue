@@ -10,7 +10,8 @@ import { useStore } from '@nanostores/vue'
 import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
 import type { Map as LeafletMapType, Marker as LeafletMarkerType } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { $locationDraft, $descriptionDraft, setStepCompleted } from '@/stores/addResource'
+import { $locationDraft, $descriptionDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded } from '@/stores/addResource'
+import { localizeHref } from '@/paraglide/runtime.js'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
 import { guessCoordinates, guessAdress } from '@/utils/nominatim'
@@ -24,6 +25,8 @@ const isAdressValid = ref(false)
 const isAdressInvalid = ref(false)
 const typologyCode = ref<string>('')
 const draft = useStore($locationDraft)
+const editingResourceId = useStore($editingResourceId)
+const isEdit = computed(() => !!editingResourceId.value)
 
 const isTypologyRepairMap = computed(() => {
   return typologyCode.value === 'repair-map'
@@ -34,6 +37,11 @@ const hasCoordinates = computed(() => {
 })
 
 onMounted(async () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const id = urlParams.get('id')
+  if (id) {
+    await ensureDraftLoaded(id)
+  }
   initMap()
   typologyCode.value = await getTypologyCode() || ''
 })
@@ -195,7 +203,7 @@ async function handleChange(event: Event) {
 }
 
 function handleBack() {
-  window.location.href = '/recursos/novo/descricao'
+  window.location.href = localizeHref(isEdit.value ? `/recursos/editar/descricao?id=${editingResourceId.value}` : '/recursos/novo/descricao')
 }
 
 function handleSubmit(event: Event) {
@@ -213,7 +221,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/recursos/novo/contactos"
+    :action="localizeHref(isEdit ? `/recursos/editar/contactos?id=${editingResourceId}` : '/recursos/novo/contactos')"
     method="post"
     data-astro-reload
     @submit="handleSubmit"

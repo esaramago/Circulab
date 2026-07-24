@@ -10,6 +10,9 @@ import {
   initialLocationDraft,
   initialValidationDraft,
 } from '@/types/add-resource-draft'
+import { actions } from 'astro:actions'
+import geojson from '@/utils/geojson'
+import { CONFIG } from '@/config'
 
 const STORAGE_PREFIX = 'circulab:add'
 
@@ -26,6 +29,11 @@ export const $locationDraft = persistentJSON<LocationDraft>(
 export const $validationDraft = persistentJSON<ValidationDraft>(
   `${STORAGE_PREFIX}:validation`,
   initialValidationDraft
+)
+
+export const $editingResourceId = persistentJSON<string | null>(
+  `${STORAGE_PREFIX}:editingResourceId`,
+  null
 )
 
 const STEP_COMPLETED_KEYS: Record<AddResourceStepCode, string> = {
@@ -62,12 +70,75 @@ export function getAddResourcePayload() {
   }
 }
 
+export async function ensureDraftLoaded(id: string) {
+  if ($editingResourceId.get() === id) {
+    return // Already loaded
+  }
+
+  const { data, error } = await actions.getResource({ id })
+  console.log('[Store] ensureDraftLoaded data:', data)
+  if (error || !data) {
+    console.error('[Store] Failed to load resource draft:', error)
+    return
+  }
+
+  // Populate description draft
+  const dbImages = (data.images as { url: string; alt?: string }[]) || []
+  const draftImages = dbImages.map((img) => ({
+    id: img.url, // Store the relative path in the id
+    url: img.url.startsWith('http') ? img.url : `${CONFIG.images_url}pin-images/${img.url}`, // Display public URL
+    alt: img.alt || '',
+  }))
+
+  $descriptionDraft.set({
+    title: data.title || '',
+    description: data.description || '',
+    typology_id: data.typology_id || null,
+    category_id: data.category_id || null,
+    characteristics_ids: data.characteristics_ids || [],
+    images: draftImages,
+  })
+
+  // Populate location draft
+  $locationDraft.set({
+    location_name: data.location || '',
+    address: data.address || '',
+    postal_code: data.postal_code || '',
+    coordinates: {
+      latitude: data.coordinates ? geojson.getLatitude(data.coordinates) : 0,
+      longitude: data.coordinates ? geojson.getLongitude(data.coordinates) : 0,
+    },
+    accessibility: 'public',
+    opening_days: [],
+    opening_hours: {},
+    email: data.email || '',
+    phone: data.phone ? Number(data.phone) : null,
+    phone_area_code: data.phone_area_code ? Number(data.phone_area_code) : null,
+    website: '',
+    instagram: '',
+    facebook: '',
+    networks: [],
+  })
+
+  // Set the editing ID
+  $editingResourceId.set(id)
+
+  // Mark steps as completed
+  setStepCompleted('validation', true)
+  setStepCompleted('description', true)
+  setStepCompleted('location', true)
+  setStepCompleted('contacts', true)
+  setStepCompleted('summary', true)
+}
+
 export function clearAddResourceDraft() {
   $descriptionDraft.set(initialDescriptionDraft)
   $locationDraft.set(initialLocationDraft)
   $validationDraft.set(initialValidationDraft)
+  $editingResourceId.set(null)
 
   for (const key of Object.values(STEP_COMPLETED_KEYS)) {
     window.localStorage.removeItem(key)
   }
+  window.localStorage.removeItem(`${STORAGE_PREFIX}:editingResourceId`)
 }

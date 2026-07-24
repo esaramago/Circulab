@@ -1,11 +1,13 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import Resume from '@/components/pages/resources/Resume.vue'
+
+const { mode } = Astro.params
+if (mode !== 'novo' && mode !== 'editar') {
+  return new Response('Not Found', { status: 404 })
+}
 ---
 
-<script>
-  import '@webawesome/button/button.js'
-</script>
 <AddLayout currentStep="summary">
   <h2>Resumo</h2>
   <Resume client:only="vue" />

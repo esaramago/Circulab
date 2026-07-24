@@ -1,0 +1,14 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import LocationForm from '@/components/pages/resources/LocationForm.vue'
+
+const { mode } = Astro.params
+if (mode !== 'novo' && mode !== 'editar') {
+  return new Response('Not Found', { status: 404 })
+}
+---
+
+<AddLayout currentStep="location">
+  <h2>Localização</h2>
+  <LocationForm client:only="vue" />
+</AddLayout>

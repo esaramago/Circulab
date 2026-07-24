@@ -6,11 +6,14 @@ import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
 import { onMounted, watch, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
-import { $locationDraft, setStepCompleted } from '@/stores/addResource'
+import { $locationDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded } from '@/stores/addResource'
+import { localizeHref } from '@/paraglide/runtime.js'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import phoneAreaCodes from '@/data/countryCodes.json'
 
 const draft = useStore($locationDraft)
+const editingResourceId = useStore($editingResourceId)
+const isEdit = computed(() => !!editingResourceId.value)
 const phoneSelectRef = ref<any>(null)
 
 const sortedPhoneAreaCodes = computed(() => {
@@ -33,15 +36,23 @@ watch(() => draft.value.phone_area_code, async newVal => {
 }, { flush: 'post' })
 
 onMounted(async () => {
-  const currentAreaCode = Number(draft.value.phone_area_code)
+  const urlParams = new URLSearchParams(window.location.search)
+  const id = urlParams.get('id')
+  if (id) {
+    await ensureDraftLoaded(id)
+  }
+
+  const currentLoc = $locationDraft.get()
+  const currentAreaCode = Number(currentLoc.phone_area_code)
   if (isNaN(currentAreaCode) || currentAreaCode <= 0) {
     updateDraft({ phone_area_code: null })
   }
 
-  if (phoneSelectRef.value && draft.value.phone_area_code) {
+  const phoneAreaCodeValue = $locationDraft.get().phone_area_code
+  if (phoneSelectRef.value && phoneAreaCodeValue) {
     await window.customElements.whenDefined('wa-select')
     await phoneSelectRef.value.updateComplete
-    const codeNum = Number(draft.value.phone_area_code)
+    const codeNum = Number(phoneAreaCodeValue)
     phoneSelectRef.value.displayLabel = (!isNaN(codeNum) && codeNum > 0) ? `+${codeNum}` : ''
   }
 })
@@ -81,7 +92,7 @@ function handleChangeDialCode(event: Event) {
 }
 
 function handleBack() {
-  window.location.href = '/recursos/novo/localizacao'
+  window.location.href = localizeHref(isEdit.value ? `/recursos/editar/localizacao?id=${editingResourceId.value}` : '/recursos/novo/localizacao')
 }
 
 function handleSubmit(event: Event) {
@@ -95,7 +106,7 @@ function handleSubmit(event: Event) {
 
 <template>
   <form
-    action="/recursos/novo/resumo"
+    :action="localizeHref(isEdit ? `/recursos/editar/resumo?id=${editingResourceId}` : '/recursos/novo/resumo')"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
