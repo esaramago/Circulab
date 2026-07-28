@@ -233,6 +233,7 @@ function handleSubmit(event: Event) {
       </Grid>
       <input name="latitude" label="Latitude" type="hidden" required :value="draft.coordinates?.latitude">
       <input name="longitude" label="Longitude" type="hidden" required :value="draft.coordinates?.longitude">
+      <wa-input name="location_name" label="Nome do local (opcional)" hint="Preencha apenas se o recurso estiver dentro de um local específico" @input="handleInput" :value="draft.location_name"></wa-input>
       <Grid direction="column" gap="xs">
         <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
         <p v-if="isAdressInvalid" class="u-text-error">Morada não encontrada. Por favor, verifique se o endereço está correto.</p>
@@ -240,7 +241,6 @@ function handleSubmit(event: Event) {
       </Grid>
       <wa-input name="postal_code" required label="Código postal" :pattern="postCodeRegex.source" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
       
-      <wa-input name="location_name" label="Nome do local (opcional)" hint="Preencha apenas se o recurso estiver dentro de um local específico" @input="handleInput" :value="draft.location_name"></wa-input>
 
       <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="draft.accessibility">
         <wa-radio value="public">Local com acesso livre</wa-radio>
