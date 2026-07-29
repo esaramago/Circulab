@@ -1,11 +1,8 @@
 {
-  "servers": {
-    "supabase": {
-      "type": "http",
-      "url": "https://mcp.supabase.com/mcp"
-    },
-    "vue-docs": {
-      "url": "https://mcp.vue-mcp.org/mcp"
-    }
-  }
+	"servers": {
+		"vue-docs": {
+			"url": "https://mcp.vue-mcp.org/mcp",
+			"type": "http"
+		}
+	}
 }
