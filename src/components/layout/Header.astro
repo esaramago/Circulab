@@ -44,12 +44,9 @@ const navItems = [
 
 <header>
   <Grid gap="xl" align="center">
-    <div>
-      <a href={localizeHref('/')} class="header__logo">
-        <span>{m.site_title()}</span>
-      </a>
-      <p class="header__subtitle">Mapa colaborativo para a agroecologia circularidade</p>
-    </div>
+    <a href={localizeHref('/')} class="header__logo">
+      <span>{m.site_title()}</span>
+    </a>
     <nav>
       <ul class="nav-list">
         {navItems.map((item) => (
@@ -154,11 +151,12 @@ const navItems = [
     justify-content: space-between;
     gap: var(--wa-space-l);
     justify-self: start;
-    padding: var(--wa-space-m) var(--wa-space-l);
+    padding: var(--wa-space-s) var(--wa-space-l);
+    background-color: var(--wa-color-brand-20);
     @media (min-width: 768px) {
       flex-wrap: nowrap;
       gap: var(--wa-space-xl);
-      padding: var(--wa-space-l) var(--wa-space-xl);
+      padding: var(--wa-space-m) var(--wa-space-xl);
     }
     @media (max-width: 767px) {
       .nav-lang,
@@ -173,7 +171,7 @@ const navItems = [
     gap: var(--wa-space-xs);
     font-size: var(--wa-font-size-l);
     font-weight: var(--wa-font-weight-bold);
-    color: var(--wa-color-brand-50);
+    color: var(--wa-color-brand-60);
     text-decoration: none;
     line-height: 1;
     transition: all .2s;
@@ -215,18 +213,22 @@ const navItems = [
   .nav-lang,
   .nav-list {
     display: flex;
-    gap: var(--wa-space-s);
     list-style: none;
     padding: 0;
     margin: 0;
     a {
+      position: relative;
+      display: block;
+      padding: 0 var(--wa-space-xs) var(--wa-space-3xs);
+      border-block-end: 3px solid transparent;
       text-decoration: none;
       font-weight: var(--wa-font-weight-semibold);
+      transition: color 0.2s ease, border-color 0.2s ease;
       &:hover,
       &.is-active {
-        text-decoration: underline;
-        color: var(--wa-color-brand-50);
+        color: var(--wa-color-brand-60);
         font-weight: var(--wa-font-weight-bold);
+        border-block-end-color: var(--wa-color-brand-60);
       }
     }
   }

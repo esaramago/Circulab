@@ -1,7 +1,7 @@
 
 body {
-  font-family: var(--font-roboto), sans-serif;
-  background-color: var(--wa-color-neutral-10);
+  font-family: var(--wa-font-family-body), sans-serif;
+  background-color: var(--wa-color-brand-10);
   color: var(--wa-color-neutral-90);
   line-height: 1.4;
   font-size: var(--default-font-size);

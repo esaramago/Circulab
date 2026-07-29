@@ -3,6 +3,7 @@ import { Font } from 'astro:assets'
 import '@awesome.me/webawesome/dist/styles/themes/default.css'
 import '@/css/main.css'
 import Header from '@/components/layout/Header.astro'
+import Footer from '@/components/layout/Footer.vue'
 import { ClientRouter } from 'astro:transitions'
 
 interface Props {
@@ -17,7 +18,7 @@ const { title, fullWidth } = Astro.props
 <!doctype html>
 <html lang={Astro.locals.locale}>
 	<head>
-		<Font cssVariable="--font-roboto" />
+		<Font cssVariable="--font-nunito" />
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="initial-scale=1,minimum-scale=1,width=device-width,interactive-widget=resizes-content,viewport-fit=cover" />
     <!-- <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -35,6 +36,7 @@ const { title, fullWidth } = Astro.props
     <main class:list={fullWidth ? 'u-width-full' : ''}>
       <slot />
     </main>
+    <Footer />
 	</body>
 </html>
 
@@ -48,11 +50,10 @@ const { title, fullWidth } = Astro.props
     margin-inline: auto;
     gap: var(--wa-space-4xl);
     flex: 1;
-    padding: var(--wa-space-l) var(--wa-space-xl) var(--wa-space-xl);
+    padding: var(--wa-space-xl);
     box-sizing: border-box;
     &.u-width-full {
       max-width: none;
-      padding-block-start: 0;
       @media (max-width: 767px) {
         padding: 0;
       }
