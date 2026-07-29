@@ -1,0 +1,9 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { m } from '@/paraglide/messages.js'
+import Map from '@/components/pages/map/Map.vue'
+---
+
+<Layout title={m['map.title']()} fullWidth={true}>
+  <Map client:only="vue" />
+</Layout>

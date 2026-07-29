@@ -2,11 +2,34 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
-import { getPins } from '@/actions/resources'
-
-const { data: mapPins } = await Astro.callAction(getPins, {})
+import Grid from '@/components/ui/Grid.vue'
 ---
 
-<Layout title={m.site_title()} fullWidth={true}>
-  <Map client:only="vue" pins={mapPins ?? []} />
+<Layout title={m.site_title()}>
+  <Grid gap="l" direction="column" align="center">
+    <h1>Mapa colaborativo para a agroecologia e circularidade.</h1>
+    <p>Plataforma de cartografia participativa dedicada à identificação e valorização de recursos urbanos subutilizados ou desperdiçados.</p>
+    <Grid align="center" justify="center">
+      <wa-button href="/sobre" size="l">Saber mais</wa-button>
+      <wa-button href="/mapa" variant="brand" size="l">
+        <wa-icon name="map" slot="start"></wa-icon>
+        Explorar recursos
+      </wa-button>
+    </Grid>
+  </Grid>
+  <Map client:only="vue" hide-filters={true} />
 </Layout>
+
+<style>
+h1 {
+  text-align: center;
+  max-width: 65rem;
+  font-size: var(--wa-font-size-3xl);
+  line-height: 1.2;
+}
+p {
+  font-size: var(--wa-font-size-l);
+  text-align: center;
+  max-width: 92rem;
+}
+</style>

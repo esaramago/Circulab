@@ -15,13 +15,15 @@ import '@webawesome/button/button.js'
 import '@webawesome/dropdown/dropdown.js'
 import '@webawesome/dropdown-item/dropdown-item.js'
 import '@webawesome/icon/icon.js'
+import { actions } from 'astro:actions'
+
+const props = defineProps<{
+  hideFilters?: boolean
+}>()
 
 const selectedLayerId = useStore($selectedLayerId)
 
-const props = defineProps<{
-  pins: Pin[]
-}>()
-
+const pins = ref<Pin[]>([])
 const mapContainer = ref<HTMLElement | null>(null)
 const activePin = ref<Pin | null>(null)
 const mapInstance = shallowRef<LeafletMap | null>(null)
@@ -38,7 +40,7 @@ const filters = ref({
 
 // Compute filtered pins
 const filteredPins = computed(() => {
-  return props.pins.filter(pin => {
+  return pins.value.filter((pin: Pin) => {
     // Search filter
     if (filters.value.search && !pin.title.toLowerCase().includes(filters.value.search.toLowerCase())) {
       return false
@@ -98,7 +100,7 @@ watch(selectedLayerId, (newLayerId) => {
 
 // Watch for filter changes and update markers
 watch(filteredPins, (newPins) => {
-  if (mapInstance.value && markersLayer.value) {
+  if (!props.hideFilters && mapInstance.value && markersLayer.value) {
     addPins(newPins, mapInstance.value, markersLayer.value)
   }
 }, { deep: true })
@@ -148,7 +150,7 @@ function getSvgFromCache(iconName: string | null | undefined): string {
   return svgCache.get(iconName) || (iconName.trim().startsWith('<svg') ? iconName : '')
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!mapContainer.value) return
 
   const map = new L.Map(mapContainer.value, {
@@ -182,6 +184,10 @@ onMounted(() => {
   })
   layer.addTo(map)
   markersLayer.value = layer
+
+  const { data: mapPins } = await actions.getPins({}) as { data: Pin[] }
+
+  pins.value = mapPins
   
   // Add initial pins
   addPins(filteredPins.value, map, layer)
@@ -235,7 +241,7 @@ function showPopup(pin: Pin) {
 
 <template>
   <div class="c-map-container">
-    <MapFilters v-model="filters" />
+    <MapFilters v-if="!props.hideFilters" v-model="filters" />
     <div ref="mapContainer" id="map"></div>
     
     <div class="map-actions">
