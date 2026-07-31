@@ -19,6 +19,7 @@ import { actions } from 'astro:actions'
 
 const props = defineProps<{
   hideFilters?: boolean
+  defaultTypologyCode?: string | null
 }>()
 
 const selectedLayerId = useStore($selectedLayerId)
@@ -241,7 +242,7 @@ function showPopup(pin: Pin) {
 
 <template>
   <div class="c-map-container">
-    <MapFilters v-if="!props.hideFilters" v-model="filters" />
+    <MapFilters v-if="!props.hideFilters" v-model="filters" :default-typology-code="props.defaultTypologyCode" />
     <div ref="mapContainer" id="map"></div>
     
     <div class="map-actions">

@@ -14,6 +14,7 @@ const props = defineProps<{
     characteristic: string | null
     search: string | null
   }
+  defaultTypologyCode?: string | null
 }>()
 
 const emit = defineEmits(['update:modelValue'])
@@ -47,6 +48,16 @@ watch([typology, category, characteristic, search], () => {
     search: search.value
   })
 }, { deep: true })
+
+// Watch for defaultTypologyCode and set the typology
+watch([() => props.defaultTypologyCode, typologies], ([code, list]) => {
+  if (code && list && list.length > 0) {
+    const matched = list.find(t => t.code === code)
+    if (matched && typology.value !== matched.id) {
+      setTypology(matched.id)
+    }
+  }
+}, { immediate: true })
 
 // Auto-select "cartodb-positron" layer when "Lisboa Repair Map" typology is selected
 watch([typology, () => typologies.value], ([newTypologyId, list]) => {
