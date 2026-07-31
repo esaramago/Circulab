@@ -10,123 +10,73 @@ const user = Astro.locals.user
 if (!user || !userHasAccess(user, 'backoffice')) {
   return Astro.redirect('/')
 }
+
+const cards = [
+  {
+    title: 'Tipologias',
+    description: 'Gerir as tipologias de recursos no mapa.',
+    href: localizeHref('/backoffice/typologies'),
+    icon: 'layer-group'
+  },
+  {
+    title: 'Categorias',
+    description: 'Gerir as categorias de recursos no mapa.',
+    href: localizeHref('/backoffice/categories'),
+    icon: 'tags'
+  }
+]
 ---
 
 <script>
-  import '@awesome.me/webawesome/dist/components/button/button.js'
   import '@awesome.me/webawesome/dist/components/card/card.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
 </script>
 
 <Layout title="Backoffice">
-  <div class="backoffice-home">
-    <div class="backoffice-home__header">
+  <Grid gap="l" direction="column">
+    <div>
       <h1>Backoffice</h1>
-      <p class="subtitle">Área de administração do Circulab</p>
+      <p>Área de administração do Circulab</p>
     </div>
 
     <Grid gap="l">
-      <wa-card class="admin-card">
-        <div class="admin-card__icon">
-          <wa-icon name="layer-group"></wa-icon>
-        </div>
-        <div class="admin-card__content">
-          <h3>Tipologias</h3>
-          <p>Gerir as tipologias de recursos no mapa.</p>
-        </div>
-        <div slot="footer">
-          <wa-button variant="primary" href={localizeHref('/backoffice/typologies')} size="s">
-            Gerir tipologias
-            <wa-icon name="arrow-right" slot="suffix"></wa-icon>
-          </wa-button>
-        </div>
-      </wa-card>
-      <wa-card class="admin-card">
-        <div class="admin-card__icon">
-          <wa-icon name="tags"></wa-icon>
-        </div>
-        <div class="admin-card__content">
-          <h3>Categorias</h3>
-          <p>Gerir as categorias de recursos no mapa.</p>
-        </div>
-        <div slot="footer">
-          <wa-button variant="primary" href={localizeHref('/backoffice/categories')} size="s">
-            Gerir categorias
-            <wa-icon name="arrow-right" slot="suffix"></wa-icon>
-          </wa-button>
-        </div>
-      </wa-card>
+      {
+        cards.map((card) => (
+          <a href={card.href} class="u-text-decoration-none">
+            <wa-card>
+              <Grid direction="column">
+                <Grid align="center" gap="s">
+                  <div class="admin-card__icon">
+                    <wa-icon name={card.icon}></wa-icon>
+                  </div>
+                  <h3>{card.title}</h3>
+                </Grid>
+                <p>{card.description}</p>
+              </Grid>
+              <div slot="footer">
+                {card.title} <wa-icon name="arrow-right" slot="suffix"></wa-icon>
+              </div>
+            </wa-card>
+          </a>
+        ))
+      }
     </Grid>
-  </div>
+  </Grid>
 </Layout>
 
 <style>
-  .backoffice-home {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-xl);
-  }
 
-  .backoffice-home__header {
-    margin-block-end: var(--wa-space-m);
-  }
+.admin-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 2.4rem;
+  color: var(--wa-color-brand-50);
+  background-color: var(--wa-color-brand-90);
+  border-radius: var(--wa-border-radius-m);
+  flex-shrink: 0;
+}
 
-  .subtitle {
-    font-size: var(--wa-font-size-m);
-    color: var(--wa-color-neutral-600);
-    margin-block-start: var(--wa-space-xs);
-  }
-
-  .admin-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    border: 1px solid var(--wa-color-neutral-200);
-    border-radius: var(--wa-border-radius-l);
-    background-color: var(--wa-color-surface-default);
-    
-    &::part(body) {
-      display: flex;
-      gap: var(--wa-space-m);
-      padding: var(--wa-space-l);
-    }
-    
-    &::part(footer) {
-      padding: var(--wa-space-m) var(--wa-space-l);
-      border-block-start: 1px solid var(--wa-color-neutral-100);
-      background-color: var(--wa-color-neutral-50);
-    }
-  }
-
-  .admin-card__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 4rem;
-    height: 4rem;
-    font-size: 2.4rem;
-    color: var(--wa-color-brand-50);
-    background-color: var(--wa-color-brand-90);
-    border-radius: var(--wa-border-radius-m);
-    flex-shrink: 0;
-  }
-
-  .admin-card__content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-xs);
-  }
-
-  .admin-card__content h3 {
-    margin: 0;
-    font-size: var(--wa-font-size-m);
-    font-weight: var(--wa-font-weight-bold);
-  }
-
-  .admin-card__content p {
-    margin: 0;
-    font-size: var(--wa-font-size-s);
-    color: var(--wa-color-neutral-600);
-    line-height: 1.4;
-  }
 </style>

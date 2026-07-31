@@ -50,3 +50,8 @@ const gridStyle = computed<CSSProperties>(() => {
   flex: 1;
 }
 </style>
+<style>
+.l-grid > [data-grow="1"] {
+  flex-grow: 1;
+}
+</style>

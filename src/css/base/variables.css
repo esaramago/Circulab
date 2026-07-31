@@ -24,7 +24,7 @@
   --wa-color-brand-20: #1E4C4B;
   --wa-color-brand-10: #0C3136; /* #darker */
 
-  --wa-color-surface-default: var(--wa-color-brand-10);
+  --wa-color-surface-default: var(--wa-color-brand-20);
   --wa-color-danger-fill-normal: var(--wa-color-danger-60);
   --wa-color-neutral-fill-loud: #FFF;
 
