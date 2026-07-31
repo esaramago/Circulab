@@ -281,7 +281,7 @@ async function deleteCategory() {
         <tbody>
           <tr v-for="category in filteredCategories" :key="category.id">
             <td>
-              <img v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon" alt="Ícone" />
+              <wa-icon v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon"></wa-icon>
               <span v-else class="no-icon">-</span>
             </td>
             <td><strong>{{ category.name }}</strong></td>
@@ -368,12 +368,12 @@ async function deleteCategory() {
                 class="category-icon-preview"
                 alt="Novo ícone"
               />
-              <img
+              <wa-icon
                 v-else-if="form.icon"
                 :src="CONFIG.images_url + 'pin-images/' + form.icon"
                 class="category-icon-preview"
                 alt="Ícone atual"
-              />
+              ></wa-icon>
               <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
             </div>
           </div>
@@ -385,7 +385,7 @@ async function deleteCategory() {
             <input
               type="color"
               :value="form.color || '#ffffff'"
-              @input="form.color = $event.target.value"
+              @input="form.color = $event.target?.value"
               class="color-picker"
             />
             <wa-input
@@ -545,15 +545,8 @@ async function deleteCategory() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--wa-color-neutral-700);
-}
-
-.category-icon-preview :deep(svg) {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
+  font-size: 4rem;
+  fill: #FFF;
 }
 
 .no-icon {
