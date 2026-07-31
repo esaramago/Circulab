@@ -15,6 +15,10 @@ import Grid from '@/components/ui/Grid.vue'
         <wa-icon name="map" slot="start"></wa-icon>
         Explorar recursos
       </wa-button>
+      <wa-button href="/mapa" variant="brand" size="l">
+        <img slot="start" src="/img/lisboa-repair-map.webp" alt="Lisboa Repair Map" width="30" height="30" />
+        Lisboa Repair Map
+      </wa-button>
     </Grid>
   </Grid>
   <Map client:only="vue" hide-filters={true} class="map" />
