@@ -16,6 +16,7 @@ import '@webawesome/dropdown/dropdown.js'
 import '@webawesome/dropdown-item/dropdown-item.js'
 import '@webawesome/icon/icon.js'
 import { actions } from 'astro:actions'
+import isColorDark from '@/utils/isColorDark'
 
 const props = defineProps<{
   hideFilters?: boolean
@@ -211,10 +212,12 @@ function createPinMarker(pin: Pin): Marker | null {
   if (!pin?.coordinates) return null
 
   const pinColor = (filters.value.typology && pin.category_color) ? pin.category_color : pin.typology_color
+  const isDark = pinColor && isColorDark(pinColor)
+  const pinClass = isDark ? 'c-pin c-pin--dark' : 'c-pin'
   const customStyle = pinColor ? `background-color: ${pinColor};` : ''
   const pinSvg = pin.icon ? getSvgFromCache(pin.icon) : ''
   const pinIcon = new DivIcon({
-    html: `<div class="c-pin" style="${customStyle}">${pinSvg}</div>`,
+    html: `<div class="${pinClass}" style="${customStyle}">${pinSvg}</div>`,
     iconSize: [tooltipSize, tooltipSize],
     iconAnchor: [tooltipAnchor, tooltipAnchor]
   })
@@ -285,10 +288,13 @@ function showPopup(pin: Pin) {
   text-align: center;
   line-height: 1;
   transition: transform 160ms ease;
-  color: #FFF;
+  fill: var(--wa-color-neutral-10);
   &:hover {
     transform: scale(1.2);
   }
+}
+.c-pin--dark {
+  fill: #FFF;
 }
 .c-pin--cluster {
   opacity: 0.4;
