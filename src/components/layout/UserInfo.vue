@@ -20,7 +20,7 @@ async function logout() {
 }
 
 function goto(route: string) {
-  window.location.href = localizeHref(route, props.locale ? { locale: props.locale } : undefined)
+  window.open(localizeHref(route, props.locale ? { locale: props.locale } : undefined), '_blank')
 }
 </script>
 
