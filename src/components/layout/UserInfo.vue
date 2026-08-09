@@ -30,9 +30,18 @@ function goto(route: string) {
       <wa-icon name="user" label="User"></wa-icon>
       {{ user?.email }}
     </wa-button>
-    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/dashboard')">Dashboard</wa-dropdown-item>
-    <wa-dropdown-item v-if="userHasAccess(user, 'backoffice')" @click="goto('/backoffice')">Backoffice</wa-dropdown-item>
-    <wa-dropdown-item @click="logout">Logout</wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/dashboard')">
+      <wa-icon name="table-list" label="Dashboard"></wa-icon>
+      Dashboard
+    </wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'backoffice')" @click="goto('/backoffice')">
+      <wa-icon name="gear" label="Backoffice"></wa-icon>
+      Backoffice
+    </wa-dropdown-item>
+    <wa-dropdown-item @click="logout">
+      <wa-icon name="right-from-bracket" label="Logout"></wa-icon>
+      Logout
+    </wa-dropdown-item>
   </wa-dropdown>
 </template>
 
