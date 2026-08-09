@@ -97,7 +97,8 @@ export const getResource = defineAction({
           postal_code,
           email,
           phone,
-          phone_area_code
+          phone_area_code,
+          accessibility
         ),
         coordinates: get_geojson
       `).eq('id', input.id).single()
@@ -129,6 +130,7 @@ export const getResource = defineAction({
         phone: data.location?.phone || null,
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
+        accessibility: data.location?.accessibility || null,
       }
 
       console.log('[Action] getResource mapped resource:', JSON.stringify(resource))
@@ -212,6 +214,7 @@ export const addResource = defineAction({
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
+        accessibility: input.accessibility || null,
       }
 
       const { data: locationsData, error: locationsError } = await supabase
@@ -373,6 +376,7 @@ export const editResource = defineAction({
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
+        accessibility: input.accessibility || null,
       }
 
       const { error: locationUpdateError } = await supabase

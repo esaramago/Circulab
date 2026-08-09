@@ -127,6 +127,7 @@ async function handleSubmit() {
       email: resumeData.value?.email || undefined,
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
+      accessibility: resumeData.value?.accessibility || undefined,
       images: uploadedImages,
     }
 
@@ -167,6 +168,7 @@ async function handleSubmit() {
     <li>Coordenadas: {{ resumeData?.coordinates?.latitude }}, {{ resumeData?.coordinates?.longitude }}</li>
     <li>Morada: {{ resumeData?.address }}</li>
     <li>Código postal: {{ resumeData?.postal_code }}</li>
+    <li>Acessibilidade: {{ resumeData?.accessibility === 'public' ? 'Local com acesso livre' : (resumeData?.accessibility === 'private' ? 'Local com acesso limitado' : '-') }}</li>
     <li>Email: {{ resumeData?.email }}</li>
     <li>Telefone: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
   </ul>

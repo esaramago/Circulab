@@ -134,6 +134,7 @@ export type Database = {
           postal_code: string | null
           updated_at: string
           get_geojson: Json | null
+          accessibility: string | null
         }
         Insert: {
           address?: string | null
@@ -147,6 +148,7 @@ export type Database = {
           phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
+          accessibility?: string | null
         }
         Update: {
           address?: string | null
@@ -160,6 +162,7 @@ export type Database = {
           phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
+          accessibility?: string | null
         }
         Relationships: []
       }
