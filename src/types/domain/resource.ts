@@ -32,4 +32,5 @@ export type ResourcePopup = Pick<PinRow, 'id' | 'title' | 'description'> & {
   characteristics: CategoryRow['name']
   location: LocationRow['name']
   coordinates: GeoJsonPoint
+  accessibility: LocationRow['accessibility']
 } & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone'>

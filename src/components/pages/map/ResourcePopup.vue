@@ -55,7 +55,7 @@ watch(() => props.resourceId, async () => {
             <p v-if="resource?.characteristics">{{ resource?.characteristics }}</p>
           </div>
 
-          <Grid gap="xs" direction="column">
+          <Grid gap="xs" direction="column" class="list">
             <div>
               <wa-icon name="location-dot"></wa-icon>
               {{resource?.location}}, {{ resource?.address }}, {{ resource?.postal_code }}
@@ -71,12 +71,22 @@ watch(() => props.resourceId, async () => {
               </a>
             </div>
             <div v-if="resource?.email">
-              <wa-icon name="email"></wa-icon>
+              <wa-icon name="at"></wa-icon>
               {{ resource.email }}
             </div>
             <div v-if="resource?.phone">
               <wa-icon name="phone"></wa-icon>
               {{ resource.phone }}
+            </div>
+            <div v-if="resource?.accessibility">
+              <template v-if="resource.accessibility === 'private'">
+                <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
+                <span>Acesso limitado</span>
+              </template>
+              <template v-else-if="resource.accessibility === 'public'">
+                <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
+                <span>Acesso livre</span>
+              </template>
             </div>
           </Grid>
 
@@ -144,5 +154,11 @@ watch(() => props.resourceId, async () => {
   height: 20rem;
   object-fit: cover;
   border-radius: var(--wa-border-radius-m);
+}
+
+.list {
+  wa-icon {
+    padding-inline-end: var(--wa-space-xs);
+  }
 }
 </style>
