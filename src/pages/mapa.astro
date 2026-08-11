@@ -3,11 +3,23 @@ import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
+import Grid from '@/components/ui/Grid.vue'
 
 const defaultTypologyCode = Astro.url.searchParams.get('code')
 ---
 
 <Layout title={m['map.title']()} fullWidth={true}>
-  <MapFilters client:only="vue" defaultTypologyCode={defaultTypologyCode} />
-  <Map client:only="vue" />
+  <div class="wrapper">
+    <MapFilters client:only="vue" defaultTypologyCode={defaultTypologyCode} />
+    <Map client:only="vue" />
+  </div>
 </Layout>
+
+<style>
+.wrapper {
+  display: flex;
+  gap: var(--wa-space-m);
+  flex: 1;
+}
+</style>
+  

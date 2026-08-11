@@ -117,22 +117,28 @@ function clearFilters() {
 
 <template>
   <form class="filters" @submit.prevent="">
-    <h2 class="is-visually-hidden">Filtros</h2>
+    <h2 data-appearance="h4">Filtrar recursos</h2>
     <wa-input 
-      type="text" 
+      type="text"
+      label="Pesquisar recurso"
       placeholder="Pesquisar" 
       size="s" 
       v-model="search"
     />
-    <wa-select
-      placeholder="Tipologia"
-      size="s"
-      :value="typology"
-      @input="setTypology(($event.target as HTMLSelectElement).value)"
-      with-clear
-    >
-      <wa-option v-for="item in typologies" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
-    </wa-select>
+
+    <fieldset>
+      <legend data-appearance="h5">Tipologia</legend>
+      <div class="typologies">
+        <div v-for="typology in typologies" :key="typology.id" class="typologies__item">
+          <input type="radio" name="typology" :value="typology.id" @change="setTypology(typology.id)" :id="`typology-${typology.id}`" />
+          <label :for="`typology-${typology.id}`" class="typologies__label">
+            <wa-icon :name="typology.icon"></wa-icon>
+            {{ typology.name }}
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
     <wa-select
       v-if="typology"
       placeholder="Categoria"
@@ -153,6 +159,7 @@ function clearFilters() {
     >
       <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
+    <hr>
     <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
       Limpar
     </wa-button>
@@ -161,17 +168,54 @@ function clearFilters() {
 
 <style scoped>
 .filters {
-  position: absolute;
-  inset-inline-start: 5.5rem;
-  inset-block-start: 1rem;
-  z-index: 1001; /* one more than the map */
   display: flex;
+  flex-direction: column;
   gap: var(--wa-space-s);
+  background-color: var(--wa-color-brand-30);
+  border-radius: var(--wa-border-radius-l);
+  padding: var(--wa-space-m);
+  flex: 0 0 28rem;
 }
 
 .filters wa-input,
 .filters wa-select,
 .filters wa-button {
   flex-shrink: 0;
+}
+
+.typologies {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--wa-space-xs);
+  input {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    &:checked + .typologies__label {
+      background-color: var(--wa-color-brand-70);
+      color: var(--wa-color-brand-10);
+    }
+  }
+}
+.typologies__item {
+  aspect-ratio: 5/4;
+}
+.typologies__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  background-color: var(--wa-color-brand-20);
+  border-radius: var(--wa-border-radius-m);
+  padding: var(--wa-space-s) var(--wa-space-xs);
+  height: 100%;
+  box-sizing: border-box;
+  font-size: var(--wa-font-size-s);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: var(--wa-color-brand-40);
+  }
 }
 </style>

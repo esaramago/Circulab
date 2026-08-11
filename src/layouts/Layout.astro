@@ -9,9 +9,10 @@ import { ClientRouter } from 'astro:transitions'
 interface Props {
 	title: string
 	fullWidth?: boolean
+  class?: string
 }
 
-const { title, fullWidth } = Astro.props
+const { title, fullWidth, class: className } = Astro.props
 
 ---
 
@@ -33,7 +34,7 @@ const { title, fullWidth } = Astro.props
   </head>
 	<body class="wa-dark wa-custom-theme">
     <Header />
-    <main class:list={fullWidth ? 'u-width-full' : ''}>
+    <main class:list={[fullWidth ? 'u-width-full' : '', className]}>
       <slot />
     </main>
     <Footer />
