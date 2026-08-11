@@ -4,6 +4,7 @@ import { fetchDB } from '@/utils/fetchDB'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import { CONFIG } from '@/config'
 
 const user = Astro.locals.user
 
@@ -47,6 +48,12 @@ const typologies = typologiesData || []
                 <Grid direction="column">
                   <Grid align="center" gap="s">
                     <span class="color-indicator" style={`background-color: ${t.color || '#cccccc'}`}></span>
+                    {t.icon && (
+                      <wa-icon
+                        src={t.icon.includes('/') || t.icon.endsWith('.svg') || t.icon.startsWith('http') ? CONFIG.images_url + 'pin-images/' + t.icon : undefined}
+                        name={!(t.icon.includes('/') || t.icon.endsWith('.svg') || t.icon.startsWith('http')) ? t.icon : undefined}
+                      ></wa-icon>
+                    )}
                     <h3>{t.name}</h3>
                   </Grid>
                   <p>{t.description}</p>

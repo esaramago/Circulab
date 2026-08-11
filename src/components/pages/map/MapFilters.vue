@@ -9,10 +9,17 @@ import { useTypologyCascade } from '@/composables/useTypologyCascade'
 import { selectLayer, $mapFilters, setMapFilters, resetMapFilters, type MapFiltersState } from '@/stores/map'
 import type { CharacteristicRow } from '@/types/database'
 
+import { CONFIG } from '@/config'
+
 const props = defineProps<{
   modelValue?: MapFiltersState
   defaultTypologyCode?: string | null
 }>()
+
+function isUrlIcon(icon?: string | null): boolean {
+  if (!icon) return false
+  return icon.includes('/') || icon.endsWith('.svg') || icon.startsWith('http')
+}
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: MapFiltersState): void
@@ -132,7 +139,11 @@ function clearFilters() {
         <div v-for="typology in typologies" :key="typology.id" class="typologies__item">
           <input type="radio" name="typology" :value="typology.id" @change="setTypology(typology.id)" :id="`typology-${typology.id}`" />
           <label :for="`typology-${typology.id}`" class="typologies__label">
-            <wa-icon :name="typology.icon"></wa-icon>
+            <wa-icon
+              v-if="typology.icon"
+              :src="isUrlIcon(typology.icon) ? CONFIG.images_url + 'pin-images/' + typology.icon : undefined"
+              :name="!isUrlIcon(typology.icon) ? typology.icon : undefined"
+            ></wa-icon>
             {{ typology.name }}
           </label>
         </div>
@@ -216,6 +227,10 @@ function clearFilters() {
   transition: background-color 0.2s ease-in-out;
   &:hover {
     background-color: var(--wa-color-brand-40);
+  }
+
+  wa-icon {
+    font-size: var(--wa-font-size-xl)
   }
 }
 </style>

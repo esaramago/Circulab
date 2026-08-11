@@ -122,6 +122,7 @@ export type Database = {
       }
       locations: {
         Row: {
+          accessibility: string | null
           address: string | null
           coordinates: unknown
           created_at: string
@@ -134,9 +135,9 @@ export type Database = {
           postal_code: string | null
           updated_at: string
           get_geojson: Json | null
-          accessibility: string | null
         }
         Insert: {
+          accessibility?: string | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
@@ -148,9 +149,9 @@ export type Database = {
           phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
-          accessibility?: string | null
         }
         Update: {
+          accessibility?: string | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
@@ -162,7 +163,6 @@ export type Database = {
           phone_area_code?: number | null
           postal_code?: string | null
           updated_at?: string
-          accessibility?: string | null
         }
         Relationships: []
       }
@@ -334,6 +334,7 @@ export type Database = {
           created_at: string
           description: string | null
           has_category_color: boolean
+          icon: string | null
           id: string
           name: string
         }
@@ -343,6 +344,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           has_category_color?: boolean
+          icon?: string | null
           id?: string
           name: string
         }
@@ -352,6 +354,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           has_category_color?: boolean
+          icon?: string | null
           id?: string
           name?: string
         }

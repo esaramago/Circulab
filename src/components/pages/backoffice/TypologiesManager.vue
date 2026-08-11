@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { actions } from 'astro:actions'
+import { supabase } from '@/utils/supabase'
+import { CONFIG } from '@/config'
 import '@webawesome/button/button.js'
 import '@webawesome/dialog/dialog.js'
 import '@webawesome/input/input.js'
@@ -28,7 +30,58 @@ const form = ref({
   description: '',
   color: '',
   has_category_color: true,
+  icon: '',
 })
+
+const selectedFile = ref<File | null>(null)
+const selectedFileUrl = ref<string | null>(null)
+
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    const { data: sessionData, error: sessionError } = await actions.getSession()
+    if (sessionError) {
+      console.error('[TypologiesManager] Failed to get session:', sessionError)
+      return
+    }
+    if (sessionData) {
+      const { error: setSessionError } = await supabase.auth.setSession({
+        access_token: sessionData.access_token,
+        refresh_token: sessionData.refresh_token,
+      })
+      if (setSessionError) {
+        console.error('[TypologiesManager] Failed to set session:', setSessionError)
+      }
+    }
+  }
+})
+
+function isUrlIcon(icon?: string | null): boolean {
+  if (!icon) return false
+  return icon.includes('/') || icon.endsWith('.svg') || icon.startsWith('http')
+}
+
+function clearIcon() {
+  form.value.icon = ''
+  selectedFile.value = null
+  selectedFileUrl.value = null
+}
+
+function onFileChange(event: any) {
+  const file = event.target?.files?.[0]
+  if (file) {
+    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')
+    if (isSvg) {
+      selectedFile.value = file
+      selectedFileUrl.value = URL.createObjectURL(file)
+      dialogError.value = null
+    } else {
+      dialogError.value = 'Por favor, selecione um ficheiro SVG válido.'
+      selectedFile.value = null
+      selectedFileUrl.value = null
+    }
+  }
+}
 
 function openEditDialog(typology: TypologyRow) {
   form.value = {
@@ -37,7 +90,10 @@ function openEditDialog(typology: TypologyRow) {
     description: typology.description || '',
     color: typology.color || '#ffffff',
     has_category_color: typology.has_category_color !== false,
+    icon: typology.icon || '',
   }
+  selectedFile.value = null
+  selectedFileUrl.value = null
   feedback.value = null
   dialogError.value = null
   dialogOpen.value = true
@@ -53,13 +109,37 @@ async function saveTypology() {
   dialogError.value = null
   feedback.value = null
   try {
+    let iconPath = form.value.icon
+
+    if (selectedFile.value) {
+      const file = selectedFile.value
+      const extension = 'svg'
+      const filename = `${crypto.randomUUID()}.${extension}`
+      const path = `typology-icons/${filename}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('pin-images')
+        .upload(path, file, {
+          cacheControl: '3600',
+          upsert: true,
+        })
+
+      if (uploadError) {
+        throw new Error(`Erro ao carregar o ícone: ${uploadError.message}`)
+      }
+      iconPath = path
+    }
+
     const { data, error } = await actions.updateTypology({
       id: form.value.id,
       name: form.value.name,
       description: form.value.description,
       color: form.value.color,
       has_category_color: form.value.has_category_color,
+      icon: iconPath,
     })
+
+    console.log('[TypologiesManager] Action response:', { data, error })
 
     if (error) {
       console.error('[TypologiesManager] Update typology action error:', error)
@@ -99,6 +179,7 @@ async function saveTypology() {
       <table class="manager__table">
         <thead>
           <tr>
+            <th>Ícone</th>
             <th>Código</th>
             <th>Nome</th>
             <th>Descrição</th>
@@ -109,6 +190,15 @@ async function saveTypology() {
         </thead>
         <tbody>
           <tr v-for="typology in typologies" :key="typology.id">
+            <td>
+              <wa-icon
+                v-if="typology.icon"
+                class="typology-icon-preview"
+                :src="isUrlIcon(typology.icon) ? CONFIG.images_url + 'pin-images/' + typology.icon : undefined"
+                :name="!isUrlIcon(typology.icon) ? typology.icon : undefined"
+              ></wa-icon>
+              <span v-else class="no-icon">-</span>
+            </td>
             <td>
               <span class="badge badge--code">{{ typology.code }}</span>
             </td>
@@ -135,7 +225,7 @@ async function saveTypology() {
             </td>
           </tr>
           <tr v-if="typologies.length === 0">
-            <td colspan="6" class="text-center">Nenhuma tipologia encontrada.</td>
+            <td colspan="7" class="text-center">Nenhuma tipologia encontrada.</td>
           </tr>
         </tbody>
       </table>
@@ -173,6 +263,41 @@ async function saveTypology() {
             placeholder="Breve descrição da tipologia"
             rows="3"
           ></wa-textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ícone (ficheiro SVG)</label>
+          <div class="file-upload-wrapper">
+            <input
+              type="file"
+              id="typology-icon-upload"
+              accept=".svg"
+              @change="onFileChange"
+              class="file-input-hidden"
+            />
+            <label for="typology-icon-upload" class="file-upload-btn">
+              <wa-icon name="upload"></wa-icon>
+              <span>Selecionar ficheiro SVG</span>
+            </label>
+            <div v-if="selectedFile || form.icon" class="file-upload-preview-area">
+              <img
+                v-if="selectedFileUrl"
+                :src="selectedFileUrl"
+                class="typology-icon-preview"
+                alt="Novo ícone"
+              />
+              <wa-icon
+                v-else-if="form.icon"
+                :src="isUrlIcon(form.icon) ? CONFIG.images_url + 'pin-images/' + form.icon : undefined"
+                :name="!isUrlIcon(form.icon) ? form.icon : undefined"
+                class="typology-icon-preview"
+              ></wa-icon>
+              <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
+              <wa-button size="s" variant="neutral" @click="clearIcon">
+                <wa-icon name="trash"></wa-icon>
+              </wa-button>
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -329,6 +454,71 @@ async function saveTypology() {
   font-weight: var(--wa-font-weight-semibold);
   color: var(--wa-color-neutral-700);
   margin-block-end: var(--wa-space-3xs);
+}
+
+.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.file-upload-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wa-space-xs);
+  padding: var(--wa-space-s) var(--wa-space-m);
+  border: 1px dashed var(--wa-color-neutral-300);
+  border-radius: var(--wa-border-radius-m);
+  background-color: var(--wa-color-neutral-50);
+  cursor: pointer;
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-medium);
+  transition: all 0.2s ease;
+}
+
+.file-upload-btn:hover {
+  border-color: var(--wa-color-brand-50);
+  background-color: var(--wa-color-neutral-100);
+}
+
+.file-upload-preview-area {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+  padding: var(--wa-space-xs) var(--wa-space-s);
+  border: 1px solid var(--wa-color-neutral-200);
+  border-radius: var(--wa-border-radius-m);
+  background-color: var(--wa-color-neutral-0);
+}
+
+.typology-icon-preview {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  display: inline-block;
+}
+
+.no-icon {
+  color: var(--wa-color-neutral-400);
+}
+
+.file-name {
+  font-size: var(--wa-font-size-xs);
+  color: var(--wa-color-neutral-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .color-input-wrapper {

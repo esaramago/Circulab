@@ -6,4 +6,5 @@ export const updateTypologySchema = z.object({
   description: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
   has_category_color: z.boolean().optional(),
+  icon: z.string().optional().nullable(),
 })
