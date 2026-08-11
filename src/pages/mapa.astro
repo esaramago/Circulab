@@ -2,10 +2,12 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
+import MapFilters from '@/components/pages/map/MapFilters.vue'
 
 const defaultTypologyCode = Astro.url.searchParams.get('code')
 ---
 
 <Layout title={m['map.title']()} fullWidth={true}>
-  <Map client:only="vue" defaultTypologyCode={defaultTypologyCode} />
+  <MapFilters client:only="vue" defaultTypologyCode={defaultTypologyCode} />
+  <Map client:only="vue" />
 </Layout>

@@ -4,25 +4,26 @@ import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
 import '@webawesome/button/button.js'
 import { ref, watch } from 'vue'
+import { useStore } from '@nanostores/vue'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
-import { selectLayer } from '@/stores/map'
+import { selectLayer, $mapFilters, setMapFilters, resetMapFilters, type MapFiltersState } from '@/stores/map'
+import type { CharacteristicRow } from '@/types/database'
 
 const props = defineProps<{
-  modelValue: {
-    typology: string | null
-    category: string | null
-    characteristic: string | null
-    search: string | null
-  }
+  modelValue?: MapFiltersState
   defaultTypologyCode?: string | null
 }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: MapFiltersState): void
+}>()
 
-const typology = ref<string | null>(props.modelValue.typology)
-const category = ref<string | null>(props.modelValue.category)
-const characteristic = ref<string | null>(props.modelValue.characteristic)
-const search = ref<string | null>(props.modelValue.search)
+const storeFilters = useStore($mapFilters)
+
+const typology = ref<string | null>(props.modelValue?.typology ?? storeFilters.value.typology)
+const category = ref<string | null>(props.modelValue?.category ?? storeFilters.value.category)
+const characteristics = ref<CharacteristicRow['name'][] | null>(props.modelValue?.characteristics ?? storeFilters.value.characteristics)
+const search = ref<string | null>(props.modelValue?.search ?? storeFilters.value.search)
 
 const {
   typologies,
@@ -31,22 +32,34 @@ const {
   loadCharacteristics,
 } = useTypologyCascade()
 
-// Watch for prop changes (e.g., when filters are cleared externally)
-watch(() => props.modelValue, (newVal) => {
-  typology.value = newVal.typology
-  category.value = newVal.category
-  characteristic.value = newVal.characteristic
-  search.value = newVal.search
+// Sync local refs when store updates externally
+watch(storeFilters, (newVal) => {
+  if (typology.value !== newVal.typology) typology.value = newVal.typology
+  if (category.value !== newVal.category) category.value = newVal.category
+  if (characteristics.value !== newVal.characteristics) characteristics.value = newVal.characteristics
+  if (search.value !== newVal.search) search.value = newVal.search
 }, { deep: true })
 
-// Watch for internal changes and emit updates
-watch([typology, category, characteristic, search], () => {
-  emit('update:modelValue', {
+// Watch for prop changes if passed via v-model
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    typology.value = newVal.typology
+    category.value = newVal.category
+    characteristics.value = newVal.characteristics
+    search.value = newVal.search
+  }
+}, { deep: true })
+
+// Sync local changes to store and emit update
+watch([typology, category, characteristics, search], () => {
+  const current: MapFiltersState = {
     typology: typology.value,
     category: category.value,
-    characteristic: characteristic.value,
+    characteristics: characteristics.value,
     search: search.value
-  })
+  }
+  setMapFilters(current)
+  emit('update:modelValue', current)
 }, { deep: true })
 
 // Watch for defaultTypologyCode and set the typology
@@ -59,7 +72,7 @@ watch([() => props.defaultTypologyCode, typologies], ([code, list]) => {
   }
 }, { immediate: true })
 
-// Auto-select "cartodb-positron" layer when "Lisboa Repair Map" typology is selected
+// Auto-select layer when typology is selected
 watch([typology, () => typologies.value], ([newTypologyId, list]) => {
   if (newTypologyId && list && list.length > 0) {
     const selectedTypology = list.find(t => t.id === newTypologyId)
@@ -73,25 +86,32 @@ watch([typology, () => typologies.value], ([newTypologyId, list]) => {
   }
 }, { immediate: true })
 
-async function setTypology(id: string) {
-  typology.value = id
+async function setTypology(id: string | null) {
+  const val = id || null
+  typology.value = val
   category.value = null
-  characteristic.value = null
-  await loadCategories(id)
-  await loadCharacteristics(id)
+  characteristics.value = null
+  if (val) {
+    await loadCategories(val)
+    await loadCharacteristics(val)
+  }
 }
 
-async function setCategory(id: string) {
-  category.value = id
-  characteristic.value = null
-  await loadCharacteristics(id)
+async function setCategory(id: string | null) {
+  const val = id || null
+  category.value = val
+  characteristics.value = null
+  if (val) {
+    await loadCharacteristics(val)
+  }
 }
 
 function clearFilters() {
   typology.value = null
   category.value = null
-  characteristic.value = null
+  characteristics.value = null
   search.value = null
+  resetMapFilters()
 }
 </script>
 
@@ -124,16 +144,16 @@ function clearFilters() {
       <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
     <wa-select
-      v-if="category && characteristic?.length"
+      v-if="category && characteristics?.length"
       placeholder="Característica"
       size="s"
-      :value="characteristic"
-      @input="characteristic = ($event.target as HTMLSelectElement).value"
+      :value="characteristics"
+      @input="characteristics?.push(($event.target as HTMLSelectElement).value)"
       with-clear
     >
-      <wa-option v-for="item in characteristic" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+      <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
-    <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || characteristic || search">
+    <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
       Limpar
     </wa-button>
   </form>

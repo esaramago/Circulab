@@ -4,7 +4,7 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "js/ts.preferences.quoteStyle": "single",
+  "editor.formatOnSave": false,
   "search.exclude": {
     "node_modules": true,
     "dist": true,

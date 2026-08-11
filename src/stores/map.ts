@@ -31,3 +31,31 @@ export function selectLayer(layerId: string) {
     $selectedLayerId.set(layerId)
   }
 }
+
+export interface MapFiltersState {
+  typology: string | null
+  category: string | null
+  characteristics: string[] | null
+  search: string | null
+}
+
+export const initialMapFilters: MapFiltersState = {
+  typology: null,
+  category: null,
+  characteristics: null,
+  search: null
+}
+
+export const $mapFilters = atom<MapFiltersState>(initialMapFilters)
+
+export function setMapFilters(filters: Partial<MapFiltersState>) {
+  $mapFilters.set({
+    ...$mapFilters.get(),
+    ...filters
+  })
+}
+
+export function resetMapFilters() {
+  $mapFilters.set({ ...initialMapFilters })
+}
+

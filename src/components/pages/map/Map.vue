@@ -6,11 +6,10 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import ResourcePopup from './ResourcePopup.vue'
-import MapFilters from './MapFilters.vue'
 import type { Pin } from '@/types/domain/resource.ts'
 import { CONFIG } from '@/config'
 import { useStore } from '@nanostores/vue'
-import { $selectedLayerId, MAP_LAYERS, selectLayer } from '@/stores/map'
+import { $selectedLayerId, MAP_LAYERS, selectLayer, $mapFilters } from '@/stores/map'
 import '@webawesome/button/button.js'
 import '@webawesome/dropdown/dropdown.js'
 import '@webawesome/dropdown-item/dropdown-item.js'
@@ -18,12 +17,8 @@ import '@webawesome/icon/icon.js'
 import { actions } from 'astro:actions'
 import isColorDark from '@/utils/isColorDark'
 
-const props = defineProps<{
-  hideFilters?: boolean
-  defaultTypologyCode?: string | null
-}>()
-
 const selectedLayerId = useStore($selectedLayerId)
+const filters = useStore($mapFilters)
 
 const pins = ref<Pin[]>([])
 const mapContainer = ref<HTMLElement | null>(null)
@@ -32,13 +27,6 @@ const mapInstance = shallowRef<LeafletMap | null>(null)
 const markersLayer = shallowRef<L.MarkerClusterGroup | null>(null)
 const activeTileLayer = shallowRef<TileLayer | null>(null)
 
-// Filter state
-const filters = ref({
-  typology: null as string | null,
-  category: null as string | null,
-  characteristic: null as string | null,
-  search: null as string | null
-})
 
 // Compute filtered pins
 const filteredPins = computed(() => {
@@ -102,7 +90,7 @@ watch(selectedLayerId, (newLayerId) => {
 
 // Watch for filter changes and update markers
 watch(filteredPins, (newPins) => {
-  if (!props.hideFilters && mapInstance.value && markersLayer.value) {
+  if (mapInstance.value && markersLayer.value) {
     addPins(newPins, mapInstance.value, markersLayer.value)
   }
 }, { deep: true })
@@ -245,7 +233,7 @@ function showPopup(pin: Pin) {
 
 <template>
   <div class="c-map-container">
-    <MapFilters v-if="!props.hideFilters" v-model="filters" :default-typology-code="props.defaultTypologyCode" />
+
     <div ref="mapContainer" id="map"></div>
     
     <div class="map-actions">
