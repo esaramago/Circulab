@@ -121,8 +121,8 @@ watch(() => props.resourceId, async () => {
   }
 
   @media (max-width: 600px) {
+    position: fixed;
     --inset: 0;
-    --border-radius: 0;
     width: auto;
     inset: auto var(--inset) var(--inset) var(--inset);
   }
@@ -143,6 +143,8 @@ watch(() => props.resourceId, async () => {
   border-radius: calc(var(--border-radius) + var(--padding) / 2);
   @media (max-width: 600px) {
     max-height: 50vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 }
 .popup__body {

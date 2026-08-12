@@ -13,3 +13,8 @@
 .is-hidden {
   display: none !important;
 }
+@media (min-width: 768px) {
+  .is-hidden-desktop {
+    display: none !important;
+  }
+}

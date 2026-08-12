@@ -8,6 +8,8 @@ import { useStore } from '@nanostores/vue'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
 import { selectLayer, $mapFilters, setMapFilters, resetMapFilters, type MapFiltersState } from '@/stores/map'
 import type { CharacteristicRow } from '@/types/database'
+import Grid from '@/components/ui/Grid.vue'
+import Icon from '@/components/ui/Icon.vue'
 
 import { CONFIG } from '@/config'
 
@@ -104,6 +106,14 @@ async function setTypology(id: string | null) {
   }
 }
 
+function handleTypologyClick(id: string) {
+  if (typology.value === id) {
+    setTypology(null)
+  } else {
+    setTypology(id)
+  }
+}
+
 async function setCategory(id: string | null) {
   const val = id || null
   category.value = val
@@ -120,11 +130,25 @@ function clearFilters() {
   search.value = null
   resetMapFilters()
 }
+
+
+const isOpen = ref(false)
+function toggleFilters() {
+  isOpen.value = !isOpen.value
+}
 </script>
 
 <template>
-  <form class="filters" @submit.prevent="">
-    <h2 data-appearance="h4">Filtrar recursos</h2>
+  <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
+    <Grid justify="space-between">
+      <h2 data-appearance="h3">Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h2>
+      <wa-button @click="toggleFilters" size="s" class="is-hidden-desktop">
+        <Icon :name="isOpen ? 'xmark' : 'angle-up'"></Icon>
+      </wa-button>
+      <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
+        Limpar filtros
+      </wa-button>
+    </Grid>
     <wa-input 
       type="text"
       label="Pesquisar recurso"
@@ -134,17 +158,24 @@ function clearFilters() {
     />
 
     <fieldset>
-      <legend data-appearance="h5">Tipologia</legend>
+      <legend data-appearance="p">Tipologia</legend>
       <div class="typologies">
-        <div v-for="typology in typologies" :key="typology.id" class="typologies__item">
-          <input type="radio" name="typology" :value="typology.id" @change="setTypology(typology.id)" :id="`typology-${typology.id}`" />
-          <label :for="`typology-${typology.id}`" class="typologies__label">
+        <div v-for="item in typologies" :key="item.id" class="typologies__item">
+          <input
+            type="radio"
+            name="typology"
+            :value="item.id"
+            :checked="typology === item.id"
+            @click="handleTypologyClick(item.id)"
+            :id="`typology-${item.id}`"
+          />
+          <label :for="`typology-${item.id}`" class="typologies__label">
             <wa-icon
-              v-if="typology.icon"
-              :src="isUrlIcon(typology.icon) ? CONFIG.images_url + 'pin-images/' + typology.icon : undefined"
-              :name="!isUrlIcon(typology.icon) ? typology.icon : undefined"
+              v-if="item.icon"
+              :src="isUrlIcon(item.icon) ? CONFIG.images_url + 'pin-images/' + item.icon : undefined"
+              :name="!isUrlIcon(item.icon) ? item.icon : undefined"
             ></wa-icon>
-            {{ typology.name }}
+            {{ item.name }}
           </label>
         </div>
       </div>
@@ -152,7 +183,8 @@ function clearFilters() {
 
     <wa-select
       v-if="typology"
-      placeholder="Categoria"
+      placeholder="Filtra a categoria"
+      label="Categoria"
       size="s"
       :value="category"
       @input="setCategory(($event.target as HTMLSelectElement).value)"
@@ -162,7 +194,8 @@ function clearFilters() {
     </wa-select>
     <wa-select
       v-if="category && characteristics?.length"
-      placeholder="Característica"
+      placeholder="Filtra a caraterística"
+      label="Característica"
       size="s"
       :value="characteristics"
       @input="characteristics?.push(($event.target as HTMLSelectElement).value)"
@@ -171,9 +204,6 @@ function clearFilters() {
       <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
     <hr>
-    <wa-button size="s" type="button" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
-      Limpar
-    </wa-button>
   </form>
 </template>
 
@@ -181,11 +211,27 @@ function clearFilters() {
 .filters {
   display: flex;
   flex-direction: column;
-  gap: var(--wa-space-s);
+  gap: var(--wa-space-m);
   background-color: var(--wa-color-brand-30);
   border-radius: var(--wa-border-radius-l);
   padding: var(--wa-space-m);
-  flex: 0 0 28rem;
+  box-sizing: border-box;
+  flex: 0 0 34rem;
+  transition: transform .2s ease-in-out;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    z-index: 1001; /* map + 1 */
+    width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    inset-block-end: 0;
+    box-shadow: var(--wa-shadow-l);
+    transform: translateY(calc(100% - 7rem));
+    &.is-open {
+      transform: translateY(0);
+    }
+  }
 }
 
 .filters wa-input,
@@ -196,7 +242,7 @@ function clearFilters() {
 
 .typologies {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100% / 3, 9rem), 1fr));
   gap: var(--wa-space-xs);
   input {
     opacity: 0;
