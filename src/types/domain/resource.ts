@@ -25,7 +25,7 @@ export type Pin = Pick<PinRow, 'id' | 'title' | 'category_id'> & {
   icon?: CategoryRow['icon'] | null
 }
 
-export type ResourcePopup = Pick<PinRow, 'id' | 'title' | 'description'> & {
+export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   images: ImageType[]
   category: CategoryRow['name']
   typology: TypologyRow['name']
@@ -33,4 +33,5 @@ export type ResourcePopup = Pick<PinRow, 'id' | 'title' | 'description'> & {
   location: LocationRow['name']
   coordinates: GeoJsonPoint
   accessibility: LocationRow['accessibility']
-} & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone'>
+  status?: PinRow['status']
+} & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone' | 'phone_area_code'>

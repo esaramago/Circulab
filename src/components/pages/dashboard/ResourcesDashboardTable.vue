@@ -3,24 +3,37 @@ import { ref } from 'vue'
 import { actions } from 'astro:actions'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue'
 import geojson from '@/utils/geojson'
-import type { ResourceRow } from '@/types/database'
 import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
+import '@webawesome/card/card.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { clearAddResourceDraft } from '@/stores/addResource'
+import type { FullResource } from '@/types/domain/resource'
+import { onMounted } from 'vue'
 
-const props = defineProps<{
-  initialResources: ResourceRow[]
-}>()
+const resources = ref<FullResource[]>([])
 
-const resources = ref<ResourceRow[]>([...props.initialResources])
+onMounted(async () => {
+  await getResources()
+})
+
+async function getResources() {
+  const { data, error } = await actions.getFullResources()
+  if (error) {
+    console.error(error)
+  } else {
+    resources.value = data as FullResource[]
+  }
+}
+  
+
 const deleteDialogOpen = ref(false)
-const resourceToDelete = ref<ResourceRow | null>(null)
+const resourceToDelete = ref<FullResource | null>(null)
 const deleting = ref(false)
 const feedback = ref<{ type: 'success' | 'danger'; message: string } | null>(null)
 
-function confirmDelete(resource: ResourceRow) {
+function confirmDelete(resource: FullResource) {
   resourceToDelete.value = resource
   feedback.value = null
   deleteDialogOpen.value = true
@@ -36,7 +49,7 @@ async function handleDelete() {
     if (error) throw error
 
     if (data?.success) {
-      resources.value = resources.value.filter(r => r.id !== resourceToDelete.value?.id)
+      
       feedback.value = { type: 'success', message: 'Recurso apagado com sucesso!' }
       deleteDialogOpen.value = false
     }
@@ -55,65 +68,43 @@ async function handleDelete() {
 </script>
 
 <template>
-  <div class="resources-table-wrapper">
-    <wa-callout v-if="feedback" :variant="feedback.type" class="table-feedback">
+  <div>
+    <wa-callout v-if="feedback" :variant="feedback.type">
       {{ feedback.message }}
     </wa-callout>
 
-    <div class="table-container">
-      <table class="dashboard-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Imagem</th>
-            <th>Categoria</th>
-            <th>Características</th>
-            <th>Localização</th>
-            <th>Endereço</th>
-            <th>Código Postal</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Coordenadas</th>
-            <th>Estado</th>
-            <th class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="resource in resources" :key="resource.id">
-            <td><strong>{{ resource.title }}</strong></td>
-            <td>{{ resource.description || '-' }}</td>
-            <td>{{ Array.isArray(resource.images) ? resource.images.join(', ') : resource.images || '-' }}</td>
-            <td>{{ resource.category_id || '-' }}</td>
-            <td>{{ resource.characteristics_ids?.join(', ') || '-' }}</td>
-            <td>{{ resource.locations?.name || '-' }}</td>
-            <td>{{ resource.locations?.address || '-' }}</td>
-            <td>{{ resource.locations?.postal_code || '-' }}</td>
-            <td>{{ resource.locations?.email || '-' }}</td>
-            <td>{{ resource.locations?.phone || '-' }}</td>
-            <td>
-              <template v-if="resource.get_geojson">
-                {{ geojson.getLatitude(resource.get_geojson) }}, {{ geojson.getLongitude(resource.get_geojson) }}
-              </template>
-              <template v-else>-</template>
-            </td>
-            <td>{{ resource.status || '-' }}</td>
-            <td class="text-end actions-cell">
-              <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar/descricao?id=${resource.id}`)" @click="clearAddResourceDraft">
-                <wa-icon name="pen"></wa-icon>
-                Editar
-              </wa-button>
-              <wa-button size="s" variant="danger" @click="confirmDelete(resource)">
-                <wa-icon name="trash"></wa-icon>
-                Apagar
-              </wa-button>
-            </td>
-          </tr>
-          <tr v-if="resources.length === 0">
-            <td colspan="13" class="text-center">Nenhum recurso encontrado.</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card-container">
+      <wa-card v-for="resource in resources" :key="resource.id">
+        <div slot="header">
+          <h2>{{ resource.title }}</h2>
+          {{ resource.typology }}
+          {{ resource.category }}
+        </div>
+        <div>
+          <p>{{ resource.description }}</p>
+          <ul>
+            <li>{{ resource.address }}</li>
+            <li>{{ resource.email }}</li>
+            <li>{{ resource.phone }}</li>
+            <li>{{ geojson.getLatitude(resource.coordinates)}}, {{ geojson.getLongitude(resource.coordinates) }}</li>
+            <li>{{ resource.accessibility }}</li>
+            <li>{{ resource.status }}</li>
+            <li>{{ resource.location }}</li>
+            <li>{{ resource.postal_code }}</li>
+            <li>{{ resource.phone_area_code }}</li>
+          </ul>
+        </div>
+        <div slot="footer">
+          <wa-button variant="primary" :href="localizeHref(`/recursos/editar/descricao?id=${resource.id}`)" @click="clearAddResourceDraft">
+            <wa-icon name="pen"></wa-icon>
+            Editar
+          </wa-button>
+          <wa-button variant="danger" @click="confirmDelete(resource)">
+            <wa-icon name="trash"></wa-icon>
+            Apagar
+          </wa-button>
+        </div>
+      </wa-card>
     </div>
 
     <ConfirmationDialog
@@ -125,61 +116,15 @@ async function handleDelete() {
       @confirm="handleDelete"
     >
       <p>Tem a certeza de que deseja apagar o recurso <strong>{{ resourceToDelete?.title }}</strong>?</p>
-      <p class="text-danger"><small>Esta ação não pode ser desfeita.</small></p>
+      <p class="u-color-danger"><small>Esta ação não pode ser desfeita.</small></p>
     </ConfirmationDialog>
   </div>
 </template>
 
 <style scoped>
-.resources-table-wrapper {
-  display: flex;
-  flex-direction: column;
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--wa-space-m);
-  margin-block-start: var(--wa-space-m);
-}
-
-.table-feedback {
-  margin-block-end: var(--wa-space-s);
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.dashboard-table th,
-.dashboard-table td {
-  padding-block: var(--wa-space-s);
-  padding-inline: var(--wa-space-m);
-  text-align: start;
-  border-block-end: 1px solid var(--wa-color-neutral-border);
-}
-
-.dashboard-table th {
-  font-weight: var(--wa-font-weight-semibold);
-  background-color: var(--wa-color-neutral-subtle);
-}
-
-.actions-cell {
-  white-space: nowrap;
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--wa-space-xs);
-}
-
-.text-end {
-  text-align: end;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-danger {
-  color: var(--wa-color-danger-text, #dc2626);
 }
 </style>

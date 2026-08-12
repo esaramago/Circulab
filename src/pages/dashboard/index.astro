@@ -1,13 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import ResourcesDashboardTable from '@/components/pages/dashboard/ResourcesDashboardTable.vue'
-import { getResources } from '@/actions/resources'
 
-const resources = await Astro.callAction(getResources, {})
 ---
 
 <Layout title="Dashboard" fullWidth={true}>
   <h1>Dashboard</h1>
 
-  <ResourcesDashboardTable client:only="vue" initialResources={resources.data || []} />
+  <ResourcesDashboardTable client:only="vue" />
 </Layout>

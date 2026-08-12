@@ -209,3 +209,32 @@ export const deleteCategory = defineAction({
     }
   }
 })
+
+export const getCategories = defineAction({
+  handler: async (_, { request, cookies }) => {
+    try {
+      const supabase = createClient({ request, cookies })
+      
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name', { ascending: true })
+
+      if (error) {
+        throw new ActionError({
+          message: 'Failed to get categories',
+          code: 'INTERNAL_SERVER_ERROR'
+        })
+      }
+
+      return { success: true, categories: data }
+
+    } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      throw new ActionError({
+        message: error.message || 'Internal server error',
+        code: 'INTERNAL_SERVER_ERROR'
+      })
+    }
+  }
+})

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CONFIG } from '@/config'
-import type { ResourcePopup } from '@/types/domain/resource'
+import type { FullResource } from '@/types/domain/resource'
 import { ref, watch } from 'vue'
 import { actions } from 'astro:actions'
 import Grid from '@/components/ui/Grid.vue'
@@ -14,7 +14,7 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const resource = ref<ResourcePopup | null>(null)
+const resource = ref<FullResource | null>(null)
 const isLoading = ref(true)
 const hasError = ref(false)
 
@@ -30,7 +30,7 @@ watch(() => props.resourceId, async () => {
       hasError.value = true
     } else {
       console.log(data)
-      resource.value = data as unknown as ResourcePopup
+      resource.value = data as unknown as FullResource
     }
   } else {
     hasError.value = true

@@ -75,3 +75,32 @@ export const updateTypology = defineAction({
     }
   }
 })
+
+export const getTypologies = defineAction({
+  handler: async (_, { request, cookies }) => {
+    try {
+      const supabase = createClient({ request, cookies })
+      
+      const { data, error } = await supabase
+        .from('typologies')
+        .select('*')
+        .order('name', { ascending: true })
+
+      if (error) {
+        throw new ActionError({
+          message: 'Failed to get typologies',
+          code: 'INTERNAL_SERVER_ERROR'
+        })
+      }
+
+      return { success: true, typologies: data }
+
+    } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      throw new ActionError({
+        message: error.message || 'Internal server error',
+        code: 'INTERNAL_SERVER_ERROR'
+      })
+    }
+  }
+})

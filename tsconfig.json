@@ -20,7 +20,6 @@
       "@webawesome/*": [
         "./node_modules/@awesome.me/webawesome/dist/components/*"
       ]
-    },
-    "jsx": "preserve"
+    }
   }
 }

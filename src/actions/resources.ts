@@ -2,7 +2,7 @@ import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient, supabase } from '@/utils/supabase'
 import { PIN_STATUS } from '@/types/database'
 import type { LocationInsert, ResourceRow } from '@/types/database'
-import type { Pin } from '@/types/domain/resource'
+import type { FullResource, Pin } from '@/types/domain/resource'
 import type { Resource } from '@/types/domain/resource'
 import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
 import { resourceSchema } from '@/schemas/resource.server'
@@ -110,8 +110,6 @@ export const getResource = defineAction({
         })
       }
 
-      console.log('[Action] getResource raw data:', JSON.stringify(data))
-
       const resource = {
         id: data.id,
         title: data.title,
@@ -178,6 +176,77 @@ export const getResources = defineAction({
       }
 
       return data as ResourceRow[]
+    } catch (error: any) {
+      throw new ActionError({
+        message: error.message || 'Failed to get resources',
+        code: error.code as ActionErrorCode
+      })
+    }
+  },
+})
+
+export const getFullResources = defineAction({
+  handler: async () => {
+    try {
+      const { data, error } = await supabase.from('pins').select(`
+        id,
+        title,
+        description,
+        images,
+        category_id,
+        characteristics_ids,
+        category: category_id (
+          id,
+          name,
+          typology: typology_id (
+            id,
+            name
+          )
+        ),
+        location: locations (
+          id,
+          name,
+          address,
+          postal_code,
+          email,
+          phone,
+          phone_area_code,
+          accessibility
+        ),
+        coordinates: get_geojson,
+        status
+      `)
+
+      if (error) {
+        throw new ActionError({
+          message: error.message || 'Failed to get pins',
+          code: error.code as ActionErrorCode
+        })
+      }
+
+      const fullResourses = data.map((resource: any) => ({
+        id: resource.id,
+        title: resource.title,
+        description: resource.description,
+        images: resource.images,
+        category: resource.category?.name || '',
+        category_id: resource.category?.id || null,
+        typology: resource.category?.typology?.name || '',
+        typology_id: resource.category?.typology?.id || null,
+        characteristics_ids: resource.characteristics_ids || [],
+        location: resource.location?.name || '',
+        location_id: resource.location?.id || '',
+        address: resource.location?.address || '',
+        postal_code: resource.location?.postal_code || '',
+        email: resource.location?.email || '',
+        phone: resource.location?.phone || null,
+        phone_area_code: resource.location?.phone_area_code || null,
+        coordinates: resource.coordinates,
+        accessibility: resource.location?.accessibility || null,
+        status: resource.status,
+      }))
+
+      return fullResourses as FullResource[]
     } catch (error: any) {
       throw new ActionError({
         message: error.message || 'Failed to get resources',
