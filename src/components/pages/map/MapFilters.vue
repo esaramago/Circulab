@@ -140,15 +140,15 @@ function toggleFilters() {
 
 <template>
   <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
-    <Grid justify="space-between">
-      <h2 data-appearance="h3">Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h2>
-      <wa-button @click="toggleFilters" size="s" class="is-hidden-desktop">
-        <Icon :name="isOpen ? 'xmark' : 'angle-up'"></Icon>
-      </wa-button>
-      <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
-        Limpar filtros
-      </wa-button>
-    </Grid>
+    <button type="button" @click="toggleFilters" class="filters__header">
+      <Grid justify="space-between">
+        <h2 data-appearance="h3">Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h2>
+        <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-desktop"></Icon>
+      </Grid>
+    </button>
+    <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
+      Limpar filtros
+    </wa-button>
     <wa-input 
       type="text"
       label="Pesquisar recurso"
@@ -203,7 +203,6 @@ function toggleFilters() {
     >
       <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
     </wa-select>
-    <hr>
   </form>
 </template>
 
@@ -221,7 +220,7 @@ function toggleFilters() {
 
   @media (max-width: 768px) {
     position: fixed;
-    z-index: 1001; /* map + 1 */
+    z-index: 1002; /* map + 2 */
     width: 100%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -238,6 +237,10 @@ function toggleFilters() {
 .filters wa-select,
 .filters wa-button {
   flex-shrink: 0;
+}
+
+.filters__header {
+  margin-block-end: var(--wa-space-s);
 }
 
 .typologies {
@@ -261,6 +264,7 @@ function toggleFilters() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--wa-space-xs);
   background-color: var(--wa-color-brand-20);
   border-radius: var(--wa-border-radius-m);
@@ -271,6 +275,7 @@ function toggleFilters() {
   text-align: center;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  line-height: 1;
   &:hover {
     background-color: var(--wa-color-brand-40);
   }

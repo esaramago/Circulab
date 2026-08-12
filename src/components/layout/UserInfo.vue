@@ -22,14 +22,19 @@ async function logout() {
 function goto(route: string) {
   window.open(localizeHref(route, props.locale ? { locale: props.locale } : undefined), '_blank')
 }
+
 </script>
 
 <template>
   <wa-dropdown>
-    <wa-button variant="neutral" size="s" appearance="plain" slot="trigger" with-caret>
+    <wa-button variant="neutral" size="s" slot="trigger" with-caret>
       <wa-icon name="user" label="User"></wa-icon>
-      {{ user?.email }}
+      <span class="is-hidden-mobile">{{ user?.email }}</span>
     </wa-button>
+    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/recursos/novo')">
+      <wa-icon name="plus"></wa-icon>
+      Adicionar recurso
+    </wa-dropdown-item>
     <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/dashboard')">
       <wa-icon name="table-list" label="Dashboard"></wa-icon>
       Dashboard
@@ -44,7 +49,3 @@ function goto(route: string) {
     </wa-dropdown-item>
   </wa-dropdown>
 </template>
-
-<style scoped>
-
-</style>

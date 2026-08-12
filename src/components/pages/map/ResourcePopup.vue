@@ -115,7 +115,7 @@ watch(() => props.resourceId, async () => {
   width: clamp(30rem, 30vw, 40rem);
   inset: var(--inset) var(--inset) var(--inset) auto;
   display: none;
-  z-index: 1002; /* map + 2 */
+  z-index: 1003; /* map + 3 */
   &[open] {
     display: block;
   }

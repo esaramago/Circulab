@@ -288,6 +288,9 @@ function showPopup(pin: Pin) {
   opacity: 0.4;
   border: 3px solid var(--wa-color-neutral-40);
   outline: 3px solid var(--wa-color-neutral-60);
+  color: #FFF;
+  font-weight: 600;
+  font-size: var(--wa-font-size-s);
 }
 .c-pin--cluster--l {
   border-width: 4px;
