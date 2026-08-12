@@ -58,7 +58,8 @@ watch(() => props.resourceId, async () => {
           <Grid gap="xs" direction="column" class="list">
             <div>
               <wa-icon name="location-dot"></wa-icon>
-              {{resource?.location}}, {{ resource?.address }}, {{ resource?.postal_code }}
+              <template v-if="resource.location">{{resource.location}}, </template>{{resource.address}},
+              {{ resource.postal_code }}
             </div>
             <div v-if="resource?.coordinates">
               <wa-icon name="map"></wa-icon>
