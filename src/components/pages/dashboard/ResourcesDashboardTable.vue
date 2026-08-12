@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { actions } from 'astro:actions'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue'
 import geojson from '@/utils/geojson'
@@ -7,15 +7,28 @@ import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
+import '@webawesome/input/input.js'
+import '@webawesome/select/select.js'
+import '@webawesome/option/option.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { clearAddResourceDraft } from '@/stores/addResource'
+import { fetchDB } from '@/utils/fetchDB'
 import type { FullResource } from '@/types/domain/resource'
-import { onMounted } from 'vue'
+import Grid from '@/components/ui/Grid.vue'
+import type { TypologyRow, CategoryRow } from '@/types/database'
 
 const resources = ref<FullResource[]>([])
+const typologies = ref<TypologyRow[]>([])
+const categories = ref<CategoryRow[]>([])
+
+const search = ref('')
+const selectedTypology = ref('')
+const selectedCategory = ref('')
 
 onMounted(async () => {
   await getResources()
+  await getTypologies()
+  await getCategories()
 })
 
 async function getResources() {
@@ -26,7 +39,81 @@ async function getResources() {
     resources.value = data as FullResource[]
   }
 }
-  
+
+async function getTypologies() {
+  const { data, error } = await fetchDB('typologies').select('*').order('name', { ascending: true })
+  if (error) {
+    console.error('[ResourcesDashboardTable] Error fetching typologies:', error)
+  } else {
+    typologies.value = (data ?? []) as TypologyRow[]
+  }
+}
+
+async function getCategories() {
+  const { data, error } = await fetchDB('categories').select('*').order('name', { ascending: true })
+  if (error) {
+    console.error('[ResourcesDashboardTable] Error fetching categories:', error)
+  } else {
+    categories.value = (data ?? []) as CategoryRow[]
+  }
+}
+
+const availableCategories = computed(() => {
+  if (!selectedTypology.value) {
+    return categories.value
+  }
+  return categories.value.filter((c) => c.typology_id === selectedTypology.value)
+})
+
+function handleTypologyChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  const newTypologyId = target.value || ''
+  selectedTypology.value = newTypologyId
+  if (selectedCategory.value && newTypologyId) {
+    const isValid = categories.value.some(
+      (c) => c.id === selectedCategory.value && c.typology_id === newTypologyId
+    )
+    if (!isValid) {
+      selectedCategory.value = ''
+    }
+  }
+}
+
+function handleCategoryChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  selectedCategory.value = target.value || ''
+}
+
+function handleSearchInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  search.value = target.value || ''
+}
+
+const filteredResources = computed(() => {
+  return resources.value.filter((resource) => {
+    if (search.value.trim()) {
+      const q = search.value.toLowerCase().trim()
+      const titleMatch = resource.title?.toLowerCase().includes(q)
+      const descMatch = resource.description?.toLowerCase().includes(q)
+      const addressMatch = resource.address?.toLowerCase().includes(q)
+      const locationMatch = resource.location?.toLowerCase().includes(q)
+      const emailMatch = resource.email?.toLowerCase().includes(q)
+      if (!titleMatch && !descMatch && !addressMatch && !locationMatch && !emailMatch) {
+        return false
+      }
+    }
+
+    if (selectedTypology.value && resource.typology_id !== selectedTypology.value) {
+      return false
+    }
+
+    if (selectedCategory.value && resource.category_id !== selectedCategory.value) {
+      return false
+    }
+
+    return true
+  })
+})
 
 const deleteDialogOpen = ref(false)
 const resourceToDelete = ref<FullResource | null>(null)
@@ -49,9 +136,9 @@ async function handleDelete() {
     if (error) throw error
 
     if (data?.success) {
-      
       feedback.value = { type: 'success', message: 'Recurso apagado com sucesso!' }
       deleteDialogOpen.value = false
+      await getResources()
     }
   } catch (err: any) {
     console.error('[ResourcesDashboardTable] Error deleting resource:', err)
@@ -68,13 +155,48 @@ async function handleDelete() {
 </script>
 
 <template>
-  <div>
+  <Grid direction="column" gap="s">
     <wa-callout v-if="feedback" :variant="feedback.type">
       {{ feedback.message }}
     </wa-callout>
 
-    <div class="card-container">
-      <wa-card v-for="resource in resources" :key="resource.id">
+    <Grid direction="row" gap="s">
+      <wa-input
+        label="Pesquisar"
+        placeholder="Pesquisar..."
+        :value="search"
+        @input="handleSearchInput"
+        with-clear
+        @clear="search = ''"
+      ></wa-input>
+      <wa-select
+        label="Tipologia"
+        :value="selectedTypology"
+        @input="handleTypologyChange"
+        with-clear
+        @clear="selectedTypology = ''"
+      >
+        <wa-option value="">Todas</wa-option>
+        <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">
+          {{ typology.name }}
+        </wa-option>
+      </wa-select>
+      <wa-select
+        label="Categoria"
+        :value="selectedCategory"
+        @input="handleCategoryChange"
+        with-clear
+        @clear="selectedCategory = ''"
+      >
+        <wa-option value="">Todas</wa-option>
+        <wa-option v-for="category in availableCategories" :key="category.id" :value="category.id">
+          {{ category.name }}
+        </wa-option>
+      </wa-select>
+    </Grid>
+
+    <div v-if="filteredResources.length > 0" class="card-container">
+      <wa-card v-for="resource in filteredResources" :key="resource.id">
         <div slot="header">
           <h2>{{ resource.title }}</h2>
           {{ resource.typology }}
@@ -106,19 +228,22 @@ async function handleDelete() {
         </div>
       </wa-card>
     </div>
+    <div v-else class="empty-state">
+      <p>Nenhum recurso encontrado com os filtros selecionados.</p>
+    </div>
+  </Grid>
 
-    <ConfirmationDialog
-      v-model:open="deleteDialogOpen"
-      title="Confirmar eliminação"
-      confirm-label="Apagar"
-      variant="danger"
-      :loading="deleting"
-      @confirm="handleDelete"
-    >
-      <p>Tem a certeza de que deseja apagar o recurso <strong>{{ resourceToDelete?.title }}</strong>?</p>
-      <p class="u-color-danger"><small>Esta ação não pode ser desfeita.</small></p>
-    </ConfirmationDialog>
-  </div>
+  <ConfirmationDialog
+    v-model:open="deleteDialogOpen"
+    title="Confirmar eliminação"
+    confirm-label="Apagar"
+    variant="danger"
+    :loading="deleting"
+    @confirm="handleDelete"
+  >
+    <p>Tem a certeza de que deseja apagar o recurso <strong>{{ resourceToDelete?.title }}</strong>?</p>
+    <p class="u-color-danger"><small>Esta ação não pode ser desfeita.</small></p>
+  </ConfirmationDialog>
 </template>
 
 <style scoped>
@@ -127,4 +252,11 @@ async function handleDelete() {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--wa-space-m);
 }
+
+.empty-state {
+  padding: var(--wa-space-l);
+  text-align: center;
+  color: var(--wa-color-neutral-70);
+}
 </style>
+

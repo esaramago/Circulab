@@ -28,8 +28,11 @@ export type Pin = Pick<PinRow, 'id' | 'title' | 'category_id'> & {
 export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   images: ImageType[]
   category: CategoryRow['name']
+  category_id?: CategoryRow['id'] | null
   typology: TypologyRow['name']
-  characteristics: CategoryRow['name']
+  typology_id?: TypologyRow['id'] | null
+  characteristics?: CategoryRow['name'] | null
+  characteristics_ids?: string[]
   location: LocationRow['name']
   coordinates: GeoJsonPoint
   accessibility: LocationRow['accessibility']

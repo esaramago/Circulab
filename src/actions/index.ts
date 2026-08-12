@@ -5,8 +5,8 @@ import { resetPassword } from './auth/resetPassword'
 import { updatePassword } from './auth/updatePassword'
 import { getSession } from './auth/getSession'
 import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource } from './resources'
-import { addCategory, updateCategory, deleteCategory } from './categories'
-import { updateTypology } from './typologies'
+import { addCategory, updateCategory, deleteCategory, getCategories } from './categories'
+import { updateTypology, getTypologies } from './typologies'
 
 export const server = {
   signIn,
@@ -25,5 +25,7 @@ export const server = {
   addCategory,
   updateCategory,
   deleteCategory,
+  getCategories,
   updateTypology,
+  getTypologies,
 }
