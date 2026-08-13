@@ -9,18 +9,17 @@ import { userHasAccess } from '@/utils/userHasAccess'
 
 const props = defineProps<{
   user: AppUser
-  locale: 'en' | 'pt'
 }>()
 
 async function logout() {
   const { data } = await actions.logout()
   if (data?.success) {
-    window.location.href = localizeHref('/', { locale: props.locale })
+    window.location.href = localizeHref('/')
   }
 }
 
 function goto(route: string) {
-  window.open(localizeHref(route, props.locale ? { locale: props.locale } : undefined), '_blank')
+  window.open(localizeHref(route), '_blank')
 }
 
 </script>
