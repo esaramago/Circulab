@@ -267,7 +267,7 @@ function showPopup(pin: Pin) {
   justify-content: center;
   padding: var(--wa-space-2xs);
   box-shadow: var(--wa-shadow-s);
-  background-color: var(--wa-color-neutral-20);
+  background-color: var(--wa-color-neutral-60);
   border-radius: var(--wa-border-radius-circle);
   border: 2px solid #FFF;
   font-size: var(--wa-font-size-xs);
@@ -285,9 +285,9 @@ function showPopup(pin: Pin) {
   fill: #FFF;
 }
 .c-pin--cluster {
-  opacity: 0.4;
-  border: 3px solid var(--wa-color-neutral-40);
-  outline: 3px solid var(--wa-color-neutral-60);
+  opacity: 0.8;
+  border: 3px solid var(--wa-color-neutral-70);
+  outline: 3px solid var(--wa-color-neutral-80);
   color: #FFF;
   font-weight: 600;
   font-size: var(--wa-font-size-s);

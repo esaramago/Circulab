@@ -1,11 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import ResourcesDashboardTable from '@/components/pages/dashboard/ResourcesDashboardTable.vue'
+import ResourcesDashboard from '@/components/pages/dashboard/ResourcesDashboard.vue'
 
 ---
 
 <Layout title="Dashboard" fullWidth={true}>
   <h1>Dashboard</h1>
 
-  <ResourcesDashboardTable client:only="vue" />
+  <ResourcesDashboard client:only="vue" />
 </Layout>

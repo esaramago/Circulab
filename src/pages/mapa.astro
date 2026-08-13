@@ -5,6 +5,8 @@ import Map from '@/components/pages/map/Map.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
 import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
+import { CONFIG } from '@/config'
+
 const defaultTypologyCode = Astro.url.searchParams.get('code')
 ---
 
@@ -13,14 +15,16 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
     <Grid justify="space-between" class="header">
       <h1>{m['map.title']()}</h1>
       <Grid justify="end">
-        <wa-button href={localizeHref("/contactos")}>
+        <wa-button href={localizeHref('/contactos')}>
           <wa-icon name="envelope"></wa-icon>
           Enviar comentário
         </wa-button>
-        <wa-button variant="brand" href={localizeHref("/recursos/novo")}>
-          <wa-icon name="plus"></wa-icon>
-          Sugerir novo recurso
-        </wa-button>
+        {CONFIG.can_suggest &&
+          <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
+            <wa-icon name="plus"></wa-icon>
+            Sugerir novo recurso
+          </wa-button>
+        }
       </Grid>
     </Grid>
     <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
@@ -36,6 +40,7 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
   grid-template-areas:
     "header header"
     "filters map";
+  align-items: start;
   gap: var(--wa-space-l);
   flex: 1;
 }
@@ -47,6 +52,7 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 }
 .map {
   grid-area: map;
+  align-self: stretch;
 }
 </style>
   

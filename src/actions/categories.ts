@@ -211,14 +211,20 @@ export const deleteCategory = defineAction({
 })
 
 export const getCategories = defineAction({
-  handler: async (_, { request, cookies }) => {
+  input: z.object({
+    typology_id: z.string().optional()
+  }),
+  handler: async (input, { request, cookies }) => {
     try {
       const supabase = createClient({ request, cookies })
       
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name', { ascending: true })
+      let query = supabase.from('categories').select('*')
+
+      if (input.typology_id) {
+        query = query.eq('typology_id', input.typology_id)
+      }
+      
+      const { data, error } = await query.order('name', { ascending: true })
 
       if (error) {
         throw new ActionError({

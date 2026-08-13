@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { CONFIG } from '@/config'
 import type { FullResource } from '@/types/domain/resource'
-import { ref, watch } from 'vue'
+import type { AppUser } from '@/types/domain/user'
+import { ref, watch, onMounted, computed } from 'vue'
 import { actions } from 'astro:actions'
 import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+import { userHasAccess } from '@/utils/userHasAccess'
 
 const props = defineProps<{
   resourceId: string | null
@@ -15,8 +18,20 @@ const emit = defineEmits<{
 }>()
 
 const resource = ref<FullResource | null>(null)
+const user = ref<AppUser | null>(null)
 const isLoading = ref(true)
 const hasError = ref(false)
+
+const isCanEdit = computed(() => {
+  return user.value ? userHasAccess(user.value, 'dashboard') : false
+})
+
+onMounted(async () => {
+  const { data } = await actions.checkUser()
+  if (data) {
+    user.value = data as AppUser
+  }
+})
 
 watch(() => props.resourceId, async () => {
   hasError.value = false
@@ -93,7 +108,7 @@ watch(() => props.resourceId, async () => {
 
           <p>{{ resource?.description }}</p>
 
-          <wa-button appearance="outlined">Sugerir edição</wa-button>
+          <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? 'Editar' : 'Sugerir edição' }}</wa-button>
 
         </Grid>
       </template>

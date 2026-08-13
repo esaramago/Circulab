@@ -142,7 +142,7 @@ function toggleFilters() {
   <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
     <button type="button" @click="toggleFilters" class="filters__header">
       <Grid justify="space-between">
-        <h2 data-appearance="h3">Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h2>
+        <h3>Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
         <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-desktop"></Icon>
       </Grid>
     </button>

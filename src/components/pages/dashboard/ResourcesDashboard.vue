@@ -28,7 +28,6 @@ const selectedCategory = ref('')
 onMounted(async () => {
   await getResources()
   await getTypologies()
-  await getCategories()
 })
 
 async function getResources() {
@@ -43,40 +42,29 @@ async function getResources() {
 async function getTypologies() {
   const { data, error } = await fetchDB('typologies').select('*').order('name', { ascending: true })
   if (error) {
-    console.error('[ResourcesDashboardTable] Error fetching typologies:', error)
+    console.error('[ResourcesDashboard] Error fetching typologies:', error)
   } else {
     typologies.value = (data ?? []) as TypologyRow[]
   }
 }
 
-async function getCategories() {
-  const { data, error } = await fetchDB('categories').select('*').order('name', { ascending: true })
+async function getCategories(typology_id: string) {
+
+  if (!typology_id) return
+  const { data, error } = await actions.getCategories({ typology_id })
+
   if (error) {
-    console.error('[ResourcesDashboardTable] Error fetching categories:', error)
+    console.error('[ResourcesDashboard] Error fetching categories:', error)
   } else {
-    categories.value = (data ?? []) as CategoryRow[]
+    categories.value = (data.categories ?? []) as CategoryRow[]
   }
 }
 
-const availableCategories = computed(() => {
-  if (!selectedTypology.value) {
-    return categories.value
-  }
-  return categories.value.filter((c) => c.typology_id === selectedTypology.value)
-})
-
-function handleTypologyChange(event: Event) {
+async function handleTypologyChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const newTypologyId = target.value || ''
   selectedTypology.value = newTypologyId
-  if (selectedCategory.value && newTypologyId) {
-    const isValid = categories.value.some(
-      (c) => c.id === selectedCategory.value && c.typology_id === newTypologyId
-    )
-    if (!isValid) {
-      selectedCategory.value = ''
-    }
-  }
+  await getCategories(newTypologyId)
 }
 
 function handleCategoryChange(event: Event) {
@@ -141,7 +129,7 @@ async function handleDelete() {
       await getResources()
     }
   } catch (err: any) {
-    console.error('[ResourcesDashboardTable] Error deleting resource:', err)
+    console.error('[ResourcesDashboard] Error deleting resource:', err)
     feedback.value = {
       type: 'danger',
       message: err.message || 'Ocorreu um erro ao apagar o recurso.'
@@ -155,7 +143,7 @@ async function handleDelete() {
 </script>
 
 <template>
-  <Grid direction="column" gap="s">
+  <Grid direction="column" gap="l">
     <wa-callout v-if="feedback" :variant="feedback.type">
       {{ feedback.message }}
     </wa-callout>
@@ -182,6 +170,7 @@ async function handleDelete() {
         </wa-option>
       </wa-select>
       <wa-select
+        v-if="selectedTypology"
         label="Categoria"
         :value="selectedCategory"
         @input="handleCategoryChange"
@@ -189,7 +178,7 @@ async function handleDelete() {
         @clear="selectedCategory = ''"
       >
         <wa-option value="">Todas</wa-option>
-        <wa-option v-for="category in availableCategories" :key="category.id" :value="category.id">
+        <wa-option v-for="category in categories" :key="category.id" :value="category.id">
           {{ category.name }}
         </wa-option>
       </wa-select>
@@ -216,16 +205,16 @@ async function handleDelete() {
             <li>{{ resource.phone_area_code }}</li>
           </ul>
         </div>
-        <div slot="footer">
-          <wa-button variant="primary" :href="localizeHref(`/recursos/editar/descricao?id=${resource.id}`)" @click="clearAddResourceDraft">
+        <Grid slot="footer" justify="end" gap="s">
+          <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
             <wa-icon name="pen"></wa-icon>
             Editar
           </wa-button>
-          <wa-button variant="danger" @click="confirmDelete(resource)">
+          <wa-button size="s" variant="danger" @click="confirmDelete(resource)">
             <wa-icon name="trash"></wa-icon>
             Apagar
           </wa-button>
-        </div>
+        </Grid>
       </wa-card>
     </div>
     <div v-else class="empty-state">
