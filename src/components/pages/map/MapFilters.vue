@@ -215,7 +215,6 @@ function toggleFilters() {
   border-radius: var(--wa-border-radius-l);
   padding: var(--wa-space-m);
   box-sizing: border-box;
-  flex: 0 0 34rem;
   transition: transform .2s ease-in-out;
 
   @media (max-width: 768px) {

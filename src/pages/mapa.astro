@@ -4,22 +4,49 @@ import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
 import Grid from '@/components/ui/Grid.vue'
-
+import { localizeHref } from '@/paraglide/runtime.js'
 const defaultTypologyCode = Astro.url.searchParams.get('code')
 ---
 
 <Layout title={m['map.title']()} fullWidth={true}>
   <div class="wrapper">
-    <MapFilters client:only="vue" defaultTypologyCode={defaultTypologyCode} />
-    <Map client:only="vue" />
+    <Grid justify="space-between" class="header">
+      <h1>{m['map.title']()}</h1>
+      <Grid justify="end">
+        <wa-button href={localizeHref("/contactos")}>
+          <wa-icon name="envelope"></wa-icon>
+          Enviar comentário
+        </wa-button>
+        <wa-button variant="brand" href={localizeHref("/recursos/novo")}>
+          <wa-icon name="plus"></wa-icon>
+          Sugerir novo recurso
+        </wa-button>
+      </Grid>
+    </Grid>
+    <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
+    <Map class="map" client:only="vue" />
   </div>
 </Layout>
 
 <style>
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-rows: min-content auto;
+  grid-template-columns: 34rem auto;
+  grid-template-areas:
+    "header header"
+    "filters map";
   gap: var(--wa-space-l);
   flex: 1;
+}
+.header {
+  grid-area: header;
+}
+.filters {
+  grid-area: filters;
+}
+.map {
+  grid-area: map;
 }
 </style>
   

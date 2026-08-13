@@ -238,7 +238,7 @@ function showPopup(pin: Pin) {
     
     <div class="map-actions">
       <wa-dropdown placement="bottom-end">
-        <wa-button slot="trigger" size="s" variant="neutral">
+        <wa-button slot="trigger" size="m" variant="neutral">
           <wa-icon name="layer-group" label="Layers"></wa-icon>
         </wa-button>
         <wa-dropdown-item
@@ -340,13 +340,13 @@ function showPopup(pin: Pin) {
 }
 .map-actions {
   position: absolute;
-  inset-inline-start: 1rem;
-  inset-block-start: 10rem;
+  inset-inline-end: 2rem;
+  inset-block-start: 2rem;
   z-index: 1001;
 
   wa-button::part(base) {
-    border-radius: var(--wa-border-radius-xs);
-    border-color: var(--wa-color-neutral-60);
+    border-radius: var(--wa-border-radius-s);
+    border: 2px solid var(--wa-color-brand-40);
   }
   .is-active {
     color: var(--wa-color-neutral-20);
