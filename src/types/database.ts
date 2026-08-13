@@ -30,7 +30,11 @@ export type PinInsert = Omit<Tables['pins']['Insert'], 'status'> & {
 export type LocationInsert = Tables['locations']['Insert']
 export type LocationRow = Tables['locations']['Row']
 
-export type ImageType = Tables['pins']['Row']['images'] extends Json[] ? Json : never
+export type ImageType = {
+  url: string
+  alt?: string
+  id?: string
+}
 
 export type GeoJsonPoint = {
   type: string
