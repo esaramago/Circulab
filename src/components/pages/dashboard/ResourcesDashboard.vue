@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { actions } from 'astro:actions'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog.vue'
-import geojson from '@/utils/geojson'
+import { CONFIG } from '@/config'
 import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
@@ -186,25 +186,51 @@ async function handleDelete() {
 
     <div v-if="filteredResources.length > 0" class="card-container">
       <wa-card v-for="resource in filteredResources" :key="resource.id">
+
+
+        <img v-if="resource?.images?.[0]" slot="media" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0].url" :alt="resource?.title" loading="lazy" />
+
         <div slot="header">
           <h2>{{ resource.title }}</h2>
-          {{ resource.typology }}
-          {{ resource.category }}
+          <p>{{ resource?.category }} ({{ resource?.typology }})</p>
         </div>
-        <div>
-          <p>{{ resource.description }}</p>
-          <ul>
-            <li>{{ resource.address }}</li>
-            <li>{{ resource.email }}</li>
-            <li>{{ resource.phone }}</li>
-            <li>{{ geojson.getLatitude(resource.coordinates)}}, {{ geojson.getLongitude(resource.coordinates) }}</li>
-            <li>{{ resource.accessibility }}</li>
-            <li>{{ resource.status }}</li>
-            <li>{{ resource.location }}</li>
-            <li>{{ resource.postal_code }}</li>
-            <li>{{ resource.phone_area_code }}</li>
-          </ul>
-        </div>
+        
+        <Grid gap="xs" direction="column">
+          <div>
+            <wa-icon name="location-dot"></wa-icon>
+            <template v-if="resource.location">{{resource.location}}, </template>{{resource.address}},
+            {{ resource.postal_code }}
+          </div>
+          <div v-if="resource?.coordinates">
+            <wa-icon name="map"></wa-icon>
+            <a
+              :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
+              target="_blank"
+              title="Abrir no Google Maps"
+            >
+              {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
+            </a>
+          </div>
+          <div v-if="resource?.email">
+            <wa-icon name="at"></wa-icon>
+            {{ resource.email }}
+          </div>
+          <div v-if="resource?.phone">
+            <wa-icon name="phone"></wa-icon>
+            {{ resource.phone }}
+          </div>
+          <div v-if="resource?.accessibility">
+            <template v-if="resource.accessibility === 'private'">
+              <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
+              <span>Acesso limitado</span>
+            </template>
+            <template v-else-if="resource.accessibility === 'public'">
+              <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
+              <span>Acesso livre</span>
+            </template>
+          </div>
+        </Grid>
+
         <Grid slot="footer" justify="end" gap="s">
           <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
             <wa-icon name="pen"></wa-icon>
@@ -246,6 +272,19 @@ async function handleDelete() {
   padding: var(--wa-space-l);
   text-align: center;
   color: var(--wa-color-neutral-70);
+}
+
+wa-card {
+  > img {
+    object-fit: cover;
+    height: 180px;
+  }
+  &::part(body) {
+    flex: 1;
+  }
+  &::part(footer) {
+    padding-block: var(--wa-space-m);
+  }
 }
 </style>
 
