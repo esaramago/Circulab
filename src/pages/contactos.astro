@@ -31,8 +31,6 @@ if (Astro.request.method === 'POST') {
   import '@awesome.me/webawesome/dist/components/card/card.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/callout/callout.js'
-  import '@awesome.me/webawesome/dist/components/accordion/accordion.js'
-  import '@awesome.me/webawesome/dist/components/accordion-item/accordion-item.js'
 </script>
 
 <Layout title={m['contacts.title']()}>
@@ -151,24 +149,6 @@ if (Astro.request.method === 'POST') {
         </form>
       </wa-card>
     </div>
-
-    <section class="faq-section">
-      <h2>{m['contacts.faq_title']()}</h2>
-      <wa-accordion>
-        <wa-accordion-item>
-          <span slot="header">O que é a plataforma Circulab?</span>
-          Circulab é uma plataforma de cartografia participativa dedicada à identificação e valorização de recursos agroecológicos e iniciativas de economia circular.
-        </wa-accordion-item>
-        <wa-accordion-item>
-          <span slot="header">Como posso adicionar um novo recurso ao mapa?</span>
-          Podes registar a tua iniciativa ou ponto de interesse acedendo à secção do mapa e clicando em "Adicionar recurso".
-        </wa-accordion-item>
-        <wa-accordion-item>
-          <span slot="header">O projeto Circulab é gratuito?</span>
-          Sim, o Circulab é uma iniciativa de acesso livre e colaborativo para toda a comunidade.
-        </wa-accordion-item>
-      </wa-accordion>
-    </section>
   </Container>
 </Layout>
 
@@ -292,17 +272,5 @@ if (Astro.request.method === 'POST') {
 
   .contact-form wa-button {
     margin-block-start: var(--wa-space-s);
-  }
-
-  .faq-section {
-    margin-block-start: var(--wa-space-3xl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-m);
-  }
-
-  wa-accordion-item {
-    background-color: var(--wa-color-brand-30);
-    border-radius: var(--wa-border-radius-m);
   }
 </style>

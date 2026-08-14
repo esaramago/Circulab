@@ -1,10 +1,281 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
+import Container from '@/components/ui/Container.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
 ---
 
+<script>
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/icon/icon.js'
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/accordion/accordion.js'
+  import '@awesome.me/webawesome/dist/components/accordion-item/accordion-item.js'
+</script>
+
 <Layout title={m['about.title']()}>
-  <h1>{m['about.title']()}</h1>
-  <p>{m.site_description()}</p>
-  <p>{Astro.currentLocale}</p>
+  <Container width="m">
+    <header class="about-header">
+      <div class="about-badge">
+        <wa-icon name="circle-info"></wa-icon>
+        <span>{m['about.title']()}</span>
+      </div>
+      <h1>{m['about.title']()}</h1>
+      <p class="about-subtitle">{m['about.subtitle']()}</p>
+    </header>
+
+    <section class="about-grid">
+      <wa-card class="about-card">
+        <div class="card-icon">
+          <wa-icon name="bullseye"></wa-icon>
+        </div>
+        <h2>{m['about.mission_title']()}</h2>
+        <p>{m['about.mission_desc']()}</p>
+      </wa-card>
+
+      <wa-card class="about-card">
+        <div class="card-icon">
+          <wa-icon name="eye"></wa-icon>
+        </div>
+        <h2>{m['about.vision_title']()}</h2>
+        <p>{m['about.vision_desc']()}</p>
+      </wa-card>
+
+      <wa-card class="about-card">
+        <div class="card-icon">
+          <wa-icon name="heart"></wa-icon>
+        </div>
+        <h2>{m['about.values_title']()}</h2>
+        <p>{m['about.values_desc']()}</p>
+      </wa-card>
+    </section>
+
+    <section class="about-section">
+      <h2>{m['about.how_title']()}</h2>
+      <div class="steps-grid">
+        <wa-card class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon">
+            <wa-icon name="location-dot"></wa-icon>
+          </div>
+          <h3>{m['about.how_step1_title']()}</h3>
+          <p>{m['about.how_step1_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon">
+            <wa-icon name="pen-to-square"></wa-icon>
+          </div>
+          <h3>{m['about.how_step2_title']()}</h3>
+          <p>{m['about.how_step2_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon">
+            <wa-icon name="users"></wa-icon>
+          </div>
+          <h3>{m['about.how_step3_title']()}</h3>
+          <p>{m['about.how_step3_desc']()}</p>
+        </wa-card>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <h2>{m['about.faq_title']()}</h2>
+      <wa-accordion>
+        <wa-accordion-item label="O que é a plataforma Circulab?">
+          Circulab é uma plataforma de cartografia participativa dedicada à identificação e valorização de recursos agroecológicos e iniciativas de economia circular.
+        </wa-accordion-item>
+        <wa-accordion-item label="Como posso adicionar um novo recurso ao mapa?">
+          Podes registar a tua iniciativa ou ponto de interesse acedendo à secção do mapa e clicando em "Adicionar recurso".
+        </wa-accordion-item>
+        <wa-accordion-item label="O projeto Circulab é gratuito?">
+          Sim, o Circulab é uma iniciativa de acesso livre e colaborativo para toda a comunidade.
+        </wa-accordion-item>
+      </wa-accordion>
+    </section>
+
+    <wa-callout variant="neutral" class="cta-callout">
+      <wa-icon slot="icon" name="network-wired"></wa-icon>
+      <div class="cta-content">
+        <h2>{m['about.cta_title']()}</h2>
+        <p>{m['about.cta_desc']()}</p>
+        <div class="cta-actions">
+          <wa-button variant="brand" href={localizeHref('/mapa')}>
+            <wa-icon name="map" slot="start"></wa-icon>
+            {m['about.explore_map']()}
+          </wa-button>
+          <wa-button appearance="plain" href={localizeHref('/contactos')}>
+            <wa-icon name="envelope" slot="start"></wa-icon>
+            {m['about.contact_us']()}
+          </wa-button>
+        </div>
+      </div>
+    </wa-callout>
+  </Container>
 </Layout>
+
+<style scoped>
+  .about-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-block-end: var(--wa-space-l);
+  }
+
+  .about-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
+    padding-inline: var(--wa-space-s);
+    border-radius: var(--wa-border-radius-pill);
+    background-color: var(--wa-color-brand-30);
+    color: var(--wa-color-brand-80);
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+    margin-block-end: var(--wa-space-s);
+  }
+
+  h1 {
+    font-size: var(--wa-font-size-3xl);
+    margin-block-end: var(--wa-space-xs);
+  }
+
+  .about-subtitle {
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-brand-70);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .about-card,
+  .step-card {
+    background-color: var(--wa-color-brand-30);
+    border: 1px solid var(--wa-color-brand-40);
+    border-radius: var(--wa-border-radius-l);
+  }
+
+  .about-card h2 {
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-s);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .about-card p,
+  .step-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.5;
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-xl);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .about-section {
+    margin-block-start: var(--wa-space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-l);
+  }
+
+  .about-section h2 {
+    font-size: var(--wa-font-size-xl);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .step-card {
+    position: relative;
+  }
+
+  .step-number {
+    position: absolute;
+    inset-block-start: var(--wa-space-m);
+    inset-inline-end: var(--wa-space-m);
+    font-size: var(--wa-font-size-2xl);
+    font-weight: var(--wa-font-weight-bold);
+    color: var(--wa-color-brand-40);
+    line-height: 1;
+  }
+
+  .step-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--wa-border-radius-circle);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .step-card h3 {
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-xs);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  wa-accordion-item {
+    background-color: var(--wa-color-brand-30);
+    border-radius: var(--wa-border-radius-m);
+  }
+
+  .cta-callout {
+    margin-block-start: var(--wa-space-2xl);
+  }
+
+  .cta-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-s);
+  }
+
+  .cta-content h2 {
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .cta-content p {
+    color: var(--wa-color-brand-80);
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wa-space-m);
+    margin-block-start: var(--wa-space-xs);
+  }
+</style>

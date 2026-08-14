@@ -5,7 +5,26 @@
     "title": "Map"
   },
   "about": {
-    "title": "About"
+    "title": "About",
+    "subtitle": "Collaborative mapping for the agroecological transition and circular economy.",
+    "mission_title": "Our mission",
+    "mission_desc": "Map, connect, and energize agroecological resources and circular economy initiatives, promoting community sustainability and resilience.",
+    "vision_title": "Our vision",
+    "vision_desc": "Facilitate the transition to more sustainable territories by making visible the resources and projects that transform our communities.",
+    "values_title": "Our values",
+    "values_desc": "Open collaboration, free access to knowledge, environmental regeneration, and local empowerment.",
+    "how_title": "How it works",
+    "how_step1_title": "Map & discover",
+    "how_step1_desc": "Locate community gardens, composting initiatives, repair spots, and agroecological markets.",
+    "how_step2_title": "Open participation",
+    "how_step2_desc": "Add new resources to the map and help keep the information updated for the whole community.",
+    "how_step3_title": "Community connection",
+    "how_step3_desc": "Connect with local projects, share resources, and strengthen circular economy networks.",
+    "faq_title": "Frequently asked questions",
+    "cta_title": "Join the Circulab network",
+    "cta_desc": "Explore the resources available in your region or contact us to learn more.",
+    "explore_map": "Explore map",
+    "contact_us": "Get in touch"
   },
   "contacts": {
     "title": "Contacts",
@@ -23,7 +42,6 @@
     "info_location": "Location",
     "info_location_value": "Lisbon, Portugal",
     "info_response": "Response time",
-    "info_response_value": "We will reply within 24 to 48 business hours.",
-    "faq_title": "Frequently asked questions"
+    "info_response_value": "We will reply within 24 to 48 business hours."
   }
 }

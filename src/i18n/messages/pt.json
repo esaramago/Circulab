@@ -5,7 +5,26 @@
     "title": "Mapa"
   },
   "about": {
-    "title": "Sobre"
+    "title": "Sobre",
+    "subtitle": "Cartografia colaborativa para a transição agroecológica e a economia circular.",
+    "mission_title": "A nossa missão",
+    "mission_desc": "Mapear, conectar e dinamizar recursos agroecológicos e iniciativas de economia circular, promovendo a sustentabilidade e a resiliência comunitária.",
+    "vision_title": "A nossa visão",
+    "vision_desc": "Facilitar a transição para territórios mais sustentáveis, tornando visíveis os recursos e projetos que transformam as nossas comunidades.",
+    "values_title": "Os nossos valores",
+    "values_desc": "Colaboração aberta, acesso livre ao conhecimento, regeneração ambiental e empoderamento local.",
+    "how_title": "Como funciona",
+    "how_step1_title": "Mapear & descobrir",
+    "how_step1_desc": "Localiza hortas comunitárias, iniciativas de compostagem, pontos de reparação e mercados agroecológicos.",
+    "how_step2_title": "Participação aberta",
+    "how_step2_desc": "Adiciona novos recursos ao mapa e ajuda a manter a informação atualizada para toda a comunidade.",
+    "how_step3_title": "Conexão comunitária",
+    "how_step3_desc": "Conecta-te com projetos locais, partilha recursos e fortalece redes de economia circular.",
+    "faq_title": "Perguntas frequentes",
+    "cta_title": "Junta-te à rede Circulab",
+    "cta_desc": "Explora os recursos disponíveis na tua região ou entra em contacto connosco para saber mais.",
+    "explore_map": "Explorar o mapa",
+    "contact_us": "Entrar em contacto"
   },
   "contacts": {
     "title": "Contactos",
@@ -23,7 +42,6 @@
     "info_location": "Localização",
     "info_location_value": "Lisboa, Portugal",
     "info_response": "Tempo de resposta",
-    "info_response_value": "Responderemos no prazo de 24 a 48 horas úteis.",
-    "faq_title": "Perguntas frequentes"
+    "info_response_value": "Responderemos no prazo de 24 a 48 horas úteis."
   }
 }
