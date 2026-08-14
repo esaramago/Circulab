@@ -4,6 +4,7 @@ import { fetchDB } from '@/utils/fetchDB'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import Back from '@/components/ui/Back.vue'
 import { CONFIG } from '@/config'
 import { m } from '@/paraglide/messages.js'
 
@@ -29,10 +30,7 @@ const typologies = typologiesData || []
 <Layout title={m['backoffice.select_typology']()}>
   <Grid direction="column" gap="l">
     <div class="backoffice-page__nav">
-      <a class="back-link" href={localizeHref('/backoffice')}>
-        <wa-icon name="arrow-left"></wa-icon>
-        {m['backoffice.back_to_panel']()}
-      </a>
+      <Back href={localizeHref('/backoffice')}>{m['backoffice.back_to_panel']()}</Back>
     </div>
 
     <Grid gap="l" direction="column">
@@ -77,22 +75,6 @@ const typologies = typologiesData || []
 </script>
 
 <style>
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-xs);
-    font-size: var(--wa-font-size-s);
-    color: var(--wa-color-neutral-600);
-    text-decoration: none;
-    font-weight: var(--wa-font-weight-semibold);
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--wa-color-brand-50);
-      text-decoration: underline;
-    }
-  }
-
   .typology-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

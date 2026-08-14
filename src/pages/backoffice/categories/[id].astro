@@ -5,6 +5,7 @@ import { fetchDB } from '@/utils/fetchDB'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import Back from '@/components/ui/Back.vue'
 import { m } from '@/paraglide/messages.js'
 
 const user = Astro.locals.user
@@ -48,10 +49,7 @@ const typologies = typologiesData || []
 <Layout title={`${m['backoffice.manage_categories_title']()} - ${typologyData.name}`}>
   <Grid direction="column" gap="l">
     <div class="backoffice-page__nav">
-      <a class="back-link" href={localizeHref('/backoffice/categories')}>
-        <wa-icon name="arrow-left"></wa-icon>
-        {m['backoffice.back_to_typology_select']()}
-      </a>
+      <Back href={localizeHref('/backoffice/categories')}>{m['backoffice.back_to_typology_select']()}</Back>
     </div>
     
     <CategoriesManager
@@ -66,21 +64,3 @@ const typologies = typologiesData || []
 <script>
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
 </script>
-
-<style>
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-xs);
-    font-size: var(--wa-font-size-s);
-    color: var(--wa-color-neutral-600);
-    text-decoration: none;
-    font-weight: var(--wa-font-weight-semibold);
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--wa-color-brand-50);
-      text-decoration: underline;
-    }
-  }
-</style>

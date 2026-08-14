@@ -1,0 +1,570 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Container from '@/components/ui/Container.vue'
+import Back from '@/components/ui/Back.vue'
+import { m } from '@/paraglide/messages.js'
+import { localizeHref } from '@/paraglide/runtime.js'
+---
+
+<script>
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/icon/icon.js'
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
+</script>
+
+<Layout title={m['lisboa_repair_project.title']()}>
+  <Container width="m">
+    <div class="project-nav">
+      <Back href={localizeHref('/sobre')} />
+    </div>
+    <header class="project-header">
+      <div class="project-badge">
+        <wa-icon name="screwdriver-wrench"></wa-icon>
+        <span>{m['lisboa_repair_project.badge']()}</span>
+      </div>
+      <h1>{m['lisboa_repair_project.title']()}</h1>
+      <p class="project-subtitle">{m['lisboa_repair_project.subtitle']()}</p>
+    </header>
+
+    <section class="project-section">
+      <wa-card class="banner-card">
+        <div class="banner-content">
+          <h2>{m['lisboa_repair_project.challenge_title']()}</h2>
+          <p>{m['lisboa_repair_project.challenge_p1']()}</p>
+          <p>{m['lisboa_repair_project.challenge_p2']()}</p>
+          <div class="banner-highlight">
+            <wa-icon name="lightbulb"></wa-icon>
+            <span>{m['lisboa_repair_project.challenge_highlight']()}</span>
+          </div>
+        </div>
+      </wa-card>
+    </section>
+
+    <section class="project-section">
+      <h2>{m['lisboa_repair_project.building_title']()}</h2>
+      <div class="building-grid">
+        <wa-card class="building-card">
+          <p>{m['lisboa_repair_project.building_p1']()}</p>
+          <p>{m['lisboa_repair_project.building_p2']()}</p>
+        </wa-card>
+        <wa-callout variant="neutral" class="quote-callout">
+          <wa-icon slot="icon" name="quote-left"></wa-icon>
+          <p class="quote-text">{m['lisboa_repair_project.building_quote']()}</p>
+        </wa-callout>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <h2>{m['lisboa_repair_project.approach_title']()}</h2>
+      <div class="approach-grid">
+        <wa-card class="approach-card">
+          <div class="card-icon">
+            <wa-icon name="eye"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.approach_visible_title']()}</h3>
+          <p>{m['lisboa_repair_project.approach_visible_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="approach-card">
+          <div class="card-icon">
+            <wa-icon name="unlock"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.approach_accessible_title']()}</h3>
+          <p>{m['lisboa_repair_project.approach_accessible_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="approach-card">
+          <div class="card-icon">
+            <wa-icon name="users"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.approach_collective_title']()}</h3>
+          <p>{m['lisboa_repair_project.approach_collective_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="approach-card">
+          <div class="card-icon">
+            <wa-icon name="heart"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.approach_human_title']()}</h3>
+          <p>{m['lisboa_repair_project.approach_human_desc']()}</p>
+        </wa-card>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <h2>{m['lisboa_repair_project.who_title']()}</h2>
+      <wa-card class="who-card">
+        <div class="who-badge">
+          <wa-icon name="tree"></wa-icon>
+          <span>Climate Circle Lisbon</span>
+        </div>
+        <p>{m['lisboa_repair_project.who_desc1']()}</p>
+        <p>{m['lisboa_repair_project.who_desc2']()}</p>
+        <div class="who-actions">
+          <wa-button appearance="plain" href="https://climatecirclelisbon.org" target="_blank" rel="noopener noreferrer">
+            <wa-icon name="globe" slot="start"></wa-icon>
+            {m['lisboa_repair_project.who_website']()}
+          </wa-button>
+          <wa-button appearance="plain" href="https://www.linkedin.com/company/climate-circle-lisbon/posts/?feedView=all" target="_blank" rel="noopener noreferrer">
+            <wa-icon name="arrow-up-right-from-square" slot="start"></wa-icon>
+            {m['lisboa_repair_project.who_linkedin']()}
+          </wa-button>
+        </div>
+      </wa-card>
+    </section>
+
+    <section class="project-section">
+      <h2>{m['lisboa_repair_project.partners_title']()}</h2>
+      <p class="partners-subtitle">{m['lisboa_repair_project.partners_subtitle']()}</p>
+      <div class="partners-grid">
+        <wa-card class="partner-card">
+          <div class="partner-header">
+            <div class="partner-icon">
+              <wa-icon name="rotate"></wa-icon>
+            </div>
+            <h3>The Next Turn.Lisbon</h3>
+          </div>
+          <p>{m['lisboa_repair_project.partner_nextturn_desc']()}</p>
+          <div class="partner-action">
+            <wa-button appearance="plain" href="https://www.instagram.com/thenextturn.lisbon/" target="_blank" rel="noopener noreferrer">
+              <wa-icon name="arrow-up-right-from-square" slot="start"></wa-icon>
+              Instagram
+            </wa-button>
+          </div>
+        </wa-card>
+
+        <wa-card class="partner-card">
+          <div class="partner-header">
+            <div class="partner-icon">
+              <wa-icon name="gem"></wa-icon>
+            </div>
+            <h3>Arches</h3>
+          </div>
+          <p>{m['lisboa_repair_project.partner_arches_desc']()}</p>
+          <div class="partner-action">
+            <wa-button appearance="plain" href="https://archesglobal.co/" target="_blank" rel="noopener noreferrer">
+              <wa-icon name="globe" slot="start"></wa-icon>
+              {m['lisboa_repair_project.who_website']()}
+            </wa-button>
+          </div>
+        </wa-card>
+
+        <wa-card class="partner-card">
+          <div class="partner-header">
+            <div class="partner-icon">
+              <wa-icon name="building-columns"></wa-icon>
+            </div>
+            <h3>Rizoma</h3>
+          </div>
+          <p>{m['lisboa_repair_project.partner_rizoma_desc']()}</p>
+          <div class="partner-action">
+            <wa-button appearance="plain" href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
+              <wa-icon name="globe" slot="start"></wa-icon>
+              {m['lisboa_repair_project.who_website']()}
+            </wa-button>
+          </div>
+        </wa-card>
+
+        <wa-card class="partner-card">
+          <div class="partner-header">
+            <div class="partner-icon">
+              <wa-icon name="seedling"></wa-icon>
+            </div>
+            <h3>ECOLISE</h3>
+          </div>
+          <p>{m['lisboa_repair_project.partner_ecolise_desc']()}</p>
+          <div class="partner-action">
+            <wa-button appearance="plain" href="https://ecolise.eu/how-we-do-it/regenerative-communities-fund/" target="_blank" rel="noopener noreferrer">
+              <wa-icon name="globe" slot="start"></wa-icon>
+              {m['lisboa_repair_project.who_website']()}
+            </wa-button>
+          </div>
+        </wa-card>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <h2>{m['lisboa_repair_project.journey_title']()}</h2>
+      <div class="journey-grid">
+        <wa-card class="journey-card">
+          <div class="journey-number">1</div>
+          <div class="journey-icon">
+            <wa-icon name="seedling"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.journey_step1_title']()}</h3>
+          <p>{m['lisboa_repair_project.journey_step1_desc']()}</p>
+        </wa-card>
+
+        <wa-card class="journey-card">
+          <div class="journey-number">2</div>
+          <div class="journey-icon">
+            <wa-icon name="map-location-dot"></wa-icon>
+          </div>
+          <h3>{m['lisboa_repair_project.journey_step2_title']()}</h3>
+          <p>{m['lisboa_repair_project.journey_step2_desc']()}</p>
+        </wa-card>
+      </div>
+    </section>
+
+    <wa-callout variant="neutral" class="cta-callout">
+      <wa-icon slot="icon" name="people-group"></wa-icon>
+      <div class="cta-content">
+        <h2>{m['lisboa_repair_project.join_title']()}</h2>
+        <p>{m['lisboa_repair_project.join_desc']()}</p>
+        <div class="cta-highlight">
+          <wa-icon name="handshake"></wa-icon>
+          <span>{m['lisboa_repair_project.join_highlight']()}</span>
+        </div>
+        <div class="cta-actions">
+          <wa-button variant="brand" href="mailto:climatecirclelisbon@gmail.com">
+            <wa-icon name="envelope" slot="start"></wa-icon>
+            {m['lisboa_repair_project.send_email']()}
+          </wa-button>
+          <wa-button appearance="plain" href="https://www.instagram.com/lisboarepairproject/" target="_blank" rel="noopener noreferrer">
+            <wa-icon name="arrow-up-right-from-square" slot="start"></wa-icon>
+            {m['lisboa_repair_project.visit_instagram']()}
+          </wa-button>
+          <wa-button appearance="plain" href={localizeHref('/mapa')}>
+            <wa-icon name="map" slot="start"></wa-icon>
+            {m['about.explore_map']()}
+          </wa-button>
+        </div>
+      </div>
+    </wa-callout>
+  </Container>
+</Layout>
+
+<style scoped>
+  .project-nav {
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .project-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-block-end: var(--wa-space-l);
+  }
+
+  .project-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
+    padding-inline: var(--wa-space-s);
+    border-radius: var(--wa-border-radius-pill);
+    background-color: var(--wa-color-brand-30);
+    color: var(--wa-color-brand-80);
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+    margin-block-end: var(--wa-space-s);
+  }
+
+  h1 {
+    font-size: var(--wa-font-size-3xl);
+    margin-block-end: var(--wa-space-xs);
+  }
+
+  .project-subtitle {
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-brand-70);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .project-section {
+    margin-block-start: var(--wa-space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-l);
+  }
+
+  .project-section h2 {
+    font-size: var(--wa-font-size-xl);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .banner-card,
+  .building-card,
+  .approach-card,
+  .who-card,
+  .partner-card,
+  .journey-card {
+    background-color: var(--wa-color-brand-30);
+    border: 1px solid var(--wa-color-brand-40);
+    border-radius: var(--wa-border-radius-l);
+  }
+
+  .banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+  }
+
+  .banner-content h2 {
+    font-size: var(--wa-font-size-xl);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .banner-content p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.6;
+  }
+
+  .banner-highlight {
+    display: flex;
+    align-items: center;
+    gap: var(--wa-space-s);
+    padding-block: var(--wa-space-s);
+    padding-inline: var(--wa-space-m);
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-90);
+    font-weight: var(--wa-font-weight-semibold);
+  }
+
+  .building-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    align-items: stretch;
+    @media (min-width: 768px) {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+
+  .building-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+  }
+
+  .building-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.6;
+  }
+
+  .quote-callout {
+    height: 100%;
+  }
+
+  .quote-text {
+    font-size: var(--wa-font-size-m);
+    font-style: italic;
+    color: var(--wa-color-neutral-fill-loud);
+    line-height: 1.6;
+  }
+
+  .approach-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .approach-card h3 {
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-xs);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .approach-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.5;
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-xl);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .who-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+  }
+
+  .who-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
+    padding-inline: var(--wa-space-s);
+    border-radius: var(--wa-border-radius-pill);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-80);
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+    align-self: flex-start;
+  }
+
+  .who-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.6;
+  }
+
+  .who-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wa-space-m);
+    margin-block-start: var(--wa-space-xs);
+  }
+
+  .partners-subtitle {
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-m);
+  }
+
+  .partners-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .partner-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--wa-space-m);
+  }
+
+  .partner-header {
+    display: flex;
+    align-items: center;
+    gap: var(--wa-space-m);
+  }
+
+  .partner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-l);
+    flex-shrink: 0;
+  }
+
+  .partner-header h3 {
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .partner-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.5;
+  }
+
+  .partner-action {
+    align-self: flex-start;
+  }
+
+  .journey-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-l);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .journey-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .journey-number {
+    position: absolute;
+    inset-block-start: var(--wa-space-m);
+    inset-inline-end: var(--wa-space-m);
+    font-size: var(--wa-font-size-2xl);
+    font-weight: var(--wa-font-weight-bold);
+    color: var(--wa-color-brand-40);
+    line-height: 1;
+  }
+
+  .journey-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--wa-border-radius-circle);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .journey-card h3 {
+    font-size: var(--wa-font-size-l);
+    margin-block-end: var(--wa-space-xs);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .journey-card p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.5;
+  }
+
+  .cta-callout {
+    margin-block-start: var(--wa-space-2xl);
+  }
+
+  .cta-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+  }
+
+  .cta-content h2 {
+    font-size: var(--wa-font-size-xl);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .cta-content p {
+    color: var(--wa-color-brand-80);
+    line-height: 1.6;
+  }
+
+  .cta-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-s);
+    padding-block: var(--wa-space-xs);
+    padding-inline: var(--wa-space-m);
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-90);
+    font-weight: var(--wa-font-weight-semibold);
+    align-self: flex-start;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wa-space-m);
+    margin-block-start: var(--wa-space-xs);
+  }
+</style>

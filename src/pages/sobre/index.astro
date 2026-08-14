@@ -52,6 +52,26 @@ import { localizeHref } from '@/paraglide/runtime.js'
     </section>
 
     <section class="about-section">
+      <wa-card class="repair-banner-card">
+        <div class="repair-banner-content">
+          <div class="repair-badge">
+            <wa-icon name="screwdriver-wrench"></wa-icon>
+            <span>{m['lisboa_repair_project.badge']()}</span>
+          </div>
+          <h2>{m['lisboa_repair_project.title']()}</h2>
+          <p class="repair-subtitle">{m['lisboa_repair_project.subtitle']()}</p>
+          <p class="repair-desc">{m['lisboa_repair_project.desc']()}</p>
+          <div class="repair-actions">
+            <wa-button variant="brand" href={localizeHref('/sobre/lisboa-repair-project')}>
+              <wa-icon name="arrow-right" slot="end"></wa-icon>
+              {m['lisboa_repair_project.button']()}
+            </wa-button>
+          </div>
+        </div>
+      </wa-card>
+    </section>
+
+    <section class="about-section">
       <h2>{m['about.how_title']()}</h2>
       <div class="steps-grid">
         <wa-card class="step-card">
@@ -276,6 +296,52 @@ import { localizeHref } from '@/paraglide/runtime.js'
     display: flex;
     flex-wrap: wrap;
     gap: var(--wa-space-m);
+    margin-block-start: var(--wa-space-xs);
+  }
+
+  .repair-banner-card {
+    background-color: var(--wa-color-brand-30);
+    border: 1px solid var(--wa-color-brand-40);
+    border-radius: var(--wa-border-radius-l);
+  }
+
+  .repair-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-s);
+    align-items: flex-start;
+  }
+
+  .repair-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
+    padding-inline: var(--wa-space-s);
+    border-radius: var(--wa-border-radius-pill);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-80);
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+  }
+
+  .repair-banner-content h2 {
+    font-size: var(--wa-font-size-xl);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .repair-subtitle {
+    font-size: var(--wa-font-size-m);
+    font-weight: var(--wa-font-weight-semibold);
+    color: var(--wa-color-brand-80);
+  }
+
+  .repair-desc {
+    color: var(--wa-color-brand-80);
+    line-height: 1.6;
+  }
+
+  .repair-actions {
     margin-block-start: var(--wa-space-xs);
   }
 </style>
