@@ -7,6 +7,7 @@ import { getSession } from './auth/getSession'
 import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource } from './resources'
 import { addCategory, updateCategory, deleteCategory, getCategories } from './categories'
 import { updateTypology, getTypologies } from './typologies'
+import { submitContact } from './contact'
 
 export const server = {
   signIn,
@@ -28,4 +29,6 @@ export const server = {
   getCategories,
   updateTypology,
   getTypologies,
+  submitContact,
 }
+

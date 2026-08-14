@@ -8,6 +8,22 @@
     "title": "About"
   },
   "contacts": {
-    "title": "Contacts"
+    "title": "Contacts",
+    "subtitle": "Have questions, suggestions, or want to collaborate with Circulab? Get in touch with us.",
+    "form_title": "Send us a message",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "success": "Message sent successfully! We will get in touch soon.",
+    "error": "An error occurred while sending the message. Please try again.",
+    "info_title": "Contact information",
+    "info_email": "Email",
+    "info_location": "Location",
+    "info_location_value": "Lisbon, Portugal",
+    "info_response": "Response time",
+    "info_response_value": "We will reply within 24 to 48 business hours.",
+    "faq_title": "Frequently asked questions"
   }
 }

@@ -8,6 +8,22 @@
     "title": "Sobre"
   },
   "contacts": {
-    "title": "Contactos"
+    "title": "Contactos",
+    "subtitle": "Tens dúvidas, sugestões ou queres colaborar no projeto Circulab? Entra em contacto connosco.",
+    "form_title": "Envia-nos uma mensagem",
+    "name": "Nome",
+    "email": "Email",
+    "subject": "Assunto",
+    "message": "Mensagem",
+    "send": "Enviar mensagem",
+    "success": "Mensagem enviada com sucesso! Entraremos em contacto em breve.",
+    "error": "Ocorreu um erro ao enviar a mensagem. Por favor tenta novamente.",
+    "info_title": "Informações de contacto",
+    "info_email": "Email",
+    "info_location": "Localização",
+    "info_location_value": "Lisboa, Portugal",
+    "info_response": "Tempo de resposta",
+    "info_response_value": "Responderemos no prazo de 24 a 48 horas úteis.",
+    "faq_title": "Perguntas frequentes"
   }
 }

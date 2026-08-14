@@ -1,9 +1,308 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
+import Container from '@/components/ui/Container.vue'
+import Grid from '@/components/ui/Grid.vue'
+import { submitContact } from '@/actions/contact'
+import { localizeHref } from '@/paraglide/runtime.js'
+
+let errorMessage = ''
+let successMessage = ''
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData()
+    const { data, error } = await Astro.callAction(submitContact, formData)
+    if (error) {
+      errorMessage = error.message || m['contacts.error']()
+    } else if (data?.success) {
+      successMessage = data.message || m['contacts.success']()
+    }
+  } catch (err: any) {
+    errorMessage = err.message || m['contacts.error']()
+  }
+}
 ---
 
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/textarea/textarea.js'
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/icon/icon.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/accordion/accordion.js'
+  import '@awesome.me/webawesome/dist/components/accordion-item/accordion-item.js'
+</script>
+
 <Layout title={m['contacts.title']()}>
-  <h1>{m['contacts.title']()}</h1>
-  saasxacs
+  <Container width="m">
+    <header class="contacts-header">
+      <div class="contacts-badge">
+        <wa-icon name="envelope"></wa-icon>
+        <span>{m['contacts.title']()}</span>
+      </div>
+      <h1>{m['contacts.title']()}</h1>
+      <p class="contacts-subtitle">{m['contacts.subtitle']()}</p>
+    </header>
+
+    <div class="contacts-grid">
+      <wa-card class="info-card">
+        <h2>{m['contacts.info_title']()}</h2>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-icon">
+              <wa-icon name="envelope"></wa-icon>
+            </div>
+            <div class="info-content">
+              <span class="info-label">{m['contacts.info_email']()}</span>
+              <a href="mailto:info@circulab.pt" class="info-value">info@circulab.pt</a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <wa-icon name="location-dot"></wa-icon>
+            </div>
+            <div class="info-content">
+              <span class="info-label">{m['contacts.info_location']()}</span>
+              <span class="info-value">{m['contacts.info_location_value']()}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <wa-icon name="clock"></wa-icon>
+            </div>
+            <div class="info-content">
+              <span class="info-label">{m['contacts.info_response']()}</span>
+              <span class="info-value">{m['contacts.info_response_value']()}</span>
+            </div>
+          </div>
+        </div>
+
+        <wa-callout variant="neutral" class="info-callout">
+          <wa-icon slot="icon" name="circle-info"></wa-icon>
+          <p>Queres adicionar um recurso ao mapa? Podes sugerir um recurso na plataforma.</p>
+          <wa-button appearance="plain" href={`${localizeHref('/recursos/novo')}`}>Sugerir recurso</wa-button>
+        </wa-callout>
+      </wa-card>
+
+      <wa-card class="form-card">
+        <h2>{m['contacts.form_title']()}</h2>
+
+        {successMessage && (
+          <wa-callout variant="success" class="status-message">
+            <wa-icon slot="icon" name="circle-check"></wa-icon>
+            {successMessage}
+          </wa-callout>
+        )}
+
+        {errorMessage && (
+          <wa-callout variant="danger" class="status-message">
+            <wa-icon slot="icon" name="triangle-exclamation"></wa-icon>
+            {errorMessage}
+          </wa-callout>
+        )}
+
+        <form method="post" class="contact-form">
+          <Grid gap="m" direction="column">
+            <wa-input
+              id="name"
+              name="name"
+              type="text"
+              label={m['contacts.name']()}
+              placeholder="O teu nome"
+              required
+            ></wa-input>
+
+            <wa-input
+              id="email"
+              name="email"
+              type="email"
+              label={m['contacts.email']()}
+              placeholder="o.teu.email@exemplo.com"
+              required
+            ></wa-input>
+
+            <wa-input
+              id="subject"
+              name="subject"
+              type="text"
+              label={m['contacts.subject']()}
+              placeholder="Assunto da mensagem"
+              required
+            ></wa-input>
+
+            <wa-textarea
+              id="message"
+              name="message"
+              label={m['contacts.message']()}
+              placeholder="Escreve a tua mensagem aqui..."
+              rows={5}
+              required
+            ></wa-textarea>
+
+            <wa-button variant="brand" type="submit" size="l">
+              <wa-icon name="paper-plane" slot="start"></wa-icon>
+              {m['contacts.send']()}
+            </wa-button>
+          </Grid>
+        </form>
+      </wa-card>
+    </div>
+
+    <section class="faq-section">
+      <h2>{m['contacts.faq_title']()}</h2>
+      <wa-accordion>
+        <wa-accordion-item>
+          <span slot="header">O que é a plataforma Circulab?</span>
+          Circulab é uma plataforma de cartografia participativa dedicada à identificação e valorização de recursos agroecológicos e iniciativas de economia circular.
+        </wa-accordion-item>
+        <wa-accordion-item>
+          <span slot="header">Como posso adicionar um novo recurso ao mapa?</span>
+          Podes registar a tua iniciativa ou ponto de interesse acedendo à secção do mapa e clicando em "Adicionar recurso".
+        </wa-accordion-item>
+        <wa-accordion-item>
+          <span slot="header">O projeto Circulab é gratuito?</span>
+          Sim, o Circulab é uma iniciativa de acesso livre e colaborativo para toda a comunidade.
+        </wa-accordion-item>
+      </wa-accordion>
+    </section>
+  </Container>
 </Layout>
+
+<style scoped>
+  .contacts-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-block-end: var(--wa-space-l);
+  }
+
+  .contacts-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
+    padding-inline: var(--wa-space-s);
+    border-radius: var(--wa-border-radius-pill);
+    background-color: var(--wa-color-brand-30);
+    color: var(--wa-color-brand-80);
+    font-size: var(--wa-font-size-s);
+    font-weight: var(--wa-font-weight-semibold);
+    margin-block-end: var(--wa-space-s);
+  }
+
+  h1 {
+    font-size: var(--wa-font-size-3xl);
+    margin-block-end: var(--wa-space-xs);
+  }
+
+  .contacts-subtitle {
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-brand-70);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .contacts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--wa-space-xl);
+    align-items: start;
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1.3fr;
+    }
+  }
+
+  .info-card,
+  .form-card {
+    background-color: var(--wa-color-brand-30);
+    border: 1px solid var(--wa-color-brand-40);
+    border-radius: var(--wa-border-radius-l);
+  }
+
+  h2 {
+    font-size: var(--wa-font-size-xl);
+    margin-block-end: var(--wa-space-l);
+    color: var(--wa-color-neutral-fill-loud);
+  }
+
+  .info-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-l);
+    margin-block-end: var(--wa-space-xl);
+  }
+
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--wa-space-m);
+  }
+
+  .info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--wa-border-radius-medium);
+    background-color: var(--wa-color-brand-20);
+    color: var(--wa-color-brand-70);
+    font-size: var(--wa-font-size-l);
+    flex-shrink: 0;
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-3xs);
+  }
+
+  .info-label {
+    font-size: var(--wa-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--wa-color-brand-70);
+    font-weight: var(--wa-font-weight-semibold);
+  }
+
+  .info-value {
+    font-size: var(--wa-font-size-m);
+    color: var(--wa-color-neutral-fill-loud);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a.info-value:hover {
+    color: var(--wa-color-brand-90);
+    text-decoration: underline;
+  }
+
+  .info-callout {
+    margin-block-start: var(--wa-space-m);
+  }
+
+  .status-message {
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .contact-form wa-button {
+    margin-block-start: var(--wa-space-s);
+  }
+
+  .faq-section {
+    margin-block-start: var(--wa-space-3xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+  }
+
+  wa-accordion-item {
+    background-color: var(--wa-color-brand-30);
+    border-radius: var(--wa-border-radius-m);
+  }
+</style>
