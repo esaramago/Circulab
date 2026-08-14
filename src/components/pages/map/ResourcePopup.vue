@@ -7,6 +7,7 @@ import { actions } from 'astro:actions'
 import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { userHasAccess } from '@/utils/userHasAccess'
+import { m } from '@/paraglide/messages.js'
 
 const props = defineProps<{
   resourceId: string | null
@@ -81,7 +82,7 @@ watch(() => props.resourceId, async () => {
               <a
                 :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
                 target="_blank"
-                title="Abrir no Google Maps"
+                :title="m['map.open_google_maps']()"
               >
                 {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
               </a>
@@ -97,26 +98,26 @@ watch(() => props.resourceId, async () => {
             <div v-if="resource?.accessibility">
               <template v-if="resource.accessibility === 'private'">
                 <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-                <span>Acesso limitado</span>
+                <span>{{ m['map.access_limited']() }}</span>
               </template>
               <template v-else-if="resource.accessibility === 'public'">
                 <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-                <span>Acesso livre</span>
+                <span>{{ m['map.access_public']() }}</span>
               </template>
             </div>
           </Grid>
 
           <p>{{ resource?.description }}</p>
 
-          <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? 'Editar' : 'Sugerir edição' }}</wa-button>
+          <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
 
         </Grid>
       </template>
       <template v-else-if="isLoading">
-        LOADING...
+        {{ m['map.loading']() }}
       </template>
       <template v-else-if="hasError">
-        ERRO
+        {{ m['map.error']() }}
       </template>
     </div>
   </div>

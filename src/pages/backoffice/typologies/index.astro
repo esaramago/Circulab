@@ -5,6 +5,7 @@ import { fetchDB } from '@/utils/fetchDB'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import { m } from '@/paraglide/messages.js'
 
 const user = Astro.locals.user
 
@@ -21,12 +22,12 @@ const { data: typologiesData } = await fetchDB('typologies')
 const typologies = typologiesData || []
 ---
 
-<Layout title="Gestão de Tipologias">
+<Layout title={m['backoffice.manage_typologies_title']()}>
   <Grid direction="column">
     <div class="backoffice-page__nav">
       <a class="back-link" href={localizeHref('/backoffice')}>
         <wa-icon name="arrow-left"></wa-icon>
-        Voltar ao painel
+        {m['backoffice.back_to_panel']()}
       </a>
     </div>
     

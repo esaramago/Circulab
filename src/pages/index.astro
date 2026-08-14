@@ -3,19 +3,20 @@ import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import Grid from '@/components/ui/Grid.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
 ---
 
 <Layout title={m.site_title()}>
   <Grid gap="l" direction="column" align="center">
-    <h1>Mapa colaborativo para a agroecologia e a circularidade.</h1>
-    <p>Plataforma de cartografia participativa dedicada à identificação e valorização de recursos urbanos subutilizados ou desperdiçados.</p>
+    <h1>{m['home.hero_title']()}</h1>
+    <p>{m['home.hero_description']()}</p>
     <Grid align="center" justify="center" wrap>
-      <wa-button href="/sobre" size="l">Saber mais</wa-button>
-      <wa-button href="/mapa" variant="brand" size="l">
+      <wa-button href={localizeHref('/sobre')} size="l">{m['home.learn_more']()}</wa-button>
+      <wa-button href={localizeHref('/mapa')} variant="brand" size="l">
         <wa-icon name="map" slot="start"></wa-icon>
-        Explorar recursos
+        {m['home.explore_resources']()}
       </wa-button>
-      <wa-button href="/mapa?code=repair-map" variant="brand" size="l">
+      <wa-button href={localizeHref('/mapa?code=repair-map')} variant="brand" size="l">
         <img slot="start" src="/img/lisboa-repair-map.webp" alt="Lisboa Repair Map" width="30" height="30" />
         Lisboa Repair Map
       </wa-button>

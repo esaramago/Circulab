@@ -81,8 +81,8 @@ if (Astro.request.method === 'POST') {
 
         <wa-callout variant="neutral" class="info-callout">
           <wa-icon slot="icon" name="circle-info"></wa-icon>
-          <p>Queres adicionar um recurso ao mapa? Podes sugerir um recurso na plataforma.</p>
-          <wa-button appearance="plain" href={`${localizeHref('/recursos/novo')}`}>Sugerir recurso</wa-button>
+          <p>{m['contacts.suggest_callout']()}</p>
+          <wa-button appearance="plain" href={`${localizeHref('/recursos/novo')}`}>{m['contacts.suggest_button']()}</wa-button>
         </wa-callout>
       </wa-card>
 
@@ -110,7 +110,7 @@ if (Astro.request.method === 'POST') {
               name="name"
               type="text"
               label={m['contacts.name']()}
-              placeholder="O teu nome"
+              placeholder={m['contacts.name_placeholder']()}
               required
             ></wa-input>
 
@@ -119,7 +119,7 @@ if (Astro.request.method === 'POST') {
               name="email"
               type="email"
               label={m['contacts.email']()}
-              placeholder="o.teu.email@exemplo.com"
+              placeholder={m['contacts.email_placeholder']()}
               required
             ></wa-input>
 
@@ -128,7 +128,7 @@ if (Astro.request.method === 'POST') {
               name="subject"
               type="text"
               label={m['contacts.subject']()}
-              placeholder="Assunto da mensagem"
+              placeholder={m['contacts.subject_placeholder']()}
               required
             ></wa-input>
 
@@ -136,7 +136,7 @@ if (Astro.request.method === 'POST') {
               id="message"
               name="message"
               label={m['contacts.message']()}
-              placeholder="Escreve a tua mensagem aqui..."
+              placeholder={m['contacts.message_placeholder']()}
               rows={5}
               required
             ></wa-textarea>

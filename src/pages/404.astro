@@ -1,14 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import Grid from '@/components/ui/Grid.vue'
+import { m } from '@/paraglide/messages.js'
 
 import { localizeHref } from '@/paraglide/runtime.js'
 ---
 
-<Layout title="Página não encontrada">
+<Layout title={m['not_found.title']()}>
   <Grid direction="column" align="center" gap="xl">
-    <h1>Página não encontrada</h1>
-    <wa-button size="l" href={`${localizeHref('/')}`}>Voltar ao mapa</wa-button>
+    <h1>{m['not_found.title']()}</h1>
+    <wa-button size="l" href={`${localizeHref('/')}`}>{m['not_found.back_to_map']()}</wa-button>
   </Grid>
 </Layout>
 

@@ -13,6 +13,7 @@ import { $descriptionDraft, $editingResourceId, setStepCompleted, ensureDraftLoa
 import type { DescriptionDraft, DescriptionImageDraft } from '@/types/add-resource-draft'
 import { getImage } from '@/utils/imageStore'
 import { localizeHref } from '@/paraglide/runtime.js'
+import { m } from '@/paraglide/messages.js'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
@@ -150,14 +151,14 @@ function handleSubmit(event: Event) {
     <Grid gap="xl" direction="column">
       <wa-input
         name="title"
-        label="Título"
+        :label="m['resources.title_label']()"
         :value="draft.title"
         required
         @input="handleInput"
       />
       <wa-textarea
         name="description"
-        label="Descrição"
+        :label="m['resources.description_label']()"
         :value="draft.description"
         required
         @input="handleInput"
@@ -165,7 +166,7 @@ function handleSubmit(event: Event) {
       <GalleryForm client:only="vue" :images="draft.images" @change="handleImagesChange" />
       <wa-select
         name="typology"
-        label="Tipologia"
+        :label="m['map.typology']()"
         :value="draft.typology_id"
         required
         @input="handleChange"
@@ -177,7 +178,7 @@ function handleSubmit(event: Event) {
       <wa-select
         v-if="draft.typology_id"
         name="category"
-        label="Categoria"
+        :label="m['map.category_label']()"
         required
         :value="draft.category_id"
         @input="handleChange"
@@ -189,7 +190,7 @@ function handleSubmit(event: Event) {
       <wa-select
         v-if="draft.category_id && characteristics.length > 0"
         name="characteristics"
-        label="Características"
+        :label="m['map.characteristic_label']()"
         :value="draft.characteristics_ids"
         @input="handleChange"
       >
@@ -198,8 +199,8 @@ function handleSubmit(event: Event) {
         </template>
       </wa-select>
       <Grid justify="end" gap="s">
-        <wa-button variant="brand" appearance="outlined" @click="handleBack">Voltar</wa-button>
-        <wa-button variant="brand" type="submit">Continuar</wa-button>
+        <wa-button variant="brand" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+        <wa-button variant="brand" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>
   </form>

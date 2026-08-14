@@ -16,6 +16,7 @@ import { fetchDB } from '@/utils/fetchDB'
 import type { FullResource } from '@/types/domain/resource'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
+import { m } from '@/paraglide/messages.js'
 
 const resources = ref<FullResource[]>([])
 const typologies = ref<TypologyRow[]>([])
@@ -124,7 +125,7 @@ async function handleDelete() {
     if (error) throw error
 
     if (data?.success) {
-      feedback.value = { type: 'success', message: 'Recurso apagado com sucesso!' }
+      feedback.value = { type: 'success', message: m['resources.deleted_success']() }
       deleteDialogOpen.value = false
       await getResources()
     }
@@ -132,7 +133,7 @@ async function handleDelete() {
     console.error('[ResourcesDashboard] Error deleting resource:', err)
     feedback.value = {
       type: 'danger',
-      message: err.message || 'Ocorreu um erro ao apagar o recurso.'
+      message: err.message || m['resources.delete_error']()
     }
     deleteDialogOpen.value = false
   } finally {
@@ -150,34 +151,34 @@ async function handleDelete() {
 
     <Grid direction="row" gap="s">
       <wa-input
-        label="Pesquisar"
-        placeholder="Pesquisar..."
+        :label="m['map.search_placeholder']()"
+        :placeholder="`${m['map.search_placeholder']()}...`"
         :value="search"
         @input="handleSearchInput"
         with-clear
         @clear="search = ''"
       ></wa-input>
       <wa-select
-        label="Tipologia"
+        :label="m['map.typology']()"
         :value="selectedTypology"
         @input="handleTypologyChange"
         with-clear
         @clear="selectedTypology = ''"
       >
-        <wa-option value="">Todas</wa-option>
+        <wa-option value="">{{ m['resources.all_typologies']() }}</wa-option>
         <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">
           {{ typology.name }}
         </wa-option>
       </wa-select>
       <wa-select
         v-if="selectedTypology"
-        label="Categoria"
+        :label="m['map.category_label']()"
         :value="selectedCategory"
         @input="handleCategoryChange"
         with-clear
         @clear="selectedCategory = ''"
       >
-        <wa-option value="">Todas</wa-option>
+        <wa-option value="">{{ m['resources.all_categories']() }}</wa-option>
         <wa-option v-for="category in categories" :key="category.id" :value="category.id">
           {{ category.name }}
         </wa-option>
@@ -206,7 +207,7 @@ async function handleDelete() {
             <a
               :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
               target="_blank"
-              title="Abrir no Google Maps"
+              :title="m['map.open_google_maps']()"
             >
               {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
             </a>
@@ -222,11 +223,11 @@ async function handleDelete() {
           <div v-if="resource?.accessibility">
             <template v-if="resource.accessibility === 'private'">
               <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-              <span>Acesso limitado</span>
+              <span>{{ m['map.access_limited']() }}</span>
             </template>
             <template v-else-if="resource.accessibility === 'public'">
               <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-              <span>Acesso livre</span>
+              <span>{{ m['map.access_public']() }}</span>
             </template>
           </div>
         </Grid>
@@ -234,30 +235,30 @@ async function handleDelete() {
         <Grid slot="footer" justify="end" gap="s">
           <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
             <wa-icon name="pen"></wa-icon>
-            Editar
+            {{ m['map.edit']() }}
           </wa-button>
           <wa-button size="s" variant="danger" @click="confirmDelete(resource)">
             <wa-icon name="trash"></wa-icon>
-            Apagar
+            {{ m['resources.delete']() }}
           </wa-button>
         </Grid>
       </wa-card>
     </div>
     <div v-else class="empty-state">
-      <p>Nenhum recurso encontrado com os filtros selecionados.</p>
+      <p>{{ m['resources.no_resources_found']() }}</p>
     </div>
   </Grid>
 
   <ConfirmationDialog
     v-model:open="deleteDialogOpen"
-    title="Confirmar eliminação"
-    confirm-label="Apagar"
+    :title="m['resources.delete_confirm_title']()"
+    :confirm-label="m['resources.delete']()"
     variant="danger"
     :loading="deleting"
     @confirm="handleDelete"
   >
-    <p>Tem a certeza de que deseja apagar o recurso <strong>{{ resourceToDelete?.title }}</strong>?</p>
-    <p class="u-color-danger"><small>Esta ação não pode ser desfeita.</small></p>
+    <p>{{ m['resources.delete_confirm_msg']({ title: resourceToDelete?.title || '' }) }}</p>
+    <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
   </ConfirmationDialog>
 </template>
 

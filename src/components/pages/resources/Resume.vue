@@ -9,6 +9,7 @@ import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
 import '@webawesome/callout/callout.js'
 import { localizeHref } from '@/paraglide/runtime.js'
+import { m } from '@/paraglide/messages.js'
 
 type AddResourcePayload = DescriptionDraft & LocationDraft
 
@@ -158,19 +159,19 @@ async function handleSubmit() {
   </wa-callout>
 
   <ul>
-    <li>Título: {{ resumeData?.title }}</li>
-    <li>Descrição: {{ resumeData?.description }}</li>
-    <li>Imagem: {{ resumeData?.images?.length }}</li>
-    <li>Tipologia: {{ resumeData?.typology_id }}</li>
-    <li>Categoria: {{ resumeData?.category_id }}</li>
-    <li>Características: {{ resumeData?.characteristics_ids?.join(', ') }}</li>
-    <li>Localização: {{ resumeData?.location_name }}</li>
-    <li>Coordenadas: {{ resumeData?.coordinates?.latitude }}, {{ resumeData?.coordinates?.longitude }}</li>
-    <li>Morada: {{ resumeData?.address }}</li>
-    <li>Código postal: {{ resumeData?.postal_code }}</li>
-    <li>Acessibilidade: {{ resumeData?.accessibility === 'public' ? 'Local com acesso livre' : (resumeData?.accessibility === 'private' ? 'Local com acesso limitado' : '-') }}</li>
+    <li>{{ m['resources.title_label']() }}: {{ resumeData?.title }}</li>
+    <li>{{ m['resources.description_label']() }}: {{ resumeData?.description }}</li>
+    <li>{{ m['resources.images_label']() }}: {{ resumeData?.images?.length }}</li>
+    <li>{{ m['map.typology']() }}: {{ resumeData?.typology_id }}</li>
+    <li>{{ m['map.category_label']() }}: {{ resumeData?.category_id }}</li>
+    <li>{{ m['map.characteristic_label']() }}: {{ resumeData?.characteristics_ids?.join(', ') }}</li>
+    <li>{{ m['resources.location_name_label']() }}: {{ resumeData?.location_name }}</li>
+    <li>{{ m['resources.coordinates']() }} {{ resumeData?.coordinates?.latitude }}, {{ resumeData?.coordinates?.longitude }}</li>
+    <li>{{ m['resources.address_label']() }}: {{ resumeData?.address }}</li>
+    <li>{{ m['resources.postal_code_label']() }}: {{ resumeData?.postal_code }}</li>
+    <li>{{ m['resources.accessibility_label']() }}: {{ resumeData?.accessibility === 'public' ? m['resources.accessibility_public']() : (resumeData?.accessibility === 'private' ? m['resources.accessibility_private']() : '-') }}</li>
     <li>Email: {{ resumeData?.email }}</li>
-    <li>Telefone: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
+    <li>{{ m['resources.phone_label']() }}: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
   </ul>
 
   <Grid justify="end">
@@ -178,10 +179,10 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      :href="localizeHref(isEdit ? `/recursos/editar/contactos?id=${editingResourceId}` : '/recursos/novo/contactos')">Voltar</wa-button
+      :href="localizeHref(isEdit ? `/recursos/editar/contactos?id=${editingResourceId}` : '/recursos/novo/contactos')">{{ m['resources.back']() }}</wa-button
     >
     <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">
-      {{ isEdit ? 'Guardar' : 'Adicionar' }}
+      {{ isEdit ? m['resources.save']() : m['resources.add']() }}
     </wa-button>
   </Grid>
 </template>

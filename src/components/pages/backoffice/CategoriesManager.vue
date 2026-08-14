@@ -14,6 +14,7 @@ import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
 import Grid from '@/components/ui/Grid.vue'
 import type { CategoryRow, TypologyRow } from '@/types/database'
+import { m } from '@/paraglide/messages.js'
 
 const props = defineProps<{
   initialCategories: CategoryRow[]
@@ -74,7 +75,7 @@ function onFileChange(event: any) {
       selectedFileUrl.value = URL.createObjectURL(file)
       dialogError.value = null
     } else {
-      dialogError.value = 'Por favor, selecione um ficheiro SVG válido.'
+      dialogError.value = m['backoffice.invalid_svg']()
       selectedFile.value = null
       selectedFileUrl.value = null
     }
@@ -97,7 +98,7 @@ const selectedTypology = computed(() => {
 
 function getTypologyName(typologyId: string) {
   const typology = props.typologies.find(t => t.id === typologyId)
-  return typology ? typology.name : 'Desconhecida'
+  return typology ? typology.name : '-'
 }
 
 function openCreateDialog() {
@@ -188,7 +189,7 @@ async function saveCategory() {
         if (idx !== -1) {
           categories.value[idx] = data.category
         }
-        feedback.value = { type: 'success', message: 'Categoria atualizada com sucesso!' }
+        feedback.value = { type: 'success', message: m['backoffice.category_updated']() }
         dialogOpen.value = false
       }
     } else {
@@ -207,7 +208,7 @@ async function saveCategory() {
 
       if (data?.success && data.category) {
         categories.value.unshift(data.category)
-        feedback.value = { type: 'success', message: 'Categoria adicionada com sucesso!' }
+        feedback.value = { type: 'success', message: m['backoffice.category_added']() }
         dialogOpen.value = false
       }
     }
@@ -235,7 +236,7 @@ async function deleteCategory() {
 
     if (data?.success) {
       categories.value = categories.value.filter(c => c.id !== categoryToDelete.value?.id)
-      feedback.value = { type: 'success', message: 'Categoria eliminada com sucesso!' }
+      feedback.value = { type: 'success', message: m['backoffice.category_deleted']() }
       deleteDialogOpen.value = false
     }
   } catch (err: any) {
@@ -258,11 +259,11 @@ async function deleteCategory() {
 
     <div class="manager__header">
       <div class="header-title-area">
-        <h2>Gestão de categorias &mdash; <span class="typology-title">{{ getTypologyName(selectedTypologyId) }}</span></h2>
+        <h2>{{ m['backoffice.manage_categories_title']() }} &mdash; <span class="typology-title">{{ getTypologyName(selectedTypologyId) }}</span></h2>
       </div>
       <wa-button variant="primary" @click="openCreateDialog">
         <wa-icon name="plus"></wa-icon>
-        Adicionar categoria
+        {{ m['backoffice.add_category']() }}
       </wa-button>
     </div>
 
@@ -271,11 +272,11 @@ async function deleteCategory() {
       <table class="manager__table">
         <thead>
           <tr>
-            <th>Ícone</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th v-if="selectedTypology?.has_category_color !== false">Cor</th>
-            <th class="text-end">Ações</th>
+            <th>{{ m['backoffice.icon']() }}</th>
+            <th>{{ m['backoffice.name']() }}</th>
+            <th>{{ m['backoffice.description']() }}</th>
+            <th v-if="selectedTypology?.has_category_color !== false">{{ m['backoffice.color']() }}</th>
+            <th class="text-end">{{ m['backoffice.actions']() }}</th>
           </tr>
         </thead>
         <tbody>
@@ -299,16 +300,16 @@ async function deleteCategory() {
             <td class="text-end actions-cell">
               <wa-button size="s" @click="openEditDialog(category)">
                 <wa-icon name="pen"></wa-icon>
-                Editar
+                {{ m['map.edit']() }}
               </wa-button>
               <wa-button variant="danger" size="s" @click="confirmDelete(category)">
                 <wa-icon name="trash"></wa-icon>
-                Eliminar
+                {{ m['backoffice.eliminate']() }}
               </wa-button>
             </td>
           </tr>
           <tr v-if="filteredCategories.length === 0">
-            <td :colspan="selectedTypology?.has_category_color !== false ? 5 : 4" class="text-center">Nenhuma categoria encontrada para esta tipologia.</td>
+            <td :colspan="selectedTypology?.has_category_color !== false ? 5 : 4" class="text-center">{{ m['backoffice.no_categories_found']() }}</td>
           </tr>
         </tbody>
       </table>
@@ -317,7 +318,7 @@ async function deleteCategory() {
     <!-- Create/Edit Dialog -->
     <wa-dialog
       id="category-dialog"
-      :label="isEditing ? 'Editar categoria' : 'Adicionar categoria'"
+      :label="isEditing ? m['backoffice.edit_category']() : m['backoffice.add_category']()"
       :open="dialogOpen ? '' : null"
       @wa-after-hide="closeDialog"
     >
@@ -327,28 +328,26 @@ async function deleteCategory() {
         </wa-callout>
         <div class="form-group">
           <wa-input
-            label="Nome"
+            :label="m['backoffice.name']()"
             name="name"
             required
             :value="form.name"
             @input="form.name = $event.target.value"
-            placeholder="Nome da categoria"
           ></wa-input>
         </div>
 
         <div class="form-group">
           <wa-textarea
-            label="Descrição"
+            :label="m['backoffice.description']()"
             name="description"
             :value="form.description"
             @input="form.description = $event.target.value"
-            placeholder="Breve descrição da categoria"
             rows="3"
           ></wa-textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Ícone (ficheiro SVG)</label>
+          <label class="form-label">{{ m['backoffice.icon']() }} (SVG)</label>
           <div class="file-upload-wrapper">
             <input
               type="file"
@@ -359,28 +358,27 @@ async function deleteCategory() {
             />
             <label for="icon-upload" class="file-upload-btn">
               <wa-icon name="upload"></wa-icon>
-              <span>Selecionar ficheiro SVG</span>
+              <span>{{ m['backoffice.select_svg']() }}</span>
             </label>
             <div v-if="selectedFile || form.icon" class="file-upload-preview-area">
                <img
                 v-if="selectedFileUrl"
                 :src="selectedFileUrl"
                 class="category-icon-preview"
-                alt="Novo ícone"
+                alt="Ícone"
               />
               <wa-icon
                 v-else-if="form.icon"
                 :src="CONFIG.images_url + 'pin-images/' + form.icon"
                 class="category-icon-preview"
-                alt="Ícone atual"
               ></wa-icon>
-              <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
+              <span class="file-name">{{ selectedFile ? selectedFile.name : form.icon }}</span>
             </div>
           </div>
         </div>
 
         <div class="form-group" v-if="selectedTypology?.has_category_color !== false">
-          <label class="form-label">Cor do pin (opcional)</label>
+          <label class="form-label">{{ m['backoffice.pin_color_optional']() }}</label>
           <div class="color-input-wrapper">
             <input
               type="color"
@@ -399,8 +397,8 @@ async function deleteCategory() {
         </div>
 
         <div slot="footer" class="dialog-footer">
-          <wa-button @click="dialogOpen = false">Cancelar</wa-button>
-          <wa-button variant="brand" type="submit" :loading="saving">Guardar</wa-button>
+          <wa-button @click="dialogOpen = false">{{ m['backoffice.cancel']() }}</wa-button>
+          <wa-button variant="brand" type="submit" :loading="saving">{{ m['resources.save']() }}</wa-button>
         </div>
       </form>
     </wa-dialog>
@@ -408,14 +406,14 @@ async function deleteCategory() {
     <!-- Delete Confirmation Dialog -->
     <ConfirmationDialog
       v-model:open="deleteDialogOpen"
-      title="Confirmar eliminação"
-      confirm-label="Eliminar"
+      :title="m['backoffice.delete_confirm_title']()"
+      :confirm-label="m['backoffice.eliminate']()"
       variant="danger"
       :loading="deleting"
       @confirm="deleteCategory"
     >
-      <p>Tem a certeza de que deseja eliminar a categoria <strong>{{ categoryToDelete?.name }}</strong>?</p>
-      <p class="text-danger"><small>Esta ação não pode ser desfeita.</small></p>
+      <p>{{ m['backoffice.delete_category_confirm']({ name: categoryToDelete?.name || '' }) }}</p>
+      <p class="text-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
     </ConfirmationDialog>
   </Grid>
 </template>

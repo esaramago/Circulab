@@ -10,6 +10,7 @@ import { selectLayer, $mapFilters, setMapFilters, resetMapFilters, type MapFilte
 import type { CharacteristicRow } from '@/types/database'
 import Grid from '@/components/ui/Grid.vue'
 import Icon from '@/components/ui/Icon.vue'
+import { m } from '@/paraglide/messages.js'
 
 import { CONFIG } from '@/config'
 
@@ -142,23 +143,23 @@ function toggleFilters() {
   <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
     <button type="button" @click="toggleFilters" class="filters__header">
       <Grid justify="space-between">
-        <h3>Filtros <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
+        <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
         <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-desktop"></Icon>
       </Grid>
     </button>
     <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
-      Limpar filtros
+      {{ m['map.clear_filters']() }}
     </wa-button>
     <wa-input 
       type="text"
-      label="Pesquisar recurso"
-      placeholder="Pesquisar" 
+      :label="m['map.search_label']()"
+      :placeholder="m['map.search_placeholder']()" 
       size="s" 
       v-model="search"
     />
 
     <fieldset>
-      <legend data-appearance="p">Tipologia</legend>
+      <legend data-appearance="p">{{ m['map.typology']() }}</legend>
       <div class="typologies">
         <div v-for="item in typologies" :key="item.id" class="typologies__item">
           <input
@@ -183,8 +184,8 @@ function toggleFilters() {
 
     <wa-select
       v-if="typology"
-      placeholder="Filtra a categoria"
-      label="Categoria"
+      :placeholder="m['map.category_placeholder']()"
+      :label="m['map.category_label']()"
       size="s"
       :value="category"
       @input="setCategory(($event.target as HTMLSelectElement).value)"
@@ -194,8 +195,8 @@ function toggleFilters() {
     </wa-select>
     <wa-select
       v-if="category && characteristics?.length"
-      placeholder="Filtra a caraterística"
-      label="Característica"
+      :placeholder="m['map.characteristic_placeholder']()"
+      :label="m['map.characteristic_label']()"
       size="s"
       :value="characteristics"
       @input="characteristics?.push(($event.target as HTMLSelectElement).value)"

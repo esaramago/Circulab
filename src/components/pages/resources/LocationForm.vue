@@ -15,6 +15,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
 import { guessCoordinates, guessAdress } from '@/utils/nominatim'
+import { m } from '@/paraglide/messages.js'
 
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null
@@ -226,30 +227,30 @@ function handleSubmit(event: Event) {
       <Grid gap="xs" direction="column">
         <div id="map"></div>
         <p class="u-text-small">
-          Coordenadas:
+          {{ m['resources.coordinates']() }}
           <template v-if="hasCoordinates"><span class="u-font-monospace">{{ draft.coordinates?.latitude }}</span>, <span class="u-font-monospace">{{ draft.coordinates?.longitude }}</span></template>
-          <template v-else>Sem coordenadas</template>
+          <template v-else>{{ m['resources.no_coordinates']() }}</template>
         </p>
       </Grid>
       <input name="latitude" label="Latitude" type="hidden" required :value="draft.coordinates?.latitude">
       <input name="longitude" label="Longitude" type="hidden" required :value="draft.coordinates?.longitude">
-      <wa-input name="location_name" label="Nome do local (opcional)" hint="Preencha apenas se o recurso estiver dentro de um local específico" @input="handleInput" :value="draft.location_name"></wa-input>
+      <wa-input name="location_name" :label="m['resources.location_name_label']()" :hint="m['resources.location_name_hint']()" @input="handleInput" :value="draft.location_name"></wa-input>
       <Grid direction="column" gap="xs">
-        <wa-input name="address" label="Morada" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
-        <p v-if="isAdressInvalid" class="u-text-error">Morada não encontrada. Por favor, verifique se o endereço está correto.</p>
-        <p v-else-if="isAdressValid" class="u-text-success">Morada válida</p>
+        <wa-input name="address" :label="m['resources.address_label']()" required @input="handleInput" @change="handleChange" :value="draft.address"></wa-input>
+        <p v-if="isAdressInvalid" class="u-text-error">{{ m['resources.address_invalid']() }}</p>
+        <p v-else-if="isAdressValid" class="u-text-success">{{ m['resources.address_valid']() }}</p>
       </Grid>
-      <wa-input name="postal_code" required label="Código postal" :pattern="postCodeRegex.source" hint="Formato: 1234-567" @change="handleChange" :value="draft.postal_code"></wa-input>
+      <wa-input name="postal_code" required :label="m['resources.postal_code_label']()" :pattern="postCodeRegex.source" :hint="m['resources.postal_code_hint']()" @change="handleChange" :value="draft.postal_code"></wa-input>
       
 
-      <wa-radio-group label="Acessibilidade" name="accessibility" @change="handleInput" required :value="draft.accessibility">
-        <wa-radio value="public">Local com acesso livre</wa-radio>
-        <wa-radio value="private">Local com acesso limitado</wa-radio>
+      <wa-radio-group :label="m['resources.accessibility_label']()" name="accessibility" @change="handleInput" required :value="draft.accessibility">
+        <wa-radio value="public">{{ m['resources.accessibility_public']() }}</wa-radio>
+        <wa-radio value="private">{{ m['resources.accessibility_private']() }}</wa-radio>
       </wa-radio-group>
 
       <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" @click="handleBack">Voltar</wa-button>
-        <wa-button variant="primary" type="submit">Continuar</wa-button>
+        <wa-button variant="primary" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+        <wa-button variant="primary" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>
   </form>

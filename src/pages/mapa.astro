@@ -17,12 +17,12 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
       <Grid justify="end">
         <wa-button href={localizeHref('/contactos')}>
           <wa-icon name="envelope"></wa-icon>
-          Enviar comentário
+          {m['map.send_feedback']()}
         </wa-button>
         {CONFIG.can_suggest &&
           <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
             <wa-icon name="plus"></wa-icon>
-            Sugerir novo recurso
+            {m['map.suggest_resource']()}
           </wa-button>
         }
       </Grid>

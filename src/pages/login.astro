@@ -5,14 +5,15 @@ import Grid from '@/components/ui/Grid.vue'
 import Container from '@/components/ui/Container.vue'
 import { getSafeRedirectPath, localizeRedirectPath } from '@/utils/authRedirect'
 import { localizeHref } from '@/paraglide/runtime.js'
+import { m } from '@/paraglide/messages.js'
 
 let errorMessage = ''
 let successMessage = ''
 if (Astro.url.searchParams.get('error') === 'auth') {
-  errorMessage = 'The sign-in link is invalid or has expired. Please request a new one.'
+  errorMessage = m['auth.invalid_link']()
 }
 if (Astro.url.searchParams.get('success') === 'password') {
-  successMessage = 'Your password has been updated. You can sign in now.'
+  successMessage = m['auth.password_updated']()
 }
 const forgotPasswordHref = localizeHref(
   '/auth/forgot-password',
@@ -36,12 +37,12 @@ if (Astro.request.method === 'POST') {
       (formData.get('redirect') as string) || Astro.url.searchParams.get('redirect')
     )
     if (!email || !password) {
-      throw new Error('Email and password are required')
+      throw new Error(m['auth.email_password_required']())
     }
 
     const { data: loginData, error: loginError } = await Astro.callAction(signIn, formData)
     if (loginError) {
-      throw new Error(loginError.message || 'Failed to sign in')
+      throw new Error(loginError.message || m['auth.failed_sign_in']())
     }
 
     if (loginData?.success) {
@@ -50,10 +51,10 @@ if (Astro.request.method === 'POST') {
       if (hasAccessToDashboard) {
         return Astro.redirect(localizeRedirectPath(redirectTarget, Astro.locals.locale))
       } else {
-        errorMessage = 'You do not have access to the dashboard'
+        errorMessage = m['auth.no_dashboard_access']()
       }
     } else {
-      errorMessage = loginData?.message || 'Failed to sign in'
+      errorMessage = loginData?.message || m['auth.failed_sign_in']()
     }
 
   } catch (error: any) {
@@ -68,9 +69,9 @@ if (Astro.request.method === 'POST') {
   import '@awesome.me/webawesome/dist/components/input/input.js'
 </script>
 
-<Layout title="Login">
+<Layout title={m['auth.login_title']()}>
   <Container width="xs">
-    <h1>Login</h1>
+    <h1>{m['auth.login_title']()}</h1>
     {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
     {successMessage && <wa-alert variant="success">{successMessage}</wa-alert>}
     <form method="post">
@@ -81,8 +82,8 @@ if (Astro.request.method === 'POST') {
           type="email"
           name="email"
           required
-          label="Email"
-          placeholder="Email"
+          label={m['auth.email_label']()}
+          placeholder={m['auth.email_label']()}
           value={ADMIN_EMAIL}
           autofocus
         />
@@ -90,14 +91,14 @@ if (Astro.request.method === 'POST') {
           id="password"
           type="password"
           name="password"
-          label="Password"
+          label={m['auth.password_label']()}
           required
-          placeholder="Password"
+          placeholder={m['auth.password_label']()}
           value={ADMIN_PASSWORD}
         />
-        <wa-button variant="primary" type="submit">Login</wa-button>
+        <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
         <p>
-          <a href={forgotPasswordHref}>Forgot your password?</a>
+          <a href={forgotPasswordHref}>{m['auth.forgot_password']()}</a>
         </p>
       </Grid>
     </form>

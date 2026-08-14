@@ -1,6 +1,6 @@
 <template>
   <Grid gap="s" direction="column">
-    <h3 appearance="p">Imagens do recurso</h3>
+    <h3 appearance="p">{{ m['resources.images_label']() }}</h3>
     <Gallery>
       <template v-if="images.length > 0">
         <GalleryItem v-for="image in images" :key="image.id" :src="image.url" :alt="image.alt" @remove="handleRemoveImage" />
@@ -8,20 +8,20 @@
       <InputFile
         id="images"
         multiple
-        label="Imagens ao recurso"
+        :label="m['resources.add_images_label']()"
         hiddenLabel
         accept="image/*"
         :filesNumber="images.length"
         @change="handleImagesChange"
       >
         <template #label>
-          <span>Adicione imagens ao recurso</span>
+          <span>{{ m['resources.add_images_label']() }}</span>
         </template>
       </InputFile>
     </Gallery>
     <p class="u-text-small">
-      <template v-if="images.length === 1">1 imagen adicionada</template>
-      <template v-else-if="images.length > 1">{{ images.length }} imagens adicionadas</template>
+      <template v-if="images.length === 1">{{ m['resources.image_added_singular']() }}</template>
+      <template v-else-if="images.length > 1">{{ m['resources.image_added_plural']({ count: images.length }) }}</template>
     </p>
   </Grid>
 </template>
@@ -35,6 +35,7 @@ import GalleryItem from '@/components/ui/GalleryItem.vue'
 import Grid from '@/components/ui/Grid.vue'
 import type { DescriptionImageDraft } from '@/types/add-resource-draft'
 import { saveImage, deleteImage } from '@/utils/imageStore'
+import { m } from '@/paraglide/messages.js'
 
 const props = defineProps<{
   images: DescriptionImageDraft[]

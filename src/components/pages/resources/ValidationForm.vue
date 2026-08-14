@@ -7,6 +7,7 @@ import '@webawesome/button/button.js'
 import '@webawesome/callout/callout.js'
 import { $validationDraft, $editingResourceId, clearAddResourceDraft, setStepCompleted } from '@/stores/addResource'
 import type { ValidationDraft } from '@/types/add-resource-draft'
+import { m } from '@/paraglide/messages.js'
 
 const draft = useStore($validationDraft)
 const errorMessage = ref<string>('')
@@ -22,7 +23,7 @@ const handleSubmit = (event: Event) => {
   setStepCompleted('validation', isCompleted)
   if (!isCompleted) {
     event.preventDefault()
-    errorMessage.value = 'Tem de aceitar todas as condições para continuar'
+    errorMessage.value = m['resources.validation_error']()
   }
 }
 
@@ -46,25 +47,26 @@ function handleChange(event: Event) {
     <Grid gap="xl" direction="column">
       <wa-callout v-if="errorMessage" variant="danger">{{ errorMessage }}</wa-callout>
       <Grid gap="m" direction="column">
-        <p>Ao adicionar um novo pin ao mapa, declaro que:</p>
+        <p>{{ m['resources.validation_conditions']() }}</p>
         <wa-checkbox
           name="exists"
           :checked="draft.exists"
           @change="handleChange"
-        ><strong>Existe agora</strong>, não é um projeto que acabou</wa-checkbox>
+        >{{ m['resources.validation_exists']() }}</wa-checkbox>
         <wa-checkbox
           name="permanent"
           :checked="draft.permanent"
           @change="handleChange"
-        ><strong>É um local permanente</strong>. Não é uma atividade ou evento pontual</wa-checkbox>
+        >{{ m['resources.validation_permanent']() }}</wa-checkbox>
         <wa-checkbox
           name="notRepeated"
           :checked="draft.notRepeated"
-          @change="handleChange"><strong>Não é um local que já foi adicionado</strong>. Se já existir, edite o pin existente.
+          @change="handleChange"
+        >{{ m['resources.validation_not_repeated']() }}
         </wa-checkbox>
       </Grid>
       <Grid justify="end">
-        <wa-button variant="primary" type="submit">Continuar</wa-button>
+        <wa-button variant="primary" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>
   </form>

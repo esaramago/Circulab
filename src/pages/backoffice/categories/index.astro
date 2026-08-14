@@ -5,6 +5,7 @@ import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
 import { CONFIG } from '@/config'
+import { m } from '@/paraglide/messages.js'
 
 const user = Astro.locals.user
 
@@ -25,19 +26,19 @@ const typologies = typologiesData || []
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
 </script>
 
-<Layout title="Selecionar Tipologia">
+<Layout title={m['backoffice.select_typology']()}>
   <Grid direction="column" gap="l">
     <div class="backoffice-page__nav">
       <a class="back-link" href={localizeHref('/backoffice')}>
         <wa-icon name="arrow-left"></wa-icon>
-        Voltar ao painel
+        {m['backoffice.back_to_panel']()}
       </a>
     </div>
 
     <Grid gap="l" direction="column">
       <div>
-        <h2>Selecionar tipologia</h2>
-        <p class="subtitle">Escolha uma tipologia para gerir as suas categorias correspondentes.</p>
+        <h2>{m['backoffice.select_typology']()}</h2>
+        <p class="subtitle">{m['backoffice.select_typology_subtitle']()}</p>
       </div>
 
       <div class="typology-grid">
@@ -59,7 +60,7 @@ const typologies = typologiesData || []
                   <p>{t.description}</p>
                 </Grid>
                 <div slot="footer">
-                  <span>Gerir categorias</span>
+                  <span>{m['backoffice.manage_categories']()}</span>
                   <wa-icon name="arrow-right"></wa-icon>
                 </div>
               </wa-card>

@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
+import { m } from '@/paraglide/messages.js'
 
 const user = Astro.locals.user
 
@@ -13,14 +14,14 @@ if (!user || !userHasAccess(user, 'backoffice')) {
 
 const cards = [
   {
-    title: 'Tipologias',
-    description: 'Gerir as tipologias de recursos no mapa.',
+    title: m['backoffice.typologies_title'](),
+    description: m['backoffice.typologies_desc'](),
     href: localizeHref('/backoffice/typologies'),
     icon: 'layer-group'
   },
   {
-    title: 'Categorias',
-    description: 'Gerir as categorias de recursos no mapa.',
+    title: m['backoffice.categories_title'](),
+    description: m['backoffice.categories_desc'](),
     href: localizeHref('/backoffice/categories'),
     icon: 'tags'
   }
@@ -32,11 +33,11 @@ const cards = [
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
 </script>
 
-<Layout title="Backoffice">
+<Layout title={m['backoffice.title']()}>
   <Grid gap="l" direction="column">
     <div>
-      <h1>Backoffice</h1>
-      <p>Área de administração do Circulab</p>
+      <h1>{m['backoffice.title']()}</h1>
+      <p>{m['backoffice.subtitle']()}</p>
     </div>
 
     <Grid gap="l">

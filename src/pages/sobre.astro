@@ -86,14 +86,14 @@ import { localizeHref } from '@/paraglide/runtime.js'
     <section class="about-section">
       <h2>{m['about.faq_title']()}</h2>
       <wa-accordion>
-        <wa-accordion-item label="O que é a plataforma Circulab?">
-          Circulab é uma plataforma de cartografia participativa dedicada à identificação e valorização de recursos agroecológicos e iniciativas de economia circular.
+        <wa-accordion-item label={m['about.faq_q1']()}>
+          {m['about.faq_a1']()}
         </wa-accordion-item>
-        <wa-accordion-item label="Como posso adicionar um novo recurso ao mapa?">
-          Podes registar a tua iniciativa ou ponto de interesse acedendo à secção do mapa e clicando em "Adicionar recurso".
+        <wa-accordion-item label={m['about.faq_q2']()}>
+          {m['about.faq_a2']()}
         </wa-accordion-item>
-        <wa-accordion-item label="O projeto Circulab é gratuito?">
-          Sim, o Circulab é uma iniciativa de acesso livre e colaborativo para toda a comunidade.
+        <wa-accordion-item label={m['about.faq_q3']()}>
+          {m['about.faq_a3']()}
         </wa-accordion-item>
       </wa-accordion>
     </section>

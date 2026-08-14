@@ -10,6 +10,7 @@ import { $locationDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded
 import { localizeHref } from '@/paraglide/runtime.js'
 import type { LocationDraft } from '@/types/add-resource-draft'
 import phoneAreaCodes from '@/data/countryCodes.json'
+import { m } from '@/paraglide/messages.js'
 
 const draft = useStore($locationDraft)
 const editingResourceId = useStore($editingResourceId)
@@ -112,26 +113,26 @@ function handleSubmit(event: Event) {
     @submit="handleSubmit"
   >
     <Grid gap="xl" direction="column">
-      <h3>Contactos</h3>
+      <h3>{{ m['resources.contacts_heading']() }}</h3>
       <wa-input name="email" type="email" label="Email" :value="draft.email" @input="handleInput" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"></wa-input>
       <fieldset>
-        <legend appearance="p">Telefone</legend>
+        <legend appearance="p">{{ m['resources.phone_heading']() }}</legend>
         <Grid>
-          <wa-select ref="phoneSelectRef" id="phone_area_code" class="phone-area-code" name="phone_area_code" label="Indicativo" :value="draft.phone_area_code ? String(draft.phone_area_code) : ''" @change="handleChangeDialCode">
+          <wa-select ref="phoneSelectRef" id="phone_area_code" class="phone-area-code" name="phone_area_code" :label="m['resources.phone_area_code']()" :value="draft.phone_area_code ? String(draft.phone_area_code) : ''" @change="handleChangeDialCode">
             <wa-option v-for="code in sortedPhoneAreaCodes" :key="code.code" :value="String(code.dial_code)">
               {{code.name}} <span class="u-nowrap">(+{{code.dial_code}})</span>
             </wa-option>
           </wa-select>
-          <wa-input class="phone" name="phone" label="Telefone" :value="draft.phone ? String(draft.phone) : ''" @input="handleInput"></wa-input>
+          <wa-input class="phone" name="phone" :label="m['resources.phone_label']()" :value="draft.phone ? String(draft.phone) : ''" @input="handleInput"></wa-input>
         </Grid>
       </fieldset>
-      <h3>Canais</h3>
-      <wa-input name="website" type="url" label="Website" :value="draft.website" @input="handleInput"></wa-input>
-      <wa-input name="instagram" type="url" label="Instagram" :value="draft.instagram" @input="handleInput"></wa-input>
-      <wa-input name="facebook" type="url" label="Facebook" :value="draft.facebook" @input="handleInput"></wa-input>
+      <h3>{{ m['resources.channels_heading']() }}</h3>
+      <wa-input name="website" type="url" :label="m['resources.website']()" :value="draft.website" @input="handleInput"></wa-input>
+      <wa-input name="instagram" type="url" :label="m['resources.instagram']()" :value="draft.instagram" @input="handleInput"></wa-input>
+      <wa-input name="facebook" type="url" :label="m['resources.facebook']()" :value="draft.facebook" @input="handleInput"></wa-input>
       <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" @click="handleBack">Voltar</wa-button>
-        <wa-button variant="primary" type="submit">Continuar</wa-button>
+        <wa-button variant="primary" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+        <wa-button variant="primary" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>
   </form>

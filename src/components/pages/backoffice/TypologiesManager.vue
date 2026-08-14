@@ -12,6 +12,7 @@ import '@webawesome/callout/callout.js'
 import '@webawesome/checkbox/checkbox.js'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow } from '@/types/database'
+import { m } from '@/paraglide/messages.js'
 
 const props = defineProps<{
   initialTypologies: TypologyRow[]
@@ -76,7 +77,7 @@ function onFileChange(event: any) {
       selectedFileUrl.value = URL.createObjectURL(file)
       dialogError.value = null
     } else {
-      dialogError.value = 'Por favor, selecione um ficheiro SVG válido.'
+      dialogError.value = m['backoffice.invalid_svg']()
       selectedFile.value = null
       selectedFileUrl.value = null
     }
@@ -151,7 +152,7 @@ async function saveTypology() {
       if (idx !== -1) {
         typologies.value[idx] = data.typology
       }
-      feedback.value = { type: 'success', message: 'Tipologia atualizada com sucesso!' }
+      feedback.value = { type: 'success', message: m['backoffice.typology_updated']() }
       dialogOpen.value = false
     }
   } catch (err: any) {
@@ -166,7 +167,7 @@ async function saveTypology() {
 <template>
   <Grid direction="column" gap="l">
     <div class="manager__header">
-      <h2>Gestão de tipologias</h2>
+      <h2>{{ m['backoffice.manage_typologies_title']() }}</h2>
     </div>
 
     <!-- Feedback Message -->
@@ -179,13 +180,13 @@ async function saveTypology() {
       <table class="manager__table">
         <thead>
           <tr>
-            <th>Ícone</th>
-            <th>Código</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Cor</th>
-            <th>Cor nas categorias</th>
-            <th class="text-end">Ações</th>
+            <th>{{ m['backoffice.icon']() }}</th>
+            <th>{{ m['backoffice.code']() }}</th>
+            <th>{{ m['backoffice.name']() }}</th>
+            <th>{{ m['backoffice.description']() }}</th>
+            <th>{{ m['backoffice.color']() }}</th>
+            <th>{{ m['backoffice.color_in_categories']() }}</th>
+            <th class="text-end">{{ m['backoffice.actions']() }}</th>
           </tr>
         </thead>
         <tbody>
@@ -220,12 +221,12 @@ async function saveTypology() {
             <td class="text-end actions-cell">
               <wa-button size="s" @click="openEditDialog(typology)">
                 <wa-icon name="pen"></wa-icon>
-                Editar
+                {{ m['map.edit']() }}
               </wa-button>
             </td>
           </tr>
           <tr v-if="typologies.length === 0">
-            <td colspan="7" class="text-center">Nenhuma tipologia encontrada.</td>
+            <td colspan="7" class="text-center">{{ m['backoffice.no_typologies_found']() }}</td>
           </tr>
         </tbody>
       </table>
@@ -234,7 +235,7 @@ async function saveTypology() {
     <!-- Edit Dialog -->
     <wa-dialog
       id="typology-dialog"
-      label="Editar tipologia"
+      :label="m['backoffice.edit_typology']()"
       :open="dialogOpen ? '' : null"
       @wa-after-hide="closeDialog"
     >
@@ -245,28 +246,26 @@ async function saveTypology() {
 
         <div class="form-group">
           <wa-input
-            label="Nome"
+            :label="m['backoffice.name']()"
             name="name"
             required
             :value="form.name"
             @input="form.name = $event.target.value"
-            placeholder="Nome da tipologia"
           ></wa-input>
         </div>
 
         <div class="form-group">
           <wa-textarea
-            label="Descrição"
+            :label="m['backoffice.description']()"
             name="description"
             :value="form.description"
             @input="form.description = $event.target.value"
-            placeholder="Breve descrição da tipologia"
             rows="3"
           ></wa-textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Ícone (ficheiro SVG)</label>
+          <label class="form-label">{{ m['backoffice.icon']() }} (SVG)</label>
           <div class="file-upload-wrapper">
             <input
               type="file"
@@ -277,14 +276,14 @@ async function saveTypology() {
             />
             <label for="typology-icon-upload" class="file-upload-btn">
               <wa-icon name="upload"></wa-icon>
-              <span>Selecionar ficheiro SVG</span>
+              <span>{{ m['backoffice.select_svg']() }}</span>
             </label>
             <div v-if="selectedFile || form.icon" class="file-upload-preview-area">
               <img
                 v-if="selectedFileUrl"
                 :src="selectedFileUrl"
                 class="typology-icon-preview"
-                alt="Novo ícone"
+                alt="Ícone"
               />
               <wa-icon
                 v-else-if="form.icon"
@@ -292,7 +291,7 @@ async function saveTypology() {
                 :name="!isUrlIcon(form.icon) ? form.icon : undefined"
                 class="typology-icon-preview"
               ></wa-icon>
-              <span class="file-name">{{ selectedFile ? selectedFile.name : 'Ícone atual' }}</span>
+              <span class="file-name">{{ selectedFile ? selectedFile.name : form.icon }}</span>
               <wa-button size="s" variant="neutral" @click="clearIcon">
                 <wa-icon name="trash"></wa-icon>
               </wa-button>
@@ -301,7 +300,7 @@ async function saveTypology() {
         </div>
 
         <div class="form-group">
-          <label class="form-label">Cor do pin</label>
+          <label class="form-label">{{ m['backoffice.color']() }}</label>
           <div class="color-input-wrapper">
             <input
               type="color"
@@ -325,13 +324,13 @@ async function saveTypology() {
             :checked="form.has_category_color"
             @change="form.has_category_color = $event.target.checked"
           >
-            <strong>Permitir cor nas categorias</strong>
+            <strong>{{ m['backoffice.allow_category_color']() }}</strong>
           </wa-checkbox>
         </div>
 
         <div slot="footer" class="dialog-footer">
-          <wa-button @click="dialogOpen = false">Cancelar</wa-button>
-          <wa-button variant="brand" type="submit" :loading="saving">Guardar</wa-button>
+          <wa-button @click="dialogOpen = false">{{ m['backoffice.cancel']() }}</wa-button>
+          <wa-button variant="brand" type="submit" :loading="saving">{{ m['resources.save']() }}</wa-button>
         </div>
       </form>
     </wa-dialog>
