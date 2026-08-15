@@ -181,7 +181,6 @@ async function saveTypology() {
         <thead>
           <tr>
             <th>{{ m['backoffice.icon']() }}</th>
-            <th>{{ m['backoffice.code']() }}</th>
             <th>{{ m['backoffice.name']() }}</th>
             <th>{{ m['backoffice.description']() }}</th>
             <th>{{ m['backoffice.color']() }}</th>
@@ -199,9 +198,6 @@ async function saveTypology() {
                 :name="!isUrlIcon(typology.icon) ? typology.icon : undefined"
               ></wa-icon>
               <span v-else class="no-icon">-</span>
-            </td>
-            <td>
-              <span class="badge badge--code">{{ typology.code }}</span>
             </td>
             <td><strong>{{ typology.name }}</strong></td>
             <td>{{ typology.description || '-' }}</td>
@@ -385,20 +381,6 @@ async function saveTypology() {
 
 .manager__table tbody tr:hover {
   background-color: var(--wa-color-neutral-100);
-}
-
-.badge {
-  display: inline-block;
-  padding: var(--wa-space-2xs) var(--wa-space-xs);
-  font-size: var(--wa-font-size-xs);
-  font-weight: var(--wa-font-weight-semibold);
-  border-radius: var(--wa-border-radius-pill);
-}
-
-.badge--code {
-  background-color: var(--wa-color-neutral-200);
-  color: var(--wa-color-neutral-800);
-  font-family: monospace;
 }
 
 .color-preview-cell {

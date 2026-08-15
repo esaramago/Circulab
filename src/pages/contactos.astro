@@ -31,15 +31,16 @@ if (Astro.request.method === 'POST') {
   import '@awesome.me/webawesome/dist/components/card/card.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
 </script>
 
 <Layout title={m['contacts.title']()}>
   <Container width="m">
     <header class="contacts-header">
-      <div class="contacts-badge">
-        <wa-icon name="envelope"></wa-icon>
-        <span>{m['contacts.title']()}</span>
-      </div>
+      <wa-badge variant="brand" appearance="filled" pill class="contacts-badge">
+        <wa-icon slot="start" name="envelope"></wa-icon>
+        {m['contacts.title']()}
+      </wa-badge>
       <h1>{m['contacts.title']()}</h1>
       <p class="contacts-subtitle">{m['contacts.subtitle']()}</p>
     </header>
@@ -162,16 +163,6 @@ if (Astro.request.method === 'POST') {
   }
 
   .contacts-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-2xs);
-    padding-block: var(--wa-space-3xs);
-    padding-inline: var(--wa-space-s);
-    border-radius: var(--wa-border-radius-pill);
-    background-color: var(--wa-color-brand-30);
-    color: var(--wa-color-brand-80);
-    font-size: var(--wa-font-size-s);
-    font-weight: var(--wa-font-weight-semibold);
     margin-block-end: var(--wa-space-s);
   }
 

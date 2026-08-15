@@ -11,6 +11,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/button/button.js'
   import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
 </script>
 
 <Layout title={m['lisboa_repair_project.title']()}>
@@ -19,10 +20,10 @@ import { localizeHref } from '@/paraglide/runtime.js'
       <Back href={localizeHref('/sobre')} />
     </div>
     <header class="project-header">
-      <div class="project-badge">
-        <wa-icon name="screwdriver-wrench"></wa-icon>
-        <span>{m['lisboa_repair_project.badge']()}</span>
-      </div>
+      <wa-badge variant="brand" appearance="filled" pill class="project-badge">
+        <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
+        {m['lisboa_repair_project.badge']()}
+      </wa-badge>
       <h1>{m['lisboa_repair_project.title']()}</h1>
       <p class="project-subtitle">{m['lisboa_repair_project.subtitle']()}</p>
     </header>
@@ -95,10 +96,10 @@ import { localizeHref } from '@/paraglide/runtime.js'
     <section class="project-section">
       <h2>{m['lisboa_repair_project.who_title']()}</h2>
       <wa-card class="who-card">
-        <div class="who-badge">
-          <wa-icon name="tree"></wa-icon>
-          <span>Climate Circle Lisbon</span>
-        </div>
+        <wa-badge variant="brand" appearance="filled" pill class="who-badge">
+          <wa-icon slot="start" name="tree"></wa-icon>
+          Climate Circle Lisbon
+        </wa-badge>
         <p>{m['lisboa_repair_project.who_desc1']()}</p>
         <p>{m['lisboa_repair_project.who_desc2']()}</p>
         <div class="who-actions">
@@ -249,16 +250,6 @@ import { localizeHref } from '@/paraglide/runtime.js'
   }
 
   .project-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-2xs);
-    padding-block: var(--wa-space-3xs);
-    padding-inline: var(--wa-space-s);
-    border-radius: var(--wa-border-radius-pill);
-    background-color: var(--wa-color-brand-30);
-    color: var(--wa-color-brand-80);
-    font-size: var(--wa-font-size-s);
-    font-weight: var(--wa-font-weight-semibold);
     margin-block-end: var(--wa-space-s);
   }
 
@@ -400,16 +391,6 @@ import { localizeHref } from '@/paraglide/runtime.js'
   }
 
   .who-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-2xs);
-    padding-block: var(--wa-space-3xs);
-    padding-inline: var(--wa-space-s);
-    border-radius: var(--wa-border-radius-pill);
-    background-color: var(--wa-color-brand-20);
-    color: var(--wa-color-brand-80);
-    font-size: var(--wa-font-size-s);
-    font-weight: var(--wa-font-weight-semibold);
     align-self: flex-start;
   }
 

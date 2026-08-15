@@ -12,15 +12,16 @@ import { localizeHref } from '@/paraglide/runtime.js'
   import '@awesome.me/webawesome/dist/components/callout/callout.js'
   import '@awesome.me/webawesome/dist/components/accordion/accordion.js'
   import '@awesome.me/webawesome/dist/components/accordion-item/accordion-item.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
 </script>
 
 <Layout title={m['about.title']()}>
   <Container width="m">
     <header class="about-header">
-      <div class="about-badge">
-        <wa-icon name="circle-info"></wa-icon>
-        <span>{m['about.title']()}</span>
-      </div>
+      <wa-badge variant="brand" appearance="filled" pill class="about-badge">
+        <wa-icon slot="start" name="circle-info"></wa-icon>
+        {m['about.title']()}
+      </wa-badge>
       <h1>{m['about.title']()}</h1>
       <p class="about-subtitle">{m['about.subtitle']()}</p>
     </header>
@@ -54,10 +55,10 @@ import { localizeHref } from '@/paraglide/runtime.js'
     <section class="about-section">
       <wa-card class="repair-banner-card">
         <div class="repair-banner-content">
-          <div class="repair-badge">
-            <wa-icon name="screwdriver-wrench"></wa-icon>
-            <span>{m['lisboa_repair_project.badge']()}</span>
-          </div>
+          <wa-badge variant="brand" appearance="filled" pill class="repair-badge">
+            <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
+            {m['lisboa_repair_project.badge']()}
+          </wa-badge>
           <h2>{m['lisboa_repair_project.title']()}</h2>
           <p class="repair-subtitle">{m['lisboa_repair_project.subtitle']()}</p>
           <p class="repair-desc">{m['lisboa_repair_project.desc']()}</p>
@@ -148,16 +149,6 @@ import { localizeHref } from '@/paraglide/runtime.js'
   }
 
   .about-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-2xs);
-    padding-block: var(--wa-space-3xs);
-    padding-inline: var(--wa-space-s);
-    border-radius: var(--wa-border-radius-pill);
-    background-color: var(--wa-color-brand-30);
-    color: var(--wa-color-brand-80);
-    font-size: var(--wa-font-size-s);
-    font-weight: var(--wa-font-weight-semibold);
     margin-block-end: var(--wa-space-s);
   }
 
@@ -312,18 +303,6 @@ import { localizeHref } from '@/paraglide/runtime.js'
     align-items: flex-start;
   }
 
-  .repair-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--wa-space-2xs);
-    padding-block: var(--wa-space-3xs);
-    padding-inline: var(--wa-space-s);
-    border-radius: var(--wa-border-radius-pill);
-    background-color: var(--wa-color-brand-20);
-    color: var(--wa-color-brand-80);
-    font-size: var(--wa-font-size-s);
-    font-weight: var(--wa-font-weight-semibold);
-  }
 
   .repair-banner-content h2 {
     font-size: var(--wa-font-size-xl);
