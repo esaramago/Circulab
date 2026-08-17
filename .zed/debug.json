@@ -1,0 +1,20 @@
+[
+  {
+    "adapter": "JavaScript",
+    "label": "Astro Dev Server (Node.js)",
+    "type": "node",
+    "request": "launch",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "program": "node_modules/astro/bin/astro.mjs",
+    "args": ["dev"],
+    "console": "integratedTerminal"
+  },
+  {
+    "adapter": "JavaScript",
+    "label": "Astro Frontend (Chrome)",
+    "type": "chrome",
+    "request": "launch",
+    "url": "http://localhost:4200",
+    "webRoot": "$ZED_WORKTREE_ROOT"
+  }
+]
