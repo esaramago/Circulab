@@ -22,7 +22,6 @@ export const resourceSchema = z.object({
   location_name: z.string().optional(),
   address: z.string().optional(),
   postal_code: z.string().optional(),
-  location: z.string().optional(),
   email: z.string().email().optional().or(z.literal('')),
   phone: z.number().optional(),
   phone_area_code: z.number().optional(),

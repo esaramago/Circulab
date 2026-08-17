@@ -59,7 +59,6 @@ Postgres + **PostGIS** (`geography(Point, 4326)` for coordinates). Application u
   * `name`
   * `address` (optional)
   * `postal_code` (optional)
-  * `location` (free text, optional)
   * `coordinates` (PostGIS / `geography(Point, 4326)`)
   * `phone` (optional)
   * `phone_area_code` (integer, optional)
@@ -78,7 +77,6 @@ Postgres + **PostGIS** (`geography(Point, 4326)` for coordinates). Application u
   * `title`
   * `description` (optional)
   * `images` — JSON array; each element `{ "bucket": "<bucket name>", "path": "<path within bucket>" }`, aligned with Supabase Storage (`storage.from(bucket).…`). Project bucket: **`pin-images`**.
-  * `location` (text, free-form location description)
   * `coordinates` (PostGIS / `geography(Point, 4326)`; more specific than the text field)
   * `category_id` → `categories.id`
   * `location_id` → `locations.id`

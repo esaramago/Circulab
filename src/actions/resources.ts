@@ -275,7 +275,6 @@ export const addResource = defineAction({
         name: input.location_name || '',
         address: input.address || '',
         postal_code: input.postal_code || '',
-        location: input.location || null,
         coordinates: geographyPointEwkt(
           Number(input.coordinates?.longitude),
           Number(input.coordinates?.latitude),
@@ -437,7 +436,6 @@ export const editResource = defineAction({
         name: input.location_name || '',
         address: input.address || '',
         postal_code: input.postal_code || '',
-        location: input.location || null,
         coordinates: geographyPointEwkt(
           Number(input.coordinates?.longitude),
           Number(input.coordinates?.latitude),
