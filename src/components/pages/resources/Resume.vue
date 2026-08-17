@@ -8,6 +8,7 @@ import { supabase } from '@/utils/supabase'
 import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
 import '@webawesome/callout/callout.js'
+import '@webawesome/card/card.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
@@ -176,61 +177,63 @@ async function handleSubmit() {
     {{ errorMessage }}
   </wa-callout>
 
-  <Grid gap="l" direction="column" v-if="resumeData">
+  <wa-card>
+    <Grid gap="l" direction="column" v-if="resumeData">
 
-    <Gallery>
-      <template v-if="resumeData.images?.length > 0">
-        <GalleryItem v-for="image in resumeData.images" :key="image.id" :src="image.url" :alt="image.alt" />
-      </template>
-    </Gallery>
-    <div>
-      <h2>{{ resumeData.title }}</h2>
-      <p>{{ category }} ({{ typology }})</p>
-      <p v-if="characteristics">{{ characteristics }}</p>
-    </div>
-
-    <Grid gap="xs" direction="column" class="list">
+      <Gallery>
+        <template v-if="resumeData.images?.length > 0">
+          <GalleryItem v-for="image in resumeData.images" :key="image.id" :src="image.url" :alt="image.alt" />
+        </template>
+      </Gallery>
       <div>
-        <wa-icon name="location-dot"></wa-icon>
-        <template v-if="resumeData.location_name">{{resumeData.location_name}}, </template>{{resumeData.address}},
-        {{ resumeData.postal_code }}
+        <h2>{{ resumeData.title }}</h2>
+        <p>{{ category }} ({{ typology }})</p>
+        <p v-if="characteristics">{{ characteristics }}</p>
       </div>
-      <div v-if="resumeData.coordinates">
-        <wa-icon name="map"></wa-icon>
-        <a
-          :href="`https://www.google.com/maps/search/?api=1&query=${resumeData.coordinates?.latitude},${resumeData.coordinates?.longitude}`"
-          target="_blank"
-          :title="m['map.open_google_maps']()"
-        >
-          {{ resumeData.coordinates?.latitude }}, {{ resumeData.coordinates?.longitude }}
-        </a>
+
+      <Grid gap="xs" direction="column" class="list">
+        <div>
+          <wa-icon name="location-dot"></wa-icon>
+          <template v-if="resumeData.location_name">{{resumeData.location_name}}, </template>{{resumeData.address}},
+          {{ resumeData.postal_code }}
+        </div>
+        <div v-if="resumeData.coordinates">
+          <wa-icon name="map"></wa-icon>
+          <a
+            :href="`https://www.google.com/maps/search/?api=1&query=${resumeData.coordinates?.latitude},${resumeData.coordinates?.longitude}`"
+            target="_blank"
+            :title="m['map.open_google_maps']()"
+          >
+            {{ resumeData.coordinates?.latitude }}, {{ resumeData.coordinates?.longitude }}
+          </a>
+        </div>
+        <div v-if="resumeData.email">
+          <wa-icon name="at"></wa-icon>
+          {{ resumeData.email }}
+        </div>
+        <div v-if="resumeData.phone">
+          <wa-icon name="phone"></wa-icon>
+          +{{resumeData.phone_area_code}} {{ resumeData.phone }}
+        </div>
+        <div v-if="resumeData.accessibility">
+          <template v-if="resumeData.accessibility === 'private'">
+            <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
+            <span>{{ m['map.access_limited']() }}</span>
+          </template>
+          <template v-else-if="resumeData.accessibility === 'public'">
+            <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
+            <span>{{ m['map.access_public']() }}</span>
+          </template>
+        </div>
+      </Grid>
+
+      <div>
+        <strong>{{ m['resources.description_label']() }}</strong>
+        <p>{{ resumeData.description }}</p>
       </div>
-      <div v-if="resumeData.email">
-        <wa-icon name="at"></wa-icon>
-        {{ resumeData.email }}
-      </div>
-      <div v-if="resumeData.phone">
-        <wa-icon name="phone"></wa-icon>
-        {{ resumeData.phone }}
-      </div>
-      <div v-if="resumeData.accessibility">
-        <template v-if="resumeData.accessibility === 'private'">
-          <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-          <span>{{ m['map.access_limited']() }}</span>
-        </template>
-        <template v-else-if="resumeData.accessibility === 'public'">
-          <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-          <span>{{ m['map.access_public']() }}</span>
-        </template>
-      </div>
+
     </Grid>
-
-    <div>
-      <strong>{{ m['resources.description_label']() }}</strong>
-      <p>{{ resumeData.description }}</p>
-    </div>
-
-  </Grid>
+  </wa-card>
 
   <Grid justify="end">
     <wa-button
