@@ -24,3 +24,14 @@
     display: none !important;
   }
 }
+
+@media (max-width: 1023px) {
+  .is-hidden-small {
+    display: none !important;
+  }
+}
+@media (min-width: 1024px) {
+  .is-hidden-large {
+    display: none !important;
+  }
+}

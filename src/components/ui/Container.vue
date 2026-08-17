@@ -19,7 +19,7 @@ const props = defineProps<{
   width: 100%;
   max-width: var(--width);
   margin-inline: auto;
-  padding: var(--wa-space-l) var(--wa-space-xl) var(--wa-space-xl);
+  padding: var(--wa-space-l) 0 var(--wa-space-xl);
   box-sizing: border-box;
 }
 .l-container--width-xs {

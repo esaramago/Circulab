@@ -144,7 +144,7 @@ function toggleFilters() {
     <button type="button" @click="toggleFilters" class="filters__header">
       <Grid justify="space-between">
         <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
-        <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-desktop"></Icon>
+        <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-large"></Icon>
       </Grid>
     </button>
     <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
@@ -218,8 +218,9 @@ function toggleFilters() {
   box-sizing: border-box;
   transition: transform .2s ease-in-out;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     position: fixed;
+    inset-inline-start: 0;
     z-index: 1002; /* map + 2 */
     width: 100%;
     border-bottom-left-radius: 0;

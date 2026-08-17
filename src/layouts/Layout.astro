@@ -42,22 +42,22 @@ const { title, fullWidth, class: className } = Astro.props
 </html>
 
 <style>
-  main {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 120rem;
-    margin-inline: auto;
-    gap: var(--wa-space-4xl);
-    flex: 1;
-    padding: var(--wa-space-xl);
-    box-sizing: border-box;
-    &.u-width-full {
-      max-width: none;
-      @media (max-width: 767px) {
-        padding: 0;
-      }
+main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 120rem;
+  margin-inline: auto;
+  gap: var(--wa-space-4xl);
+  flex: 1;
+  padding: var(--wa-space-xl);
+  box-sizing: border-box;
+  &.u-width-full {
+    max-width: none;
+    @media (max-width: 767px) {
+      padding-inline: 0;
     }
   }
+}
 </style>

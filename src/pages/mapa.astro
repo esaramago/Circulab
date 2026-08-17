@@ -43,6 +43,13 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
   align-items: start;
   gap: var(--wa-space-l);
   flex: 1;
+  @media (max-width: 1023px) {
+    padding-inline: var(--wa-space-m);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "map";
+  }
 }
 .header {
   grid-area: header;

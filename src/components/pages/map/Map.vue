@@ -334,9 +334,7 @@ function showPopup(pin: Pin) {
   position: relative;
   flex: 1;
   overflow: hidden;
-  @media (min-width: 768px) {
-    border-radius: var(--wa-border-radius-l);
-  }
+  border-radius: var(--wa-border-radius-l);
 }
 .map-actions {
   position: absolute;
