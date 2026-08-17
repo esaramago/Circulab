@@ -60,8 +60,12 @@ const navItems = [
   <Grid align="center">
     <a href={langs.find((lang) => lang.locale !== currentLocale)?.href} class="nav-lang">{langs.find((lang) => lang.locale !== currentLocale)?.label}</a>
     {
-      user && (
+      user ? (
         <UserInfo user={user} client:only="vue" />
+      ) : (
+        <wa-button href={localizeHref('/login')} variant="primary" size="s">
+          <wa-icon name="user"></wa-icon>
+        </wa-button>
       )
     }
 
