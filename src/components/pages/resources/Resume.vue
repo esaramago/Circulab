@@ -21,6 +21,10 @@ const errorMessage = ref('')
 const editingResourceId = useStore($editingResourceId)
 const isEdit = computed(() => !!editingResourceId.value)
 
+const category = ref<string | null>(null)
+const typology = ref<string | null>(null)
+const characteristics = ref<string | null>(null)
+
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search)
   const id = urlParams.get('id')
@@ -49,6 +53,18 @@ onMounted(async () => {
   } else {
     resumeData.value = payload
   }
+  if (payload.typology_id) {
+    const { data: typologyData } = await actions.getTypologyById({ id: payload.typology_id })
+    typology.value = typologyData?.typology?.name ?? null
+  }
+
+  if (payload.category_id) {
+    const { data: categoryData } = await actions.getCategoryById({ id: payload.category_id })
+    category.value = categoryData?.category?.name ?? null
+  }
+
+  console.log(category.value)
+  console.log(typology.value)
 })
 
 async function handleSubmit() {
@@ -160,10 +176,8 @@ async function handleSubmit() {
     {{ errorMessage }}
   </wa-callout>
 
-
   <Grid gap="l" direction="column" v-if="resumeData">
 
-    
     <Gallery>
       <template v-if="resumeData.images?.length > 0">
         <GalleryItem v-for="image in resumeData.images" :key="image.id" :src="image.url" :alt="image.alt" />
@@ -171,8 +185,8 @@ async function handleSubmit() {
     </Gallery>
     <div>
       <h2>{{ resumeData.title }}</h2>
-      <p>{{ resumeData.category }} ({{ resumeData.typology }})</p>
-      <p v-if="resumeData.characteristics">{{ resumeData.characteristics }}</p>
+      <p>{{ category }} ({{ typology }})</p>
+      <p v-if="characteristics">{{ characteristics }}</p>
     </div>
 
     <Grid gap="xs" direction="column" class="list">

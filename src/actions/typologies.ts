@@ -104,3 +104,32 @@ export const getTypologies = defineAction({
     }
   }
 })
+
+export const getTypologyById = defineAction({
+  input: z.object({
+    id: z.string().min(1)
+  }),
+  handler: async (input, { request, cookies }) => {
+    try {
+      const supabase = createClient({ request, cookies })
+      
+      const { data, error } = await supabase.from('typologies').select('*').eq('id', input.id).single()
+
+      if (error) {
+        throw new ActionError({
+          message: 'Failed to get typology',
+          code: 'INTERNAL_SERVER_ERROR'
+        })
+      }
+
+      return { success: true, typology: data }
+
+    } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      throw new ActionError({
+        message: error.message || 'Internal server error',
+        code: 'INTERNAL_SERVER_ERROR'
+      })
+    }
+  }
+})

@@ -5,8 +5,8 @@ import { resetPassword } from './auth/resetPassword'
 import { updatePassword } from './auth/updatePassword'
 import { getSession } from './auth/getSession'
 import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource } from './resources'
-import { addCategory, updateCategory, deleteCategory, getCategories } from './categories'
-import { updateTypology, getTypologies } from './typologies'
+import { addCategory, updateCategory, deleteCategory, getCategories, getCategoryById } from './categories'
+import { updateTypology, getTypologies, getTypologyById } from './typologies'
 import { submitContact } from './contact'
 
 export const server = {
@@ -27,8 +27,10 @@ export const server = {
   updateCategory,
   deleteCategory,
   getCategories,
+  getCategoryById,
   updateTypology,
   getTypologies,
+  getTypologyById,
   submitContact,
 }
 

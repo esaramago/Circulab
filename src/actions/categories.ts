@@ -244,3 +244,32 @@ export const getCategories = defineAction({
     }
   }
 })
+
+export const getCategoryById = defineAction({
+  input: z.object({
+    id: z.string().min(1)
+  }),
+  handler: async (input, { request, cookies }) => {
+    try {
+      const supabase = createClient({ request, cookies })
+      
+      const { data, error } = await supabase.from('categories').select('*').eq('id', input.id).single()
+
+      if (error) {
+        throw new ActionError({
+          message: 'Failed to get category',
+          code: 'INTERNAL_SERVER_ERROR'
+        })
+      }
+
+      return { success: true, category: data }
+
+    } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      throw new ActionError({
+        message: error.message || 'Internal server error',
+        code: 'INTERNAL_SERVER_ERROR'
+      })
+    }
+  }
+})
