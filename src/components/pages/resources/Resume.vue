@@ -148,6 +148,7 @@ async function handleSubmit() {
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
       accessibility: resumeData.value?.accessibility || undefined,
+      networks: resumeData.value?.networks ? resumeData.value.networks.map(n => ({ slug: n.slug, value: n.value })) : undefined,
       images: uploadedImages,
     }
 
@@ -215,6 +216,12 @@ async function handleSubmit() {
           <wa-icon name="phone"></wa-icon>
           +{{resumeData.phone_area_code}} {{ resumeData.phone }}
         </div>
+        <template v-if="resumeData.networks && resumeData.networks.length > 0">
+          <div v-for="net in resumeData.networks" :key="net.slug">
+            <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
+            <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
+          </div>
+        </template>
         <div v-if="resumeData.accessibility">
           <template v-if="resumeData.accessibility === 'private'">
             <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>

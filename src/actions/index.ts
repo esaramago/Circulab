@@ -4,7 +4,7 @@ import { logout } from './auth/logout'
 import { resetPassword } from './auth/resetPassword'
 import { updatePassword } from './auth/updatePassword'
 import { getSession } from './auth/getSession'
-import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource } from './resources'
+import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource, getNetworks } from './resources'
 import { addCategory, updateCategory, deleteCategory, getCategories, getCategoryById } from './categories'
 import { updateTypology, getTypologies, getTypologyById } from './typologies'
 import { submitContact } from './contact'
@@ -23,6 +23,7 @@ export const server = {
   getFullResources,
   deleteResource,
   editResource,
+  getNetworks,
   addCategory,
   updateCategory,
   deleteCategory,

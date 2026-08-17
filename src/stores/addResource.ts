@@ -117,7 +117,7 @@ export async function ensureDraftLoaded(id: string) {
     website: '',
     instagram: '',
     facebook: '',
-    networks: [],
+    networks: (data.networks as any) || [],
   })
 
   // Set the editing ID

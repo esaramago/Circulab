@@ -30,7 +30,7 @@ export type LocationDraft = {
   website: string
   instagram: string
   facebook: string
-  networks: string[]
+  networks: { slug: string; name: string; value: string; icon?: string | null }[]
 }
 
 export type ValidationDraft = {

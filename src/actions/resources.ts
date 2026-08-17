@@ -98,7 +98,16 @@ export const getResource = defineAction({
           email,
           phone,
           phone_area_code,
-          accessibility
+          accessibility,
+          location_networks (
+            value,
+            networks (
+              id,
+              name,
+              slug,
+              icon
+            )
+          )
         ),
         coordinates: get_geojson
       `).eq('id', input.id).single()
@@ -109,6 +118,14 @@ export const getResource = defineAction({
           code: error.code as ActionErrorCode
         })
       }
+
+      const locationNetworks = (data.location?.location_networks as any[]) || []
+      const networks = locationNetworks.map((ln: any) => ({
+        slug: ln.networks?.slug || '',
+        name: ln.networks?.name || '',
+        value: ln.value || '',
+        icon: ln.networks?.icon || null,
+      })).filter((n) => n.slug)
 
       const resource = {
         id: data.id,
@@ -129,6 +146,7 @@ export const getResource = defineAction({
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
         accessibility: data.location?.accessibility || null,
+        networks,
       }
 
       console.log('[Action] getResource mapped resource:', JSON.stringify(resource))
@@ -298,6 +316,30 @@ export const addResource = defineAction({
         })
       }
 
+      if (input.networks && input.networks.length > 0) {
+        const { data: dbNetworks } = await supabase.from('networks').select('id, slug')
+        if (dbNetworks) {
+          const networksToInsert = input.networks.map(net => {
+            const dbNet = dbNetworks.find(d => d.slug === net.slug)
+            if (dbNet) {
+              return {
+                location_id: locationsData.id,
+                network_id: dbNet.id,
+                value: net.value
+              }
+            }
+            return null
+          }).filter(Boolean) as { location_id: string; network_id: string; value: string }[]
+
+          if (networksToInsert.length > 0) {
+            const { error: netError } = await supabase.from('location_networks').insert(networksToInsert)
+            if (netError) {
+              console.error('Failed to insert location networks:', netError)
+            }
+          }
+        }
+      }
+
       const { data: pinsData, error: pinsError } = await supabase.from('pins').insert({
         id: input.id,
         title: input.title || '',
@@ -458,6 +500,33 @@ export const editResource = defineAction({
         })
       }
 
+      // Update networks
+      await supabase.from('location_networks').delete().eq('location_id', existingPin.location_id)
+
+      if (input.networks && input.networks.length > 0) {
+        const { data: dbNetworks } = await supabase.from('networks').select('id, slug')
+        if (dbNetworks) {
+          const networksToInsert = input.networks.map(net => {
+            const dbNet = dbNetworks.find(d => d.slug === net.slug)
+            if (dbNet) {
+              return {
+                location_id: existingPin.location_id,
+                network_id: dbNet.id,
+                value: net.value
+              }
+            }
+            return null
+          }).filter(Boolean) as { location_id: string; network_id: string; value: string }[]
+
+          if (networksToInsert.length > 0) {
+            const { error: netError } = await supabase.from('location_networks').insert(networksToInsert)
+            if (netError) {
+              console.error('Failed to update location networks:', netError)
+            }
+          }
+        }
+      }
+
       // 3. Update the pin
       const { error: pinUpdateError } = await supabase
         .from('pins')
@@ -494,3 +563,29 @@ export const editResource = defineAction({
   },
 })
 
+export const getNetworks = defineAction({
+  handler: async () => {
+    try {
+      const { data, error } = await supabase.from('networks').select('id, name, slug, icon')
+      if (error) {
+        throw new ActionError({
+          message: error.message || 'Failed to get networks',
+          code: error.code as ActionErrorCode
+        })
+      }
+      if (!data || data.length === 0) {
+        return [
+          { id: '1', name: 'Website', slug: 'website', icon: 'globe' },
+          { id: '2', name: 'Instagram', slug: 'instagram', icon: 'instagram' },
+          { id: '3', name: 'Facebook', slug: 'facebook', icon: 'facebook' }
+        ]
+      }
+      return data
+    } catch (error: any) {
+      throw new ActionError({
+        message: error.message || 'Failed to get networks',
+        code: 'INTERNAL_SERVER_ERROR'
+      })
+    }
+  }
+})

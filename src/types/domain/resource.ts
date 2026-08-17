@@ -37,4 +37,5 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   coordinates: GeoJsonPoint
   accessibility: LocationRow['accessibility']
   status?: PinRow['status']
+  networks?: { slug: string; name: string; value: string; icon?: string | null }[]
 } & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone' | 'phone_area_code'>

@@ -6,6 +6,7 @@
 @import './plugins/webawesome.css';
 
 @import './elements/headings.css';
+@import './elements/table.css';
 
 @import './utils/colors.css';
 @import './utils/utils.css';

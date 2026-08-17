@@ -95,6 +95,12 @@ watch(() => props.resourceId, async () => {
               <wa-icon name="phone"></wa-icon>
               {{ resource.phone }}
             </div>
+            <template v-if="resource?.networks && resource.networks.length > 0">
+              <div v-for="net in resource.networks" :key="net.slug">
+                <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
+                <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
+              </div>
+            </template>
             <div v-if="resource?.accessibility">
               <template v-if="resource.accessibility === 'private'">
                 <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
@@ -130,7 +136,7 @@ watch(() => props.resourceId, async () => {
   --border-radius: var(--wa-border-radius-m);
   position: absolute;
   width: clamp(30rem, 30vw, 40rem);
-  inset: var(--inset) var(--inset) var(--inset) auto;
+  inset: var(--inset) var(--inset) auto auto;
   display: none;
   z-index: 1003; /* map + 3 */
   &[open] {

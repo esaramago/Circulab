@@ -18,3 +18,7 @@
 .u-text-decoration-none {
   text-decoration: none;
 }
+
+.u-text-start {
+  text-align: start;
+}
