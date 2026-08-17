@@ -10,6 +10,8 @@ import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft
 import '@webawesome/callout/callout.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
+import Gallery from '@/components/ui/Gallery.vue'
+import GalleryItem from '@/components/ui/GalleryItem.vue'
 
 type AddResourcePayload = DescriptionDraft & LocationDraft
 
@@ -158,21 +160,63 @@ async function handleSubmit() {
     {{ errorMessage }}
   </wa-callout>
 
-  <ul>
-    <li>{{ m['resources.title_label']() }}: {{ resumeData?.title }}</li>
-    <li>{{ m['resources.description_label']() }}: {{ resumeData?.description }}</li>
-    <li>{{ m['resources.images_label']() }}: {{ resumeData?.images?.length }}</li>
-    <li>{{ m['map.typology']() }}: {{ resumeData?.typology_id }}</li>
-    <li>{{ m['map.category_label']() }}: {{ resumeData?.category_id }}</li>
-    <li>{{ m['map.characteristic_label']() }}: {{ resumeData?.characteristics_ids?.join(', ') }}</li>
-    <li>{{ m['resources.location_name_label']() }}: {{ resumeData?.location_name }}</li>
-    <li>{{ m['resources.coordinates']() }} {{ resumeData?.coordinates?.latitude }}, {{ resumeData?.coordinates?.longitude }}</li>
-    <li>{{ m['resources.address_label']() }}: {{ resumeData?.address }}</li>
-    <li>{{ m['resources.postal_code_label']() }}: {{ resumeData?.postal_code }}</li>
-    <li>{{ m['resources.accessibility_label']() }}: {{ resumeData?.accessibility === 'public' ? m['resources.accessibility_public']() : (resumeData?.accessibility === 'private' ? m['resources.accessibility_private']() : '-') }}</li>
-    <li>Email: {{ resumeData?.email }}</li>
-    <li>{{ m['resources.phone_label']() }}: {{ resumeData?.phone_area_code ? `+${resumeData?.phone_area_code}` : '' }} {{ resumeData?.phone }}</li>
-  </ul>
+
+  <Grid gap="l" direction="column" v-if="resumeData">
+
+    
+    <Gallery>
+      <template v-if="resumeData.images?.length > 0">
+        <GalleryItem v-for="image in resumeData.images" :key="image.id" :src="image.url" :alt="image.alt" />
+      </template>
+    </Gallery>
+    <div>
+      <h2>{{ resumeData.title }}</h2>
+      <p>{{ resumeData.category }} ({{ resumeData.typology }})</p>
+      <p v-if="resumeData.characteristics">{{ resumeData.characteristics }}</p>
+    </div>
+
+    <Grid gap="xs" direction="column" class="list">
+      <div>
+        <wa-icon name="location-dot"></wa-icon>
+        <template v-if="resumeData.location_name">{{resumeData.location_name}}, </template>{{resumeData.address}},
+        {{ resumeData.postal_code }}
+      </div>
+      <div v-if="resumeData.coordinates">
+        <wa-icon name="map"></wa-icon>
+        <a
+          :href="`https://www.google.com/maps/search/?api=1&query=${resumeData.coordinates?.latitude},${resumeData.coordinates?.longitude}`"
+          target="_blank"
+          :title="m['map.open_google_maps']()"
+        >
+          {{ resumeData.coordinates?.latitude }}, {{ resumeData.coordinates?.longitude }}
+        </a>
+      </div>
+      <div v-if="resumeData.email">
+        <wa-icon name="at"></wa-icon>
+        {{ resumeData.email }}
+      </div>
+      <div v-if="resumeData.phone">
+        <wa-icon name="phone"></wa-icon>
+        {{ resumeData.phone }}
+      </div>
+      <div v-if="resumeData.accessibility">
+        <template v-if="resumeData.accessibility === 'private'">
+          <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
+          <span>{{ m['map.access_limited']() }}</span>
+        </template>
+        <template v-else-if="resumeData.accessibility === 'public'">
+          <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
+          <span>{{ m['map.access_public']() }}</span>
+        </template>
+      </div>
+    </Grid>
+
+    <div>
+      <strong>{{ m['resources.description_label']() }}</strong>
+      <p>{{ resumeData.description }}</p>
+    </div>
+
+  </Grid>
 
   <Grid justify="end">
     <wa-button

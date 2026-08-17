@@ -3,7 +3,7 @@
     <button type="button" class="c-gallery__image">
       <img :src="src" :alt="alt" />
     </button>
-    <wa-button variant="neutral" appearance="plain" class="c-gallery__remove" @click="removeImage">
+    <wa-button v-if="removable" variant="neutral" appearance="plain" class="c-gallery__remove" @click="removeImage">
       <wa-icon name="times" label="Remover"></wa-icon>
     </wa-button>
   </div>
@@ -13,6 +13,7 @@
 const props = defineProps<{
   src: string
   alt: string
+  removable?: boolean
 }>()
 
 const emit = defineEmits<{
