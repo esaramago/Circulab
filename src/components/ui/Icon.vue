@@ -1,5 +1,5 @@
 <template>
-  <div :class="[computedClass, className]">
+  <div :class="['icon', computedClass, className]">
     <wa-icon :name="name" :style="styles"></wa-icon>
   </div>
 </template>
@@ -38,6 +38,9 @@ function getColorStyle(color: string) {
 </script>
 
 <style scoped>
+.icon {
+  display: inline-block;
+}
 .appearance--filled {
   display: inline-flex;
   align-items: center;

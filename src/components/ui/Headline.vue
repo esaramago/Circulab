@@ -8,7 +8,7 @@ const { title, subtitle } = defineProps<{
 
 <template>
   <Grid justify="center" direction="column" align="center" gap="s" class="headline">
-    <slot name="badge"></slot>
+    <slot></slot>
     <div>
       <h1><slot name="title">{{ title }}</slot></h1>
       <p class="subtitle"><slot name="subtitle">{{ subtitle }}</slot></p>

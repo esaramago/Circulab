@@ -3,6 +3,8 @@ import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Container from '@/components/ui/Container.vue'
 import Grid from '@/components/ui/Grid.vue'
+import Icon from '@/components/ui/Icon.vue'
+import Headline from '@/components/ui/Headline.vue'
 import { submitContact } from '@/actions/contact'
 import { localizeHref } from '@/paraglide/runtime.js'
 
@@ -36,23 +38,19 @@ if (Astro.request.method === 'POST') {
 
 <Layout title={m['contacts.title']()}>
   <Container width="m">
-    <header class="contacts-header">
-      <wa-badge variant="brand" appearance="filled" pill class="contacts-badge">
+    <Headline title={m['contacts.title']()} subtitle={m['contacts.subtitle']()}>
+      <wa-badge appearance="filled" pill>
         <wa-icon slot="start" name="envelope"></wa-icon>
         {m['contacts.title']()}
       </wa-badge>
-      <h1>{m['contacts.title']()}</h1>
-      <p class="contacts-subtitle">{m['contacts.subtitle']()}</p>
-    </header>
+    </Headline>
 
     <div class="contacts-grid">
       <wa-card class="info-card">
         <h2>{m['contacts.info_title']()}</h2>
-        <div class="info-list">
+        <Grid direction="column">
           <div class="info-item">
-            <div class="info-icon">
-              <wa-icon name="envelope"></wa-icon>
-            </div>
+            <Icon name="envelope" appearance="filled"></Icon>
             <div class="info-content">
               <span class="info-label">{m['contacts.info_email']()}</span>
               <a href="mailto:info@circulab.pt" class="info-value">info@circulab.pt</a>
@@ -60,9 +58,7 @@ if (Astro.request.method === 'POST') {
           </div>
 
           <div class="info-item">
-            <div class="info-icon">
-              <wa-icon name="location-dot"></wa-icon>
-            </div>
+            <Icon name="location-dot" appearance="filled"></Icon>
             <div class="info-content">
               <span class="info-label">{m['contacts.info_location']()}</span>
               <span class="info-value">{m['contacts.info_location_value']()}</span>
@@ -70,20 +66,18 @@ if (Astro.request.method === 'POST') {
           </div>
 
           <div class="info-item">
-            <div class="info-icon">
-              <wa-icon name="clock"></wa-icon>
-            </div>
+            <Icon name="clock" appearance="filled"></Icon>
             <div class="info-content">
               <span class="info-label">{m['contacts.info_response']()}</span>
               <span class="info-value">{m['contacts.info_response_value']()}</span>
             </div>
           </div>
-        </div>
+        </Grid>
 
         <wa-callout variant="neutral" class="info-callout">
           <wa-icon slot="icon" name="circle-info"></wa-icon>
           <p>{m['contacts.suggest_callout']()}</p>
-          <wa-button appearance="plain" href={`${localizeHref('/recursos/novo')}`}>{m['contacts.suggest_button']()}</wa-button>
+          <wa-button href={`${localizeHref('/recursos/novo')}`}>{m['contacts.suggest_button']()}</wa-button>
         </wa-callout>
       </wa-card>
 
@@ -104,7 +98,7 @@ if (Astro.request.method === 'POST') {
           </wa-callout>
         )}
 
-        <form method="post" class="contact-form">
+        <form method="post">
           <Grid gap="m" direction="column">
             <wa-input
               id="name"
@@ -201,13 +195,6 @@ if (Astro.request.method === 'POST') {
     color: var(--wa-color-neutral-fill-loud);
   }
 
-  .info-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-l);
-    margin-block-end: var(--wa-space-xl);
-  }
-
   .info-item {
     display: flex;
     align-items: flex-start;
@@ -259,9 +246,5 @@ if (Astro.request.method === 'POST') {
 
   .status-message {
     margin-block-end: var(--wa-space-m);
-  }
-
-  .contact-form wa-button {
-    margin-block-start: var(--wa-space-s);
   }
 </style>
