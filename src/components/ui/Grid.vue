@@ -1,12 +1,12 @@
 <template>
-  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="{ 'l-grid--full-width': fullWidth }">
+  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="[gridClass, { 'l-grid--full-width': fullWidth }]">
     <slot></slot>
   </component>
 </template>
 
 <script setup lang="ts">
 import { computed, type CSSProperties } from 'vue'
-import type { Spacing } from '@/types/ui/grid'
+import type { Spacing, Break } from '@/types/ui/grid'
 
 const props = withDefaults(defineProps<{
   tag?: keyof HTMLElementTagNameMap
@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<{
   align?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
   gap?: Spacing
+  break?: Break
   wrap?: boolean
   fullWidth?: boolean
 }>(), {
@@ -28,6 +29,13 @@ const gridStyle = computed<CSSProperties>(() => {
   if (props.wrap) style['--wrap'] = props.wrap ? 'wrap' : 'nowrap'
   if (props.direction) style['--direction'] = props.direction
   return style as CSSProperties
+})
+
+
+const gridClass = computed(() => {
+  const classes: string[] = []
+  if (props.break) classes.push(`break--${props.break}`)
+  return classes
 })
 </script>
 
@@ -48,6 +56,18 @@ const gridStyle = computed<CSSProperties>(() => {
 .l-grid--full-width > * {
   width: 100%;
   flex: 1;
+}
+@media (max-width: 767px) {
+  .break--mobile {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 1023px) {
+  .break--small {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 }
 </style>
 <style>

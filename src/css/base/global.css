@@ -23,3 +23,8 @@ textarea {
   min-height: var(--input-height);
   color: inherit;
 }
+
+
+blockquote {
+  font-style: italic;
+}

@@ -8,7 +8,8 @@ h2,
 h3,
 button,
 p,
-fieldset {
+fieldset,
+blockquote {
   margin: 0;
 }
 

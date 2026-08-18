@@ -3,6 +3,9 @@ import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Container from '@/components/ui/Container.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
+import Grid from '@/components/ui/Grid.vue'
+import Headline from '@/components/ui/Headline.vue'
+import Icon from '@/components/ui/Icon.vue'
 ---
 
 <script>
@@ -17,94 +20,76 @@ import { localizeHref } from '@/paraglide/runtime.js'
 
 <Layout title={m['about.title']()}>
   <Container width="m">
-    <header class="about-header">
-      <wa-badge variant="brand" appearance="filled" pill class="about-badge">
+    <Headline title={m['about.title']()} subtitle={m['about.subtitle']()}>
+      <wa-badge variant="brand" appearance="filled" pill>
         <wa-icon slot="start" name="circle-info"></wa-icon>
         {m['about.title']()}
       </wa-badge>
-      <h1>{m['about.title']()}</h1>
-      <p class="about-subtitle">{m['about.subtitle']()}</p>
-    </header>
+    </Headline>
 
-    <section class="about-grid">
-      <wa-card class="about-card">
-        <div class="card-icon">
-          <wa-icon name="bullseye"></wa-icon>
-        </div>
+    <Grid direction="row" fullWidth break="small">
+      <wa-card>
+        <Icon name="bullseye" appearance="filled"></Icon>
         <h2>{m['about.mission_title']()}</h2>
         <p>{m['about.mission_desc']()}</p>
       </wa-card>
 
-      <wa-card class="about-card">
-        <div class="card-icon">
-          <wa-icon name="eye"></wa-icon>
-        </div>
+      <wa-card>
+        <Icon name="eye" appearance="filled"></Icon>
         <h2>{m['about.vision_title']()}</h2>
         <p>{m['about.vision_desc']()}</p>
       </wa-card>
 
-      <wa-card class="about-card">
-        <div class="card-icon">
-          <wa-icon name="heart"></wa-icon>
-        </div>
+      <wa-card>
+        <Icon name="heart" appearance="filled"></Icon>
         <h2>{m['about.values_title']()}</h2>
         <p>{m['about.values_desc']()}</p>
       </wa-card>
-    </section>
+    </Grid>
 
-    <section class="about-section">
-      <wa-card class="repair-banner-card">
-        <div class="repair-banner-content">
-          <wa-badge variant="brand" appearance="filled" pill class="repair-badge">
-            <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
-            {m['lisboa_repair_project.badge']()}
-          </wa-badge>
-          <h2>{m['lisboa_repair_project.title']()}</h2>
-          <p class="repair-subtitle">{m['lisboa_repair_project.subtitle']()}</p>
-          <p class="repair-desc">{m['lisboa_repair_project.desc']()}</p>
-          <div class="repair-actions">
-            <wa-button variant="brand" href={localizeHref('/sobre/lisboa-repair-project')}>
-              <wa-icon name="arrow-right" slot="end"></wa-icon>
-              {m['lisboa_repair_project.button']()}
-            </wa-button>
-          </div>
-        </div>
-      </wa-card>
-    </section>
+    <wa-card>
+      <wa-badge variant="brand" appearance="filled" pill>
+        <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
+        {m['lisboa_repair_project.badge']()}
+      </wa-badge>
+      <h2>{m['lisboa_repair_project.title']()}</h2>
+      <p>{m['lisboa_repair_project.subtitle']()}</p>
+      <p>{m['lisboa_repair_project.desc']()}</p>
+      <div>
+        <wa-button variant="brand" href={localizeHref('/sobre/lisboa-repair-project')}>
+          <wa-icon name="arrow-right" slot="end"></wa-icon>
+          {m['lisboa_repair_project.button']()}
+        </wa-button>
+      </div>
+    </wa-card>
 
-    <section class="about-section">
+    <section>
       <h2>{m['about.how_title']()}</h2>
-      <div class="steps-grid">
-        <wa-card class="step-card">
+      <Grid direction="row" fullWidth break="small">
+        <wa-card>
           <div class="step-number">1</div>
-          <div class="step-icon">
-            <wa-icon name="location-dot"></wa-icon>
-          </div>
+          <Icon name="location-dot" appearance="filled"></Icon>
           <h3>{m['about.how_step1_title']()}</h3>
           <p>{m['about.how_step1_desc']()}</p>
         </wa-card>
 
-        <wa-card class="step-card">
+        <wa-card>
           <div class="step-number">2</div>
-          <div class="step-icon">
-            <wa-icon name="pen-to-square"></wa-icon>
-          </div>
+          <Icon name="pen-to-square" appearance="filled"></Icon>
           <h3>{m['about.how_step2_title']()}</h3>
           <p>{m['about.how_step2_desc']()}</p>
         </wa-card>
 
         <wa-card class="step-card">
           <div class="step-number">3</div>
-          <div class="step-icon">
-            <wa-icon name="users"></wa-icon>
-          </div>
+          <Icon name="users" appearance="filled"></Icon>
           <h3>{m['about.how_step3_title']()}</h3>
           <p>{m['about.how_step3_desc']()}</p>
         </wa-card>
       </div>
     </section>
 
-    <section class="about-section">
+    <section>
       <h2>{m['about.faq_title']()}</h2>
       <wa-accordion>
         <wa-accordion-item label={m['about.faq_q1']()}>
@@ -121,206 +106,43 @@ import { localizeHref } from '@/paraglide/runtime.js'
 
     <wa-callout variant="neutral" class="cta-callout">
       <wa-icon slot="icon" name="network-wired"></wa-icon>
-      <div class="cta-content">
-        <h2>{m['about.cta_title']()}</h2>
-        <p>{m['about.cta_desc']()}</p>
-        <div class="cta-actions">
-          <wa-button variant="brand" href={localizeHref('/mapa')}>
-            <wa-icon name="map" slot="start"></wa-icon>
-            {m['about.explore_map']()}
-          </wa-button>
-          <wa-button appearance="plain" href={localizeHref('/contactos')}>
-            <wa-icon name="envelope" slot="start"></wa-icon>
-            {m['about.contact_us']()}
-          </wa-button>
-        </div>
+      <h2>{m['about.cta_title']()}</h2>
+      <p>{m['about.cta_desc']()}</p>
+      <div class="cta-actions">
+        <wa-button variant="brand" href={localizeHref('/mapa')}>
+          <wa-icon name="map" slot="start"></wa-icon>
+          {m['about.explore_map']()}
+        </wa-button>
+        <wa-button href={localizeHref('/contactos')}>
+          <wa-icon name="envelope" slot="start"></wa-icon>
+          {m['about.contact_us']()}
+        </wa-button>
       </div>
     </wa-callout>
   </Container>
 </Layout>
 
 <style scoped>
-  .about-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-block-end: var(--wa-space-l);
-  }
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-s);
+}
+wa-card::part(body),
+wa-callout::part(message) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-m);
+}
 
-  .about-badge {
-    margin-block-end: var(--wa-space-s);
-  }
-
-  h1 {
-    font-size: var(--wa-font-size-3xl);
-    margin-block-end: var(--wa-space-xs);
-  }
-
-  .about-subtitle {
-    font-size: var(--wa-font-size-l);
-    color: var(--wa-color-brand-70);
-    max-width: 60rem;
-    margin-inline: auto;
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--wa-space-l);
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .about-card,
-  .step-card {
-    background-color: var(--wa-color-brand-30);
-    border: 1px solid var(--wa-color-brand-40);
-    border-radius: var(--wa-border-radius-l);
-  }
-
-  .about-card h2 {
-    font-size: var(--wa-font-size-l);
-    margin-block-end: var(--wa-space-s);
-    color: var(--wa-color-neutral-fill-loud);
-  }
-
-  .about-card p,
-  .step-card p {
-    color: var(--wa-color-brand-80);
-    line-height: 1.5;
-  }
-
-  .card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 4rem;
-    height: 4rem;
-    border-radius: var(--wa-border-radius-medium);
-    background-color: var(--wa-color-brand-20);
-    color: var(--wa-color-brand-70);
-    font-size: var(--wa-font-size-xl);
-    margin-block-end: var(--wa-space-m);
-  }
-
-  .about-section {
-    margin-block-start: var(--wa-space-2xl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-l);
-  }
-
-  .about-section h2 {
-    font-size: var(--wa-font-size-xl);
-    color: var(--wa-color-neutral-fill-loud);
-  }
-
-  .steps-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--wa-space-l);
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .step-card {
-    position: relative;
-  }
-
-  .step-number {
-    position: absolute;
-    inset-block-start: var(--wa-space-m);
-    inset-inline-end: var(--wa-space-m);
-    font-size: var(--wa-font-size-2xl);
-    font-weight: var(--wa-font-weight-bold);
-    color: var(--wa-color-brand-40);
-    line-height: 1;
-  }
-
-  .step-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: var(--wa-border-radius-circle);
-    background-color: var(--wa-color-brand-20);
-    color: var(--wa-color-brand-70);
-    font-size: var(--wa-font-size-l);
-    margin-block-end: var(--wa-space-m);
-  }
-
-  .step-card h3 {
-    font-size: var(--wa-font-size-l);
-    margin-block-end: var(--wa-space-xs);
-    color: var(--wa-color-neutral-fill-loud);
-  }
-
-  wa-accordion-item {
-    background-color: var(--wa-color-brand-30);
-    border-radius: var(--wa-border-radius-m);
-  }
-
-  .cta-callout {
-    margin-block-start: var(--wa-space-2xl);
-  }
-
-  .cta-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-s);
-  }
-
-  .cta-content h2 {
-    font-size: var(--wa-font-size-l);
-    color: var(--wa-color-neutral-fill-loud);
-  }
-
-  .cta-content p {
-    color: var(--wa-color-brand-80);
-  }
-
-  .cta-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--wa-space-m);
-    margin-block-start: var(--wa-space-xs);
-  }
-
-  .repair-banner-card {
-    background-color: var(--wa-color-brand-30);
-    border: 1px solid var(--wa-color-brand-40);
-    border-radius: var(--wa-border-radius-l);
-  }
-
-  .repair-banner-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wa-space-s);
-    align-items: flex-start;
-  }
-
-
-  .repair-banner-content h2 {
-    font-size: var(--wa-font-size-xl);
-    color: var(--wa-color-neutral-fill-loud);
-  }
-
-  .repair-subtitle {
-    font-size: var(--wa-font-size-m);
-    font-weight: var(--wa-font-weight-semibold);
-    color: var(--wa-color-brand-80);
-  }
-
-  .repair-desc {
-    color: var(--wa-color-brand-80);
-    line-height: 1.6;
-  }
-
-  .repair-actions {
-    margin-block-start: var(--wa-space-xs);
-  }
+.step-number {
+  position: absolute;
+  inset-block-start: var(--wa-space-l);
+  inset-inline-end: var(--wa-space-l);
+  font-size: var(--wa-font-size-2xl);
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--wa-color-brand-40);
+  line-height: 1;
+}
 </style>

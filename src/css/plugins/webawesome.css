@@ -1,5 +1,7 @@
-wa-button::part(base) {
-  transition: all 0.3s ease;
+wa-button {
+  &::part(base) {
+    transition: all 0.3s ease;
+  }
 }
 
 wa-input,
@@ -13,4 +15,14 @@ wa-radio {
   &:user-value::part(base) {
     border-color: var(--wa-color-success-500, green);
   }
+}
+
+wa-callout {
+  align-items: center;
+}
+
+wa-card {
+  &::part(body) {
+    flex: 1;
+  } 
 }
