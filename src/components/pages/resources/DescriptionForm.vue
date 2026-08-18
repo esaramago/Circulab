@@ -87,6 +87,8 @@ function handleChange(event: Event) {
     setTypology(target.value)
   } else if (target.name === 'category') {
     setCategory(target.value)
+  } else if (target.name === 'characteristics') {
+    setCharacteristics(Array.from(target.selectedOptions, option => option.value))
   } else {
     updateDraft({ [target.name]: target.value } as Partial<DescriptionDraft>)
   }
@@ -123,6 +125,12 @@ async function setCategory(id: string) {
     })
   }
   await loadCharacteristics(id)
+}
+
+async function setCharacteristics(ids: string[]) {
+  updateDraft({
+    characteristics_ids: ids,
+  })
 }
 // #endregion
 
@@ -193,6 +201,7 @@ function handleSubmit(event: Event) {
         :label="m['map.characteristic_label']()"
         :value="draft.characteristics_ids"
         @input="handleChange"
+        multiple
       >
         <template v-if="characteristics.length > 0">
           <wa-option v-for="characteristic in characteristics" :key="characteristic.id" :value="characteristic.id">{{ characteristic.name }}</wa-option>

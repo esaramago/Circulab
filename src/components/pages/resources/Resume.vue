@@ -163,7 +163,7 @@ async function handleSubmit() {
     // 3. Clear local storage/IndexedDB on success
     clearAddResourceDraft()
     await clearImages()
-    window.location.href = localizeHref(isEdit.value ? '/dashboard' : '/')
+    window.location.href = localizeHref('/mapa')
   } catch (err: any) {
     console.error(err)
     errorMessage.value = err.message || 'Ocorreu um erro ao submeter o recurso.'
