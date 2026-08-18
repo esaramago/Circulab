@@ -28,3 +28,7 @@ textarea {
 blockquote {
   font-style: italic;
 }
+
+wa-dialog:not(:defined) {
+  display: none !important;
+}

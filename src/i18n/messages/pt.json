@@ -265,5 +265,72 @@
 		"join_highlight": "Juntos, podemos tornar a reparação visível, valorizada e coletiva.",
 		"visit_instagram": "Instagram",
 		"send_email": "Email"
+	},
+	"footer": {
+		"tagline": "Mapa colaborativo para a agroecologia e a circularidade.",
+		"quick_links": "Navegação",
+		"legal": "Legal e Transparência",
+		"privacy_policy": "Política de Privacidade",
+		"terms_of_use": "Termos de Uso",
+		"cookie_preferences": "Preferências de Cookies",
+		"legal_notice": "Aviso Legal e Licença",
+		"rights_reserved": "Todos os direitos reservados."
+	},
+	"privacy": {
+		"title": "Política de Privacidade",
+		"subtitle": "Informação sobre como recolhemos, usamos e protegemos os seus dados pessoais.",
+		"last_updated": "Última atualização: 18 de agosto de 2026",
+		"sec1_title": "1. Responsável pelo Tratamento",
+		"sec1_text": "O Circulab é uma plataforma colaborativa focada no mapeamento de recursos agroecológicos e iniciativas de economia circular. Respeitamos a sua privacidade e garantimos a proteção dos seus dados pessoais em conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD).",
+		"sec2_title": "2. Dados Recolhidos",
+		"sec2_text": "Recolhemos apenas os dados estritamente necessários para a prestação dos nossos serviços:",
+		"sec2_li1": "Dados de conta (email e nome de utilizador) quando se regista para sugerir ou editar recursos.",
+		"sec2_li2": "Informações publicamente submetidas sobre recursos, tipologias e sugestões no mapa.",
+		"sec2_li3": "Dados técnicos estritamente necessários ao funcionamento do site e preferências de consentimento armazenadas no seu navegador.",
+		"sec3_title": "3. Finalidade e Base Legal",
+		"sec3_text": "Os dados são tratados com base na prestação do serviço contratado/solicitado pelo utilizador e no interesse legítimo em promover a transição agroecológica. Não vendemos nem partilhamos os seus dados pessoais com terceiros para fins comerciais.",
+		"sec4_title": "4. Os Seus Direitos",
+		"sec4_text": "Nos termos do RGPD, tem o direito de aceder, retificar, portar, limitar ou solicitar a eliminação dos seus dados pessoais a qualquer momento. Para exercer estes direitos, entre em contacto connosco.",
+		"sec5_title": "5. Contactos",
+		"sec5_text": "Para qualquer questão relativa à privacidade dos seus dados, entre em contacto através do nosso formulário de contacto ou endereço de correio eletrónico oficial."
+	},
+	"terms": {
+		"title": "Termos de Uso",
+		"subtitle": "Regras e condições para a utilização da plataforma Circulab.",
+		"last_updated": "Última atualização: 18 de agosto de 2026",
+		"sec1_title": "1. Aceitação dos Termos",
+		"sec1_text": "Ao aceder ou utilizar a plataforma Circulab, concorda em cumprir e vincular-se a estes Termos de Uso. Se não concordar com alguma parte destes termos, não deverá utilizar a plataforma.",
+		"sec2_title": "2. Uso Participativo e Responsável",
+		"sec2_text": "O Circulab é um mapa colaborativo e participativo. Ao submeter informações sobre recursos, oficinas ou iniciativas, compromete-se a fornecer dados verdadeiros, respeitosos e alinhados com os valores de sustentabilidade, agroecologia e circularidade.",
+		"sec3_title": "3. Propriedade Intelectual e Dados Abertos",
+		"sec3_text": "Os conteúdos e dados mapeados pela comunidade no Circulab são disponibilizados sob licença aberta (Creative Commons CC BY-SA 4.0), incentivando a partilha e reutilização para fins de interesse comunitário e ambiental.",
+		"sec4_title": "4. Isenção de Responsabilidade",
+		"sec4_text": "Apesar de envidarmos esforços para garantir a exatidão da informação, o Circulab não garante a disponibilidade ininterrupta do serviço nem a veracidade absoluta dos conteúdos inseridos por utilizadores terceiros.",
+		"sec5_title": "5. Alterações aos Termos",
+		"sec5_text": "Reservamo-nos o direito de atualizar estes termos periodicamente. Recomendamos a consulta regular desta página."
+	},
+	"legal_notice": {
+		"title": "Aviso Legal e Licença",
+		"subtitle": "Transparência, propriedade intelectual e compromisso comunitário.",
+		"last_updated": "Última atualização: 18 de agosto de 2026",
+		"sec1_title": "1. Informação Geral",
+		"sec1_text": "A plataforma Circulab é um projeto dedicado ao mapeamento de recursos agroecológicos e circulares em Portugal.",
+		"sec2_title": "2. Licença de Dados Abertos",
+		"sec2_text": "Salvo indicação em contrário, a informação cartográfica e dados recolhidos comunitariamente estão licenciados sob a Licença Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0).",
+		"sec3_title": "3. Acessibilidade",
+		"sec3_text": "Estamos empenhados em tornar esta plataforma acessível a todos os utilizadores, seguindo as diretrizes de acessibilidade para conteúdos web (WCAG 2.1).",
+		"sec4_title": "4. Contacto Legal",
+		"sec4_text": "Para notificações legais ou questões de direitos de autor, por favor utilize a nossa página de contactos."
+	},
+	"cookies": {
+		"title": "Preferências de Cookies",
+		"description": "Utilizamos cookies para garantir o funcionamento essencial do site e melhorar a sua experiência.",
+		"essential_title": "Cookies Estritamente Necessários",
+		"essential_desc": "Essenciais para permitir a navegação, autenticação de sessão e guardar as suas preferências de privacidade. Não podem ser desativados.",
+		"analytics_title": "Cookies de Desempenho e Estatísticas",
+		"analytics_desc": "Permitem-nos compreender de forma anónima como os utilizadores interagem com o mapa para podermos melhorar o serviço.",
+		"save": "Guardar preferências",
+		"accept_all": "Aceitar todos",
+		"close": "Fechar"
 	}
 }

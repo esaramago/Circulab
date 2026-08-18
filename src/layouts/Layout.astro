@@ -37,7 +37,7 @@ const { title, fullWidth, class: className } = Astro.props
     <main class:list={[fullWidth ? 'u-width-full' : '', className]}>
       <slot />
     </main>
-    <Footer />
+    <Footer client:load />
 	</body>
 </html>
 

@@ -1,0 +1,91 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { m } from '@/paraglide/messages.js'
+---
+
+<Layout title={m['terms.title']()}>
+  <article class="legal-page">
+    <header class="legal-page__header">
+      <h1>{m['terms.title']()}</h1>
+      <p class="legal-page__subtitle">{m['terms.subtitle']()}</p>
+      <p class="legal-page__date">{m['terms.last_updated']()}</p>
+    </header>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec1_title']()}</h2>
+      <p>{m['terms.sec1_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec2_title']()}</h2>
+      <p>{m['terms.sec2_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec3_title']()}</h2>
+      <p>{m['terms.sec3_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec4_title']()}</h2>
+      <p>{m['terms.sec4_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec5_title']()}</h2>
+      <p>{m['terms.sec5_text']()}</p>
+    </section>
+  </article>
+</Layout>
+
+<style>
+.legal-page {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-block: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xl);
+}
+
+.legal-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+  border-block-end: 1px solid var(--wa-color-neutral-100);
+  padding-block-end: var(--wa-space-m);
+}
+
+.legal-page__header h1 {
+  font-size: var(--wa-font-size-3xl);
+  color: var(--wa-color-brand-60);
+  line-height: 1.2;
+}
+
+.legal-page__subtitle {
+  font-size: var(--wa-font-size-l);
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__date {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-neutral-60);
+}
+
+.legal-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-s);
+}
+
+.legal-page__section h2 {
+  font-size: var(--wa-font-size-xl);
+  color: var(--wa-color-neutral-90);
+}
+
+.legal-page__section p {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+</style>

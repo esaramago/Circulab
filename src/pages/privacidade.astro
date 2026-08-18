@@ -1,0 +1,109 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { m } from '@/paraglide/messages.js'
+---
+
+<Layout title={m['privacy.title']()}>
+  <article class="legal-page">
+    <header class="legal-page__header">
+      <h1>{m['privacy.title']()}</h1>
+      <p class="legal-page__subtitle">{m['privacy.subtitle']()}</p>
+      <p class="legal-page__date">{m['privacy.last_updated']()}</p>
+    </header>
+
+    <section class="legal-page__section">
+      <h2>{m['privacy.sec1_title']()}</h2>
+      <p>{m['privacy.sec1_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['privacy.sec2_title']()}</h2>
+      <p>{m['privacy.sec2_text']()}</p>
+      <ul>
+        <li>{m['privacy.sec2_li1']()}</li>
+        <li>{m['privacy.sec2_li2']()}</li>
+        <li>{m['privacy.sec2_li3']()}</li>
+      </ul>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['privacy.sec3_title']()}</h2>
+      <p>{m['privacy.sec3_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['privacy.sec4_title']()}</h2>
+      <p>{m['privacy.sec4_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['privacy.sec5_title']()}</h2>
+      <p>{m['privacy.sec5_text']()}</p>
+    </section>
+  </article>
+</Layout>
+
+<style>
+.legal-page {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-block: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xl);
+}
+
+.legal-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+  border-block-end: 1px solid var(--wa-color-neutral-100);
+  padding-block-end: var(--wa-space-m);
+}
+
+.legal-page__header h1 {
+  font-size: var(--wa-font-size-3xl);
+  color: var(--wa-color-brand-60);
+  line-height: 1.2;
+}
+
+.legal-page__subtitle {
+  font-size: var(--wa-font-size-l);
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__date {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-neutral-60);
+}
+
+.legal-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-s);
+}
+
+.legal-page__section h2 {
+  font-size: var(--wa-font-size-xl);
+  color: var(--wa-color-neutral-90);
+}
+
+.legal-page__section p {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__section ul {
+  padding-inline-start: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.legal-page__section li {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+</style>
