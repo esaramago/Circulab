@@ -184,7 +184,7 @@ import Icon from '@/components/ui/Icon.vue'
           <Icon name="map-location-dot" appearance="filled"></Icon>
           <h3>{m['lisboa_repair_project.journey_step2_title']()}</h3>
           <p>{m['lisboa_repair_project.journey_step2_desc']()}</p>
-          <Grid gap="xs">
+          <Grid gap="xs" wrap>
             <wa-button href="https://docs.google.com/forms/d/1yJHvmQoy5Th1rfsr8hMjZzfFqmofLVzMjDYNtqAsEWY" target="_blank" rel="noopener noreferrer">
               <wa-icon name="globe" slot="start"></wa-icon>
               {m['lisboa_repair_project.journey_step2_link1']()}
@@ -206,7 +206,7 @@ import Icon from '@/components/ui/Icon.vue'
         <wa-icon name="handshake"></wa-icon>
         <span>{m['lisboa_repair_project.join_highlight']()}</span>
       </div>
-      <Grid gap="s">
+      <Grid gap="s" wrap>
         <wa-button href="mailto:climatecirclelisbon@gmail.com">
           <wa-icon name="envelope" slot="start"></wa-icon>
           {m['lisboa_repair_project.send_email']()}

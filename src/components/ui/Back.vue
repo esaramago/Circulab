@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { m } from '@/paraglide/messages.js'
-import '@awesome.me/webawesome/dist/components/icon/icon.js'
 
 const props = defineProps<{
   href?: string
