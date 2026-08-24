@@ -195,7 +195,7 @@ function handleDialogHide(type: string, event: Event) {
 
     <!-- Continue button -->
     <Grid justify="space-between">
-      <wa-button appearance="outlined" :href="localizeHref(`/map`)">{{ m['common.back']() }}</wa-button>
+      <wa-button appearance="outlined" :href="localizeHref(`/mapa`)">{{ m['common.back']() }}</wa-button>
       <wa-button
         variant="brand"
         :href="localizeHref(`/recursos/editar/resumo?id=${editingResourceId || ''}`)"
