@@ -67,27 +67,30 @@ if (Astro.request.method === 'POST') {
 <script>
   import '@awesome.me/webawesome/dist/components/button/button.js'
   import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
 </script>
 
 <Layout title={m['auth.login_title']()}>
   <Container width="xs">
     <h1>{m['auth.login_title']()}</h1>
-    {errorMessage && <wa-alert variant="danger">{errorMessage}</wa-alert>}
-    {successMessage && <wa-alert variant="success">{successMessage}</wa-alert>}
-    <form method="post">
-      <input type="hidden" name="redirect" value={redirectAfterLogin} />
-      <Grid gap="s" direction="column">
-        <wa-input
+    <wa-card>
+      {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+      {successMessage && <wa-callout variant="success">{successMessage}</wa-callout>}
+      <form method="post">
+        <input type="hidden" name="redirect" value={redirectAfterLogin} />
+        <Grid gap="s" direction="column">
+          <wa-input
           id="email"
           type="email"
           name="email"
-          required
-          label={m['auth.email_label']()}
-          placeholder={m['auth.email_label']()}
-          value={ADMIN_EMAIL}
-          autofocus
-        />
-        <wa-input
+            required
+            label={m['auth.email_label']()}
+            placeholder={m['auth.email_label']()}
+            value={ADMIN_EMAIL}
+            autofocus
+          />
+          <wa-input
           id="password"
           type="password"
           name="password"
@@ -95,12 +98,13 @@ if (Astro.request.method === 'POST') {
           required
           placeholder={m['auth.password_label']()}
           value={ADMIN_PASSWORD}
-        />
-        <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
-        <p>
-          <a href={forgotPasswordHref}>{m['auth.forgot_password']()}</a>
-        </p>
-      </Grid>
-    </form>
+          />
+          <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
+          <p>
+            <a href={forgotPasswordHref}>{m['auth.forgot_password']()}</a>
+          </p>
+        </Grid>
+      </form>
+    </wa-card>
   </Container>
 </Layout>
