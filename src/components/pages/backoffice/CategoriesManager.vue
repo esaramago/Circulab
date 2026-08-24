@@ -342,7 +342,7 @@ async function deleteCategory() {
             name="description"
             :value="form.description"
             @input="form.description = $event.target.value"
-            rows="3"
+            rows="4"
           ></wa-textarea>
         </div>
 
@@ -668,5 +668,9 @@ async function deleteCategory() {
 
 .typology-title {
   color: var(--wa-color-brand-50);
+}
+
+#category-dialog {
+  --width: 40rem;
 }
 </style>
