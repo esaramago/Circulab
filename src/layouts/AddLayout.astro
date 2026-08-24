@@ -6,34 +6,32 @@ import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 
-const { mode } = Astro.params
-const isEdit = mode === 'editar'
-const id = Astro.url.searchParams.get('id') || ''
-const idQuery = isEdit ? `?id=${id}` : ''
+const { mode: paramMode } = Astro.params
+const isEdit = paramMode === 'editar' || Astro.url.pathname.includes('/recursos/editar')
 
 const steps = [
   {
-    path: isEdit ? '#' : localizeHref(`/recursos/${mode}`),
+    path: localizeHref('/recursos/novo'),
     code: 'validation',
     label: m['resources.step_validation']()
   },
   {
-    path: localizeHref(`/recursos/${mode}/descricao${idQuery}`),
+    path: localizeHref(`/recursos/novo/descricao`),
     code: 'description',
     label: m['resources.step_description']()
   },
   {
-    path: localizeHref(`/recursos/${mode}/localizacao${idQuery}`),
+    path: localizeHref(`/recursos/novo/localizacao`),
     code: 'location',
     label: m['resources.step_location']()
   },
   {
-    path: localizeHref(`/recursos/${mode}/contactos${idQuery}`),
+    path: localizeHref(`/recursos/novo/contactos`),
     code: 'contacts',
     label: m['resources.step_contacts']()
   },
   {
-    path: localizeHref(`/recursos/${mode}/resumo${idQuery}`),
+    path: localizeHref(`/recursos/novo/resumo`),
     code: 'summary',
     label: m['resources.step_summary']()
   }
@@ -49,7 +47,7 @@ const description = isEdit ? m['resources.edit_desc']() : m['resources.add_desc'
     <h1>{title}</h1>
     <p>{description}</p>
   </Grid>
-  <Wizard client:only="vue" steps={steps} currentStep={currentStep} />
+  {!isEdit && <Wizard client:only="vue" steps={steps} currentStep={currentStep} />}
   <Container width="xs">
     <slot />
   </Container>

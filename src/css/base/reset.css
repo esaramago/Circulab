@@ -6,7 +6,11 @@ body,
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 button,
+ul,
 p,
 fieldset,
 blockquote {
@@ -55,4 +59,8 @@ button {
 img {
   max-width: 100%;
   max-height: 100%;
+}
+
+ul {
+  padding-inline-start: var(--wa-space-l);
 }

@@ -1,0 +1,10 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import Resume from '@/components/pages/resources/Resume.vue'
+import { m } from '@/paraglide/messages.js'
+---
+
+<AddLayout currentStep="summary">
+  <h2>{m['resources.step_summary']()}</h2>
+  <Resume client:only="vue" />
+</AddLayout>

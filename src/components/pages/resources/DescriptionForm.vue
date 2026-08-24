@@ -17,8 +17,19 @@ import { m } from '@/paraglide/messages.js'
 
 type typologiesType = Database['public']['Tables']['typologies']['Row'][]
 
-defineProps<{
-  typologies: typologiesType | null
+const props = withDefaults(
+  defineProps<{
+    typologies: typologiesType | null
+    inModal?: boolean
+  }>(),
+  {
+    inModal: false,
+  }
+)
+
+const emit = defineEmits<{
+  (e: 'save'): void
+  (e: 'cancel'): void
 }>()
 
 const draft = useStore($descriptionDraft)
@@ -38,7 +49,7 @@ onMounted(async () => {
   const id = urlParams.get('id')
   if (id) {
     await ensureDraftLoaded(id)
-  } else if ($editingResourceId.get() !== null) {
+  } else if ($editingResourceId.get() !== null && !props.inModal) {
     clearAddResourceDraft()
   }
 
@@ -139,11 +150,21 @@ function handleBack() {
   window.location.href = localizeHref(isEdit.value ? '/dashboard' : '/recursos/novo')
 }
 
+function handleCancel() {
+  emit('cancel')
+}
+
 function handleSubmit(event: Event) {
-  const isCompleted = (event.target as HTMLFormElement).checkValidity()
+  const form = event.target as HTMLFormElement
+  const isCompleted = form.checkValidity()
   setStepCompleted('description', isCompleted)
   if (!isCompleted) {
     event.preventDefault()
+    return
+  }
+  if (props.inModal) {
+    event.preventDefault()
+    emit('save')
   }
 }
 // #endregion
@@ -207,8 +228,13 @@ function handleSubmit(event: Event) {
           <wa-option v-for="characteristic in characteristics" :key="characteristic.id" :value="characteristic.id">{{ characteristic.name }}</wa-option>
         </template>
       </wa-select>
-      <Grid justify="end" gap="s">
-        <wa-button variant="brand" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+
+      <Grid v-if="inModal" justify="end" gap="s">
+        <wa-button variant="neutral" appearance="outlined" type="button" @click="handleCancel">{{ m['resources.cancel']() }}</wa-button>
+        <wa-button variant="brand" type="submit">{{ m['resources.save']() }}</wa-button>
+      </Grid>
+      <Grid v-else justify="end" gap="s">
+        <wa-button variant="brand" appearance="outlined" type="button" @click="handleBack">{{ m['resources.back']() }}</wa-button>
         <wa-button variant="brand" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>

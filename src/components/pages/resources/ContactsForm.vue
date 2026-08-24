@@ -14,6 +14,20 @@ import phoneAreaCodes from '@/data/countryCodes.json'
 import { m } from '@/paraglide/messages.js'
 import { actions } from 'astro:actions'
 
+const props = withDefaults(
+  defineProps<{
+    inModal?: boolean
+  }>(),
+  {
+    inModal: false,
+  }
+)
+
+const emit = defineEmits<{
+  (e: 'save'): void
+  (e: 'cancel'): void
+}>()
+
 const draft = useStore($locationDraft)
 const editingResourceId = useStore($editingResourceId)
 const isEdit = computed(() => !!editingResourceId.value)
@@ -164,11 +178,21 @@ function handleBack() {
   window.location.href = localizeHref(isEdit.value ? `/recursos/editar/localizacao?id=${editingResourceId.value}` : '/recursos/novo/localizacao')
 }
 
+function handleCancel() {
+  emit('cancel')
+}
+
 function handleSubmit(event: Event) {
-  const isCompleted = (event.target as HTMLFormElement).checkValidity()
+  const form = event.target as HTMLFormElement
+  const isCompleted = form.checkValidity()
   setStepCompleted('contacts', isCompleted)
   if (!isCompleted) {
     event.preventDefault()
+    return
+  }
+  if (props.inModal) {
+    event.preventDefault()
+    emit('save')
   }
 }
 </script>
@@ -198,7 +222,7 @@ function handleSubmit(event: Event) {
       <table v-if="draft.networks && draft.networks.length > 0" class="c-table">
         <thead>
           <tr>
-            <th>Canal</th>
+            <th>{{ m['resources.channel']() }}</th>
             <th>URL</th>
             <th></th>
           </tr>
@@ -228,24 +252,28 @@ function handleSubmit(event: Event) {
 
       <wa-button variant="brand" appearance="outlined" @click="openAddDialog">
         <wa-icon name="plus" slot="start"></wa-icon>
-        Adicionar canal
+        {{ m['resources.add_channel']() }}
       </wa-button>
 
-      <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+      <Grid v-if="inModal" justify="end" gap="xs">
+        <wa-button variant="neutral" appearance="outlined" type="button" @click="handleCancel">{{ m['resources.cancel']() }}</wa-button>
+        <wa-button variant="brand" type="submit">{{ m['resources.save']() }}</wa-button>
+      </Grid>
+      <Grid v-else justify="end" gap="xs">
+        <wa-button variant="primary" appearance="outlined" type="button" @click="handleBack">{{ m['resources.back']() }}</wa-button>
         <wa-button variant="primary" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>
   </form>
 
   <wa-dialog
-    :label="editingNetworkIndex !== null ? 'Editar canal' : 'Adicionar canal'"
+    :label="editingNetworkIndex !== null ? m['resources.edit_channel']() : m['resources.add_channel']()"
     :open="isDialogOpen || null"
     @wa-hide="handleDialogHide"
   >
     <Grid gap="m" direction="column">
       <wa-select
-        label="Tipo de canal"
+        :label="m['resources.channel_type']()"
         :value="selectedNetworkSlug"
         @change="selectedNetworkSlug = ($event.target as any).value"
       >
@@ -265,8 +293,8 @@ function handleSubmit(event: Event) {
     </Grid>
 
     <div slot="footer" class="dialog-footer">
-      <wa-button variant="neutral" @click="isDialogOpen = false">Cancelar</wa-button>
-      <wa-button variant="brand" @click="handleSaveNetwork">Guardar</wa-button>
+      <wa-button variant="neutral" @click="isDialogOpen = false">{{ m['resources.cancel']() }}</wa-button>
+      <wa-button variant="brand" @click="handleSaveNetwork">{{ m['resources.save']() }}</wa-button>
     </div>
   </wa-dialog>
 </template>

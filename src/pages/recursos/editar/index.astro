@@ -1,0 +1,11 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import EditIndex from '@/components/pages/resources/EditIndex.vue'
+import { fetchDB } from '@/utils/fetchDB'
+
+const { data: typologies } = await fetchDB('typologies').select('*')
+---
+
+<AddLayout currentStep="edit">
+  <EditIndex client:only="vue" typologies={typologies} />
+</AddLayout>

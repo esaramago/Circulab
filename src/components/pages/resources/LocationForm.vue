@@ -17,6 +17,20 @@ import { fetchDB } from '@/utils/fetchDB'
 import { guessCoordinates, guessAdress } from '@/utils/nominatim'
 import { m } from '@/paraglide/messages.js'
 
+const props = withDefaults(
+  defineProps<{
+    inModal?: boolean
+  }>(),
+  {
+    inModal: false,
+  }
+)
+
+const emit = defineEmits<{
+  (e: 'save'): void
+  (e: 'cancel'): void
+}>()
+
 let mapInstance: LeafletMapType | null = null
 let markerInstance: LeafletMarkerType | null = null
 
@@ -40,6 +54,11 @@ onMounted(async () => {
     await ensureDraftLoaded(id)
   }
   initMap()
+  if (props.inModal) {
+    setTimeout(() => {
+      mapInstance?.invalidateSize()
+    }, 250)
+  }
   typologyCode.value = await getTypologyCode() || ''
 })
 
@@ -203,8 +222,13 @@ function handleBack() {
   window.location.href = localizeHref(isEdit.value ? `/recursos/editar/descricao?id=${editingResourceId.value}` : '/recursos/novo/descricao')
 }
 
+function handleCancel() {
+  emit('cancel')
+}
+
 function handleSubmit(event: Event) {
-  const isCompleted = (event.target as HTMLFormElement).checkValidity() && hasCoordinates.value
+  const form = event.target as HTMLFormElement
+  const isCompleted = form.checkValidity() && hasCoordinates.value
   setStepCompleted('location', isCompleted)
   if (!isCompleted) {
     event.preventDefault()
@@ -212,6 +236,11 @@ function handleSubmit(event: Event) {
       isAdressValid.value = false
       isAdressInvalid.value = true
     }
+    return
+  }
+  if (props.inModal) {
+    event.preventDefault()
+    emit('save')
   }
 }
 </script>
@@ -248,8 +277,12 @@ function handleSubmit(event: Event) {
         <wa-radio value="private">{{ m['resources.accessibility_private']() }}</wa-radio>
       </wa-radio-group>
 
-      <Grid justify="end" gap="xs">
-        <wa-button variant="primary" appearance="outlined" @click="handleBack">{{ m['resources.back']() }}</wa-button>
+      <Grid v-if="inModal" justify="end" gap="xs">
+        <wa-button variant="neutral" appearance="outlined" type="button" @click="handleCancel">{{ m['resources.cancel']() }}</wa-button>
+        <wa-button variant="brand" type="submit">{{ m['resources.save']() }}</wa-button>
+      </Grid>
+      <Grid v-else justify="end" gap="xs">
+        <wa-button variant="primary" appearance="outlined" type="button" @click="handleBack">{{ m['resources.back']() }}</wa-button>
         <wa-button variant="primary" type="submit">{{ m['resources.continue']() }}</wa-button>
       </Grid>
     </Grid>

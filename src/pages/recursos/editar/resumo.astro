@@ -1,14 +1,10 @@
 ---
 import AddLayout from '@/layouts/AddLayout.astro'
 import Resume from '@/components/pages/resources/Resume.vue'
-
-const { mode } = Astro.params
-if (mode !== 'novo' && mode !== 'editar') {
-  return new Response('Not Found', { status: 404 })
-}
+import { m } from '@/paraglide/messages.js'
 ---
 
 <AddLayout currentStep="summary">
-  <h2>Resumo</h2>
+  <h2>{m['resources.step_summary']()}</h2>
   <Resume client:only="vue" />
 </AddLayout>

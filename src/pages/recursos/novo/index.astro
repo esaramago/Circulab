@@ -1,0 +1,10 @@
+---
+import AddLayout from '@/layouts/AddLayout.astro'
+import ValidationForm from '@/components/pages/resources/ValidationForm.vue'
+import { m } from '@/paraglide/messages.js'
+---
+
+<AddLayout currentStep="validation">
+  <h2>{m['resources.step_validation']()}</h2>
+  <ValidationForm client:only="vue" />
+</AddLayout>

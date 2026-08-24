@@ -247,7 +247,7 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      :href="localizeHref(isEdit ? `/recursos/editar/contactos?id=${editingResourceId}` : '/recursos/novo/contactos')">{{ m['resources.back']() }}</wa-button
+      :href="localizeHref(isEdit ? `/recursos/editar?id=${editingResourceId}` : '/recursos/novo/contactos')">{{ m['resources.back']() }}</wa-button
     >
     <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">
       {{ isEdit ? m['resources.save']() : m['resources.add']() }}
