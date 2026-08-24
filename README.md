@@ -1,4 +1,4 @@
-# Circulab Project
+# Circulab
 
 ## Project overview
 
