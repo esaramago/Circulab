@@ -16,6 +16,7 @@ import type { LocationDraft } from '@/types/add-resource-draft'
 import { fetchDB } from '@/utils/fetchDB'
 import { guessCoordinates, guessAdress } from '@/utils/nominatim'
 import { m } from '@/paraglide/messages.js'
+import { MAP_LAYERS } from '@/stores/map'
 
 const props = withDefaults(
   defineProps<{
@@ -102,9 +103,10 @@ function initMap() {
     center: [initialLat, initialLng],
     zoom: 14,
   })
-  new TileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
+  const defaultLayer = MAP_LAYERS[0]
+  new TileLayer(defaultLayer.url, {
+    attribution: defaultLayer.attribution,
+    subdomains: defaultLayer.subdomains,
     maxNativeZoom: 19,
     maxZoom: 22,
   }).addTo(mapInstance)

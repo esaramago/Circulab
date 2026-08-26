@@ -1,18 +1,20 @@
 import { atom } from 'nanostores'
 import type { MapLayer } from '@/types'
 
+const basemapsApiKey = import.meta.env.BASEMAPS_API_KEY
+
 export const MAP_LAYERS: MapLayer[] = [
   {
     id: 'voyager',
     name: 'Default map',
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    url: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${basemapsApiKey}`,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
   },
   {
     id: 'cartodb-positron',
     name: 'Positron',
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    url: `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${basemapsApiKey}`,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	  subdomains: 'abcd',
   },
