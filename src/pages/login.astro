@@ -21,6 +21,7 @@ const forgotPasswordHref = localizeHref(
 )
 const redirectAfterLogin = getSafeRedirectPath(
   Astro.url.searchParams.get('redirect')
+)
 
 if (Astro.request.method === 'POST') {
 
@@ -78,21 +79,21 @@ if (Astro.request.method === 'POST') {
         <input type="hidden" name="redirect" value={redirectAfterLogin} />
         <Grid gap="s" direction="column">
           <wa-input
-          id="email"
-          type="email"
-          name="email"
+            id="email"
+            type="email"
+            name="email"
             required
             label={m['auth.email_label']()}
             placeholder={m['auth.email_label']()}
             autofocus
           />
           <wa-input
-          id="password"
-          type="password"
-          name="password"
-          label={m['auth.password_label']()}
-          required
-          placeholder={m['auth.password_label']()}
+            id="password"
+            type="password"
+            name="password"
+            label={m['auth.password_label']()}
+            required
+            placeholder={m['auth.password_label']()}
           />
           <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
           <p>
