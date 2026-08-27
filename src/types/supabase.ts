@@ -127,8 +127,10 @@ export type Database = {
           coordinates: unknown
           created_at: string
           email: string | null
+          has_opening_hours: boolean
           id: string
           name: string
+          opening_hours: Json | null
           phone: string | null
           phone_area_code: number | null
           postal_code: string | null
@@ -141,8 +143,10 @@ export type Database = {
           coordinates?: unknown
           created_at?: string
           email?: string | null
+          has_opening_hours?: boolean
           id?: string
           name: string
+          opening_hours?: Json | null
           phone?: string | null
           phone_area_code?: number | null
           postal_code?: string | null
@@ -154,8 +158,10 @@ export type Database = {
           coordinates?: unknown
           created_at?: string
           email?: string | null
+          has_opening_hours?: boolean
           id?: string
           name?: string
+          opening_hours?: Json | null
           phone?: string | null
           phone_area_code?: number | null
           postal_code?: string | null

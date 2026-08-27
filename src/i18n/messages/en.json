@@ -189,7 +189,27 @@
 		"add_channel": "Add channel",
 		"edit_channel": "Edit channel",
 		"channel_type": "Channel type",
-		"channel": "Channel"
+		"channel": "Channel",
+		"schedule_heading": "Schedule",
+		"schedule_switch_label": "Schedule active",
+		"edit_schedule_dialog": "Edit schedule",
+		"open": "Open",
+		"closed": "Closed",
+		"start_time": "Start",
+		"end_time": "End",
+		"add_period": "Add period",
+		"remove_period": "Remove period",
+		"apply_to_weekdays": "Copy to weekdays (Monday to Friday)",
+		"apply_to_all_days": "Copy to all days"
+	},
+	"days": {
+		"sunday": "Sunday",
+		"monday": "Monday",
+		"tuesday": "Tuesday",
+		"wednesday": "Wednesday",
+		"thursday": "Thursday",
+		"friday": "Friday",
+		"saturday": "Saturday"
 	},
 	"backoffice": {
 		"title": "Backoffice",

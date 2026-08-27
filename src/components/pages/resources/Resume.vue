@@ -13,6 +13,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
 import GalleryItem from '@/components/ui/GalleryItem.vue'
+import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 
 type AddResourcePayload = DescriptionDraft & LocationDraft
 
@@ -148,6 +149,8 @@ async function handleSubmit() {
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
       accessibility: resumeData.value?.accessibility || undefined,
+      has_opening_hours: resumeData.value?.has_opening_hours ?? false,
+      opening_hours: resumeData.value?.has_opening_hours ? (resumeData.value?.opening_hours || undefined) : undefined,
       networks: resumeData.value?.networks ? resumeData.value.networks.map(n => ({ slug: n.slug, value: n.value })) : undefined,
       images: uploadedImages,
     }
@@ -234,6 +237,11 @@ async function handleSubmit() {
         </div>
       </Grid>
 
+      <div v-if="resumeData.has_opening_hours" class="schedule-section">
+        <strong>{{ m['resources.schedule_heading']() }}</strong>
+        <OpeningHoursTable :opening-hours="resumeData.opening_hours" />
+      </div>
+
       <div>
         <strong>{{ m['resources.description_label']() }}</strong>
         <p>{{ resumeData.description }}</p>
@@ -254,3 +262,11 @@ async function handleSubmit() {
     </wa-button>
   </Grid>
 </template>
+
+<style scoped>
+.list {
+  wa-icon {
+    padding-inline-end: var(--wa-space-xs);
+  }
+}
+</style>

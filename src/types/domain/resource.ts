@@ -6,6 +6,7 @@ import type {
   ImageType,
   GeoJsonPoint
 } from '@/types/database'
+import type { WeekSchedule } from '@/types/add-resource-draft'
 import { z } from 'astro/zod'
 import { resourceSchema } from '@/schemas/resource.server'
 
@@ -38,4 +39,6 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   accessibility: LocationRow['accessibility']
   status?: PinRow['status']
   networks?: { slug: string; name: string; value: string; icon?: string | null }[]
+  has_opening_hours?: boolean
+  opening_hours?: WeekSchedule | null
 } & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone' | 'phone_area_code'>

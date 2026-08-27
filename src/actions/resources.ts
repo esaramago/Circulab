@@ -99,6 +99,8 @@ export const getResource = defineAction({
           phone,
           phone_area_code,
           accessibility,
+          has_opening_hours,
+          opening_hours,
           location_networks (
             value,
             networks (
@@ -146,6 +148,8 @@ export const getResource = defineAction({
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
         accessibility: data.location?.accessibility || null,
+        has_opening_hours: data.location?.has_opening_hours ?? false,
+        opening_hours: (data.location?.opening_hours as any) || null,
         networks,
       }
 
@@ -301,6 +305,8 @@ export const addResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         accessibility: input.accessibility || null,
+        has_opening_hours: input.has_opening_hours ?? false,
+        opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
 
       const { data: locationsData, error: locationsError } = await supabase
@@ -486,6 +492,8 @@ export const editResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         accessibility: input.accessibility || null,
+        has_opening_hours: input.has_opening_hours ?? false,
+        opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
 
       const { error: locationUpdateError } = await supabase
