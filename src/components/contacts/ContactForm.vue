@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import { actions, isInputError } from 'astro:actions'
 import { m } from '@/paraglide/messages.js'
 import Grid from '@/components/ui/Grid.vue'
-import '@awesome.me/webawesome/dist/components/button/button.js'
-import '@awesome.me/webawesome/dist/components/input/input.js'
-import '@awesome.me/webawesome/dist/components/textarea/textarea.js'
-import '@awesome.me/webawesome/dist/components/callout/callout.js'
-import '@awesome.me/webawesome/dist/components/icon/icon.js'
+import '@webawesome/button/button.js'
+import '@webawesome/input/input.js'
+import '@webawesome/textarea/textarea.js'
+import '@webawesome/callout/callout.js'
+import '@webawesome/icon/icon.js'
 
 const formRef = ref<HTMLFormElement | null>(null)
 const nameRef = ref<any>(null)
