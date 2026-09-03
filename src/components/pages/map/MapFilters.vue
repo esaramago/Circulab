@@ -269,7 +269,7 @@ function toggleFilters() {
   gap: var(--wa-space-xs);
   background-color: var(--wa-color-brand-20);
   border-radius: var(--wa-border-radius-m);
-  padding: var(--wa-space-s) var(--wa-space-xs);
+  padding: var(--wa-space-s) var(--wa-space-2xs);
   height: 100%;
   box-sizing: border-box;
   font-size: var(--wa-font-size-s);

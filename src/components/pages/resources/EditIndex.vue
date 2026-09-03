@@ -82,6 +82,7 @@ const detailedChanges = computed(() => {
     if (currLoc.email !== initLoc.email) changes.push('Email')
     if (currLoc.phone !== initLoc.phone || currLoc.phone_area_code !== initLoc.phone_area_code) changes.push(m['resources.phone_label']())
     if (JSON.stringify(currLoc.networks) !== JSON.stringify(initLoc.networks)) changes.push(m['resources.channels_heading']())
+    if (currLoc.has_opening_hours !== initLoc.has_opening_hours || (currLoc.has_opening_hours && JSON.stringify(currLoc.opening_hours) !== JSON.stringify(initLoc.opening_hours))) changes.push(m['resources.schedule_heading']())
   }
 
   return changes

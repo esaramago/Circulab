@@ -37,7 +37,8 @@
 		"edit": "Editar",
 		"suggest_edit": "Sugerir edição",
 		"loading": "Carregando...",
-		"error": "Erro"
+		"error": "Erro",
+		"schedule_heading": "Horário"
 	},
 	"about": {
 		"title": "Sobre",
@@ -189,7 +190,27 @@
 		"add_channel": "Adicionar canal",
 		"edit_channel": "Editar canal",
 		"channel_type": "Tipo de canal",
-		"channel": "Canal"
+		"channel": "Canal",
+		"schedule_heading": "Horário",
+    "schedule_switch_label": "Horário ativo",
+		"edit_schedule_dialog": "Editar horário",
+		"open": "Aberto",
+		"closed": "Fechado",
+		"start_time": "Início",
+		"end_time": "Fim",
+		"add_period": "Adicionar período",
+		"remove_period": "Remover período",
+		"apply_to_weekdays": "Copiar para os dias úteis (Segunda a Sexta)",
+		"apply_to_all_days": "Copiar para todos os dias"
+	},
+	"days": {
+		"sunday": "Domingo",
+		"monday": "Segunda-feira",
+		"tuesday": "Terça-feira",
+		"wednesday": "Quarta-feira",
+		"thursday": "Quinta-feira",
+		"friday": "Sexta-feira",
+		"saturday": "Sábado"
 	},
 	"backoffice": {
 		"title": "Backoffice",

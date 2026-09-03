@@ -13,6 +13,7 @@ import type { LocationDraft } from '@/types/add-resource-draft'
 import phoneAreaCodes from '@/data/countryCodes.json'
 import { m } from '@/paraglide/messages.js'
 import { actions } from 'astro:actions'
+import OpeningHours from '@/components/pages/resources/OpeningHours.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -147,6 +148,14 @@ function updateDraft(partial: Partial<LocationDraft>) {
   } as LocationDraft)
 }
 
+function handleHasOpeningHoursChange(hasHours: boolean) {
+  updateDraft({ has_opening_hours: hasHours })
+}
+
+function handleOpeningHoursChange(hours: any) {
+  updateDraft({ opening_hours: hours })
+}
+
 function handleInput(event: Event) {
   const field = event.target as HTMLInputElement & { checkValidity?: () => boolean }
   const name = field.name
@@ -254,6 +263,13 @@ function handleSubmit(event: Event) {
         <wa-icon name="plus" slot="start"></wa-icon>
         {{ m['resources.add_channel']() }}
       </wa-button>
+
+      <OpeningHours
+        :has-opening-hours="draft.has_opening_hours"
+        :model-value="draft.opening_hours"
+        @update:has-opening-hours="handleHasOpeningHoursChange"
+        @update:model-value="handleOpeningHoursChange"
+      />
 
       <Grid v-if="inModal" justify="end" gap="xs">
         <wa-button variant="neutral" appearance="outlined" type="button" @click="handleCancel">{{ m['resources.cancel']() }}</wa-button>

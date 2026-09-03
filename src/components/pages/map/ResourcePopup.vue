@@ -8,6 +8,7 @@ import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { m } from '@/paraglide/messages.js'
+import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 
 const props = defineProps<{
   resourceId: string | null
@@ -20,7 +21,7 @@ const emit = defineEmits<{
 
 const resource = ref<FullResource | null>(null)
 const user = ref<AppUser | null>(null)
-const isLoading = ref(true)
+const isLoading = ref(false)
 const hasError = ref(false)
 
 const isCanEdit = computed(() => {
@@ -39,18 +40,18 @@ watch(() => props.resourceId, async () => {
   if (props.resourceId) {
     resource.value = null
     isLoading.value = true
-    const { data, error } = await actions.getResource({ id: props.resourceId })
+    const { data, error } = await actions.getResource({ id: String(props.resourceId) })
     isLoading.value = false
     if (error) {
-      console.error(error)
+      console.error('[ResourcePopup] Error loading resource:', error)
       hasError.value = true
     } else {
-      console.log(data)
       resource.value = data as unknown as FullResource
     }
   } else {
-    hasError.value = true
+    resource.value = null
     isLoading.value = false
+    hasError.value = false
   }
 }, { immediate: true })
 </script>
@@ -110,6 +111,13 @@ watch(() => props.resourceId, async () => {
                 <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
                 <span>{{ m['map.access_public']() }}</span>
               </template>
+            </div>
+            <div v-if="resource?.has_opening_hours" class="popup-schedule">
+              <div>
+                <wa-icon name="clock"></wa-icon>
+                <span>{{ m['resources.schedule_heading']() }}</span>
+              </div>
+              <OpeningHoursTable :opening-hours="resource.opening_hours" />
             </div>
           </Grid>
 
@@ -185,5 +193,12 @@ watch(() => props.resourceId, async () => {
   wa-icon {
     padding-inline-end: var(--wa-space-xs);
   }
+}
+
+.popup-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xxs);
+  margin-block-start: var(--wa-space-xxs);
 }
 </style>

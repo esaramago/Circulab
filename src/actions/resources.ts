@@ -9,6 +9,14 @@ import { resourceSchema } from '@/schemas/resource.server'
 import { z } from 'astro/zod'
 import geojson from '@/utils/geojson'
 
+function mapErrorCode(code?: string): ActionErrorCode {
+  if (code === 'PGRST116') return 'NOT_FOUND'
+  if (code === '42501') return 'FORBIDDEN'
+  if (code === '23505') return 'CONFLICT'
+  if (code === '23503' || code === '22P02') return 'BAD_REQUEST'
+  return 'INTERNAL_SERVER_ERROR'
+}
+
 export const getPins = defineAction({
   handler: async () => {
     try {
@@ -29,28 +37,30 @@ export const getPins = defineAction({
           )
         )
       `).or(`status.is.null,status.eq.${PIN_STATUS.APPROVED}`) // only status that are null or 'approved'
+
       if (error) {
+        console.error('[Action] getPins error from Supabase:', error)
         throw new ActionError({
           message: error.message || 'Failed to get pins',
-          code: error.code as ActionErrorCode
+          code: mapErrorCode(error.code)
         })
       }
 
       const pins = [] as Pin[]
 
-      data.forEach((pin) => {
+      data?.forEach((pin) => {
         const hasCategoryColor = pin.categories?.typology?.has_category_color !== false
         pins.push({
           id: pin.id,
           title: pin.title,
           coordinates: {
-            latitude: geojson.getLatitude(pin.coordinates) ,
-            longitude: geojson.getLongitude(pin.coordinates) ,
+            latitude: geojson.getLatitude(pin.coordinates),
+            longitude: geojson.getLongitude(pin.coordinates),
           },
-          category: pin.categories.name,
-          typology: pin.categories.typology.name,
+          category: pin.categories?.name,
+          typology: pin.categories?.typology?.name,
           category_id: pin.category_id,
-          typology_id: pin.categories.typology_id,
+          typology_id: pin.categories?.typology_id,
           color: (hasCategoryColor && pin.categories?.color) ? pin.categories.color : (pin.categories?.typology?.color ?? null),
           category_color: (hasCategoryColor && pin.categories?.color) ? pin.categories.color : null,
           typology_color: pin.categories?.typology?.color ?? null,
@@ -61,9 +71,11 @@ export const getPins = defineAction({
       return pins
 
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] getPins catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get public user',
-        code: error.code as ActionErrorCode
+        message: error.message || 'Failed to get pins',
+        code: 'INTERNAL_SERVER_ERROR'
       })
     }
   },
@@ -74,6 +86,9 @@ export const getResource = defineAction({
     id: z.string(),
   }),
   handler: async (input: { id: string }) => {
+
+
+    debugger
     try {
       const { data, error } = await supabase.from('pins').select(`
         id,
@@ -99,6 +114,8 @@ export const getResource = defineAction({
           phone,
           phone_area_code,
           accessibility,
+          has_opening_hours,
+          opening_hours,
           location_networks (
             value,
             networks (
@@ -113,9 +130,10 @@ export const getResource = defineAction({
       `).eq('id', input.id).single()
 
       if (error) {
+        console.error('[Action] getResource error from Supabase:', error)
         throw new ActionError({
           message: error.message || 'Failed to get pin',
-          code: error.code as ActionErrorCode
+          code: mapErrorCode(error.code)
         })
       }
 
@@ -146,16 +164,18 @@ export const getResource = defineAction({
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
         accessibility: data.location?.accessibility || null,
+        has_opening_hours: data.location?.has_opening_hours ?? false,
+        opening_hours: (data.location?.opening_hours as any) || null,
         networks,
       }
 
-      console.log('[Action] getResource mapped resource:', JSON.stringify(resource))
-
       return resource
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] getResource catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to get resource',
-        code: error.code as ActionErrorCode
+        code: 'INTERNAL_SERVER_ERROR'
       })
     }
   },
@@ -187,17 +207,20 @@ export const getResources = defineAction({
       `)
 
       if (error) {
+        console.error('[Action] getResources error from Supabase:', error)
         throw new ActionError({
           message: error.message || 'Failed to get pins',
-          code: error.code as ActionErrorCode
+          code: mapErrorCode(error.code)
         })
       }
 
       return data as ResourceRow[]
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] getResources catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to get resources',
-        code: error.code as ActionErrorCode
+        code: 'INTERNAL_SERVER_ERROR'
       })
     }
   },
@@ -229,20 +252,23 @@ export const getFullResources = defineAction({
           email,
           phone,
           phone_area_code,
-          accessibility
+          accessibility,
+          has_opening_hours,
+          opening_hours
         ),
         coordinates: get_geojson,
         status
       `)
 
       if (error) {
+        console.error('[Action] getFullResources error from Supabase:', error)
         throw new ActionError({
           message: error.message || 'Failed to get pins',
-          code: error.code as ActionErrorCode
+          code: mapErrorCode(error.code)
         })
       }
 
-      const fullResourses = data.map((resource: any) => ({
+      const fullResourses = data?.map((resource: any) => ({
         id: resource.id,
         title: resource.title,
         description: resource.description,
@@ -261,14 +287,18 @@ export const getFullResources = defineAction({
         phone_area_code: resource.location?.phone_area_code || null,
         coordinates: resource.coordinates,
         accessibility: resource.location?.accessibility || null,
+        has_opening_hours: resource.location?.has_opening_hours ?? false,
+        opening_hours: (resource.location?.opening_hours as any) || null,
         status: resource.status,
       }))
 
       return fullResourses as FullResource[]
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] getFullResources catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to get resources',
-        code: error.code as ActionErrorCode
+        code: 'INTERNAL_SERVER_ERROR'
       })
     }
   },
@@ -277,7 +307,6 @@ export const getFullResources = defineAction({
 export const addResource = defineAction({
   input: resourceSchema,
   handler: async (input: Resource, { request, cookies }) => {
-
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -301,6 +330,8 @@ export const addResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         accessibility: input.accessibility || null,
+        has_opening_hours: input.has_opening_hours ?? false,
+        opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
 
       const { data: locationsData, error: locationsError } = await supabase
@@ -310,9 +341,10 @@ export const addResource = defineAction({
         .single()
 
       if (!locationsData?.id) {
+        console.error('[Action] addResource locations error:', locationsError)
         throw new ActionError({
           message: locationsError?.message || 'Failed to add location',
-          code: locationsError?.code as ActionErrorCode
+          code: mapErrorCode(locationsError?.code)
         })
       }
 
@@ -356,16 +388,19 @@ export const addResource = defineAction({
       }).select('id').single()
 
       if (!pinsData?.id) {
+        console.error('[Action] addResource pins error:', pinsError)
         throw new ActionError({
           message: pinsError?.message || 'Failed to add pin',
-          code: pinsError?.code as ActionErrorCode,
+          code: mapErrorCode(pinsError?.code),
         })
       }
 
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] addResource catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to add resource',
-        code: error.code as ActionErrorCode
+        code: 'INTERNAL_SERVER_ERROR'
       })
     }
   },
@@ -406,9 +441,10 @@ export const deleteResource = defineAction({
         .eq('id', input.id)
 
       if (error) {
+        console.error('[Action] deleteResource error:', error)
         throw new ActionError({
           message: error.message || 'Failed to delete resource',
-          code: error.code as ActionErrorCode,
+          code: mapErrorCode(error.code),
         })
       }
 
@@ -422,6 +458,7 @@ export const deleteResource = defineAction({
       return { success: true }
     } catch (error: any) {
       if (error instanceof ActionError) throw error
+      console.error('[Action] deleteResource catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to delete resource',
         code: 'INTERNAL_SERVER_ERROR',
@@ -486,6 +523,8 @@ export const editResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         accessibility: input.accessibility || null,
+        has_opening_hours: input.has_opening_hours ?? false,
+        opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
 
       const { error: locationUpdateError } = await supabase
@@ -494,6 +533,7 @@ export const editResource = defineAction({
         .eq('id', existingPin.location_id)
 
       if (locationUpdateError) {
+        console.error('[Action] editResource location error:', locationUpdateError)
         throw new ActionError({
           message: locationUpdateError.message || 'Failed to update location',
           code: 'INTERNAL_SERVER_ERROR',
@@ -546,6 +586,7 @@ export const editResource = defineAction({
         .eq('id', input.id)
 
       if (pinUpdateError) {
+        console.error('[Action] editResource pin error:', pinUpdateError)
         throw new ActionError({
           message: pinUpdateError.message || 'Failed to update resource',
           code: 'INTERNAL_SERVER_ERROR',
@@ -555,6 +596,7 @@ export const editResource = defineAction({
       return { success: true }
     } catch (error: any) {
       if (error instanceof ActionError) throw error
+      console.error('[Action] editResource catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to edit resource',
         code: 'INTERNAL_SERVER_ERROR',
@@ -568,9 +610,10 @@ export const getNetworks = defineAction({
     try {
       const { data, error } = await supabase.from('networks').select('id, name, slug, icon')
       if (error) {
+        console.error('[Action] getNetworks error:', error)
         throw new ActionError({
           message: error.message || 'Failed to get networks',
-          code: error.code as ActionErrorCode
+          code: mapErrorCode(error.code)
         })
       }
       if (!data || data.length === 0) {
@@ -582,6 +625,8 @@ export const getNetworks = defineAction({
       }
       return data
     } catch (error: any) {
+      if (error instanceof ActionError) throw error
+      console.error('[Action] getNetworks catch error:', error)
       throw new ActionError({
         message: error.message || 'Failed to get networks',
         code: 'INTERNAL_SERVER_ERROR'

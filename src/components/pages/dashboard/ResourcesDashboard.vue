@@ -7,6 +7,7 @@ import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
+import '@webawesome/dialog/dialog.js'
 import '@webawesome/input/input.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
@@ -14,13 +15,16 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import { clearAddResourceDraft } from '@/stores/addResource'
 import { fetchDB } from '@/utils/fetchDB'
 import type { FullResource } from '@/types/domain/resource'
+import type { WeekSchedule } from '@/types/add-resource-draft'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
+import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 
 const resources = ref<FullResource[]>([])
 const typologies = ref<TypologyRow[]>([])
 const categories = ref<CategoryRow[]>([])
+const openingHours = ref<WeekSchedule | null>(null)
 
 const search = ref('')
 const selectedTypology = ref('')
@@ -141,6 +145,10 @@ async function handleDelete() {
     resourceToDelete.value = null
   }
 }
+
+function showOpeningHours(resource: FullResource) {
+  openingHours.value = resource.opening_hours ?? null
+}
 </script>
 
 <template>
@@ -230,6 +238,16 @@ async function handleDelete() {
               <span>{{ m['map.access_public']() }}</span>
             </template>
           </div>
+          <div v-if="resource?.has_opening_hours">
+            <wa-icon name="clock"></wa-icon>
+            <button
+              class="c-link"
+              data-dialog="open opening-hours-dialog"
+              @click="showOpeningHours(resource)"
+            >
+              {{ m['map.schedule_heading']() }}
+            </button>
+          </div>
         </Grid>
 
         <Grid slot="footer" justify="end" gap="s">
@@ -260,6 +278,14 @@ async function handleDelete() {
     <p>{{ m['resources.delete_confirm_msg']({ title: resourceToDelete?.title || '' }) }}</p>
     <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
   </ConfirmationDialog>
+
+  <wa-dialog
+    id="opening-hours-dialog"
+    :label="m['map.schedule_heading']()"
+    light-dismiss
+  >
+    <OpeningHoursTable :opening-hours="openingHours" />
+  </wa-dialog>
 </template>
 
 <style scoped>

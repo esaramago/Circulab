@@ -13,6 +13,30 @@ export type DescriptionDraft = {
   images: DescriptionImageDraft[]
 }
 
+export type TimePeriod = {
+  start: string
+  end: string
+}
+
+export type DaySchedule = {
+  isOpen: boolean
+  periods: TimePeriod[]
+}
+
+export type WeekSchedule = Record<string, DaySchedule>
+
+export const WEEK_DAYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const
+
+export type WeekDay = typeof WEEK_DAYS[number]
+
 export type LocationDraft = {
   location_name: string
   address: string
@@ -22,8 +46,9 @@ export type LocationDraft = {
     longitude: number
   }
   accessibility: '' | 'public' | 'private'
+  has_opening_hours: boolean
   opening_days: string[]
-  opening_hours: Record<string, { start: string, end: string }>
+  opening_hours: Record<string, DaySchedule>
   email: string
   phone: number | null
   phone_area_code: number | null
@@ -59,6 +84,7 @@ export const initialLocationDraft: LocationDraft = {
     longitude: 0,
   },
   accessibility: '',
+  has_opening_hours: false,
   opening_days: [],
   opening_hours: {},
   email: '',
