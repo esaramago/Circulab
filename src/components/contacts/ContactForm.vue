@@ -73,7 +73,7 @@ const handleSubmit = async (event: Event) => {
         const firstField = Object.values(error.fields)[0]?.[0]
         errorMessage.value = firstIssue || firstField || m['contacts.error']()
       } else {
-        errorMessage.value = error.message || m['contacts.error']()
+        errorMessage.value = m['contacts.error']()
       }
     } else if (data?.success) {
       successMessage.value = data.message || m['contacts.success']()
@@ -81,7 +81,7 @@ const handleSubmit = async (event: Event) => {
       validateFields()
     }
   } catch (err: any) {
-    errorMessage.value = err.message || m['contacts.error']()
+    errorMessage.value = m['contacts.error']()
   } finally {
     loading.value = false
   }
