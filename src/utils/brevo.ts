@@ -24,8 +24,6 @@ export async function sendContactEmail({
   message,
 }: ContactFormInput): Promise<BrevoEmailResult> {
   const apiKey =
-    import.meta.env.SMTP_KEY ||
-    process.env.SMTP_KEY ||
     import.meta.env.BREVO_API_KEY ||
     process.env.BREVO_API_KEY
 
@@ -45,11 +43,11 @@ export async function sendContactEmail({
     'Circulab'
 
   if (!apiKey) {
-    console.warn('[Brevo] SMTP_KEY is not configured. Skipping email dispatch in development.')
+    console.warn('[Brevo] BREVO_API_KEY is not configured. Skipping email dispatch in development.')
     return {
       success: false,
       skipped: true,
-      error: 'SMTP_KEY is not configured',
+      error: 'BREVO_API_KEY is not configured',
     }
   }
 
