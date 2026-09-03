@@ -64,7 +64,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
 
       <wa-card class="form-card">
         <h2>{m['contacts.form_title']()}</h2>
-        <ContactForm client:load />
+        <ContactForm client:only="vue" />
       </wa-card>
     </div>
   </Container>
