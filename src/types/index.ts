@@ -15,6 +15,8 @@ export type {
   ImageType,
   GeoJsonPoint,
   ResourceRow,
+  ContactMessageRow,
+  ContactMessageInsert,
 } from '@/types/database'
 
 export type { AppUser } from '@/types/domain/user'
@@ -25,3 +27,4 @@ export type { ResourceType } from '@/schemas/resource.server'
 
 export type { Spacing } from '@/types/ui/grid'
 export type { MapLayer } from '@/types/domain/map'
+export type { ContactFormInput, ContactMessage } from '@/types/domain/contact'

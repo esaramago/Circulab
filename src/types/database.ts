@@ -6,6 +6,8 @@ export type Tables = Database['public']['Tables']
 
 export type UserRow = Tables['users']['Row']
 export type RoleRow = Tables['roles']['Row']
+export type ContactMessageRow = Tables['contact_messages']['Row']
+export type ContactMessageInsert = Tables['contact_messages']['Insert']
 
 export type CategoryRow = Tables['categories']['Row']
 export type CharacteristicRow = Tables['characteristics']['Row']
