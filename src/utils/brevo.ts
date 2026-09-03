@@ -42,12 +42,15 @@ export async function sendContactEmail({
     process.env.CONTACT_FROM_NAME ||
     'Circulab'
 
+  console.log('[Brevo] Attempting to send email. Key configured:', !!apiKey, '| From:', fromEmail, '| To:', toEmail)
+
   if (!apiKey) {
-    console.warn('[Brevo] BREVO_API_KEY is not configured. Skipping email dispatch in development.')
+    const msg = 'SMTP_KEY (ou BREVO_API_KEY) não está configurada no .env'
+    console.warn(`[Brevo] ${msg}`)
     return {
       success: false,
       skipped: true,
-      error: 'BREVO_API_KEY is not configured',
+      error: msg,
     }
   }
 
@@ -97,19 +100,20 @@ export async function sendContactEmail({
       }),
     })
 
+    const responseBody = await response.json().catch(() => ({}))
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      console.error('[Brevo] Failed to send email:', response.status, errorData)
+      console.error('[Brevo] Failed to send email:', response.status, responseBody)
       return {
         success: false,
-        error: errorData?.message || `HTTP ${response.status}`,
+        error: responseBody?.message || JSON.stringify(responseBody) || `HTTP ${response.status}`,
       }
     }
 
-    const data = await response.json().catch(() => ({}))
+    console.log('[Brevo] Email sent successfully! MessageId:', responseBody?.messageId)
     return {
       success: true,
-      messageId: data?.messageId,
+      messageId: responseBody?.messageId,
     }
   } catch (error: any) {
     console.error('[Brevo] Network or dispatch error:', error)
