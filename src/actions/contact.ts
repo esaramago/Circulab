@@ -46,12 +46,13 @@ export const submitContact = defineAction({
       }
 
       if (dbError || !emailResult.success) {
-        const errors: string[] = []
-        if (dbError) errors.push(`Base de dados: ${dbError.message}`)
-        if (!emailResult.success) errors.push(`Email: ${emailResult.error}`)
+        console.error('[Contact Action] Failure details:', {
+          dbError: dbError ? `${dbError.code}: ${dbError.message}` : null,
+          brevoError: emailResult.error || null,
+        })
 
         throw new ActionError({
-          message: `Falha no envio: ${errors.join(' — ')}`,
+          message: 'Ocorreu um erro ao enviar a mensagem. Por favor tenta novamente.',
           code: 'INTERNAL_SERVER_ERROR',
         })
       }

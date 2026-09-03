@@ -45,3 +45,6 @@ CREATE POLICY contact_messages_delete_admin
   TO authenticated
   USING (public.is_admin());
 
+-- Grant privileges to API roles (anon and authenticated) so RLS can control operations
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.contact_messages TO anon, authenticated;
+
