@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
+import { localizeHref } from '@/paraglide/runtime.js'
 ---
 
 <Layout title={m['terms.title']()}>
@@ -13,7 +14,8 @@ import { m } from '@/paraglide/messages.js'
 
     <section class="legal-page__section">
       <h2>{m['terms.sec1_title']()}</h2>
-      <p>{m['terms.sec1_text']()}</p>
+      <p>{m['terms.sec1_p1']()}</p>
+      <p>{m['terms.sec1_p2']()}</p>
     </section>
 
     <section class="legal-page__section">
@@ -23,17 +25,133 @@ import { m } from '@/paraglide/messages.js'
 
     <section class="legal-page__section">
       <h2>{m['terms.sec3_title']()}</h2>
-      <p>{m['terms.sec3_text']()}</p>
+      <h3>{m['terms.sec3_1_title']()}</h3>
+      <p>{m['terms.sec3_1_text']()}</p>
+      <h3>{m['terms.sec3_2_title']()}</h3>
+      <p>{m['terms.sec3_2_text']()}</p>
+      <h3>{m['terms.sec3_3_title']()}</h3>
+      <p>{m['terms.sec3_3_text']()}</p>
     </section>
 
     <section class="legal-page__section">
       <h2>{m['terms.sec4_title']()}</h2>
-      <p>{m['terms.sec4_text']()}</p>
+      <p>{m['terms.sec4_intro']()}</p>
+      <ul>
+        <li>{m['terms.sec4_commit1']()}</li>
+        <li>{m['terms.sec4_commit2']()}</li>
+        <li>{m['terms.sec4_commit3']()}</li>
+        <li>{m['terms.sec4_commit4']()}</li>
+      </ul>
+      <h3>{m['terms.sec4_prohibited_title']()}</h3>
+      <p>{m['terms.sec4_prohibited_intro']()}</p>
+      <ul>
+        <li>{m['terms.sec4_prohibited1']()}</li>
+        <li>{m['terms.sec4_prohibited2']()}</li>
+        <li>{m['terms.sec4_prohibited3']()}</li>
+        <li>{m['terms.sec4_prohibited4']()}</li>
+        <li>{m['terms.sec4_prohibited5']()}</li>
+        <li>{m['terms.sec4_prohibited6']()}</li>
+        <li>{m['terms.sec4_prohibited7']()}</li>
+        <li>{m['terms.sec4_prohibited8']()}</li>
+      </ul>
     </section>
 
     <section class="legal-page__section">
       <h2>{m['terms.sec5_title']()}</h2>
-      <p>{m['terms.sec5_text']()}</p>
+      <h3>{m['terms.sec5_1_title']()}</h3>
+      <p>{m['terms.sec5_1_text']()}</p>
+      <h3>{m['terms.sec5_2_title']()}</h3>
+      <p>{m['terms.sec5_2_text']()}</p>
+      <h3>{m['terms.sec5_3_title']()}</h3>
+      <p>{m['terms.sec5_3_text']()}</p>
+      <h3>{m['terms.sec5_4_title']()}</h3>
+      <p>{m['terms.sec5_4_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec6_title']()}</h2>
+      <h3>{m['terms.sec6_1_title']()}</h3>
+      <p>{m['terms.sec6_1_text']()}</p>
+      <h3>{m['terms.sec6_2_title']()}</h3>
+      <p>
+        {m['terms.sec6_2_text_before']()} <a href="mailto:info@circulab.pt">info@circulab.pt</a>.
+      </p>
+      <h3>{m['terms.sec6_3_title']()}</h3>
+      <p>{m['terms.sec6_3_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec7_title']()}</h2>
+      <h3>{m['terms.sec7_1_title']()}</h3>
+      <p>{m['terms.sec7_1_text']()}</p>
+      <h3>{m['terms.sec7_2_title']()}</h3>
+      <p>{m['terms.sec7_2_text']()}</p>
+      <h3>{m['terms.sec7_3_title']()}</h3>
+      <p>{m['terms.sec7_3_text']()}</p>
+      <h3>{m['terms.sec7_4_title']()}</h3>
+      <p>{m['terms.sec7_4_text']()}</p>
+      <h3>{m['terms.sec7_5_title']()}</h3>
+      <p>{m['terms.sec7_5_intro']()}</p>
+      <ul>
+        <li>{m['terms.sec7_5_li1']()}</li>
+        <li>{m['terms.sec7_5_li2']()}</li>
+        <li>{m['terms.sec7_5_li3']()}</li>
+        <li>{m['terms.sec7_5_li4']()}</li>
+      </ul>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec8_title']()}</h2>
+      <p>{m['terms.sec8_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec9_title']()}</h2>
+      <h3>{m['terms.sec9_1_title']()}</h3>
+      <p>
+        {m['terms.sec9_1_text_before']()} <a href={localizeHref('/privacidade')}>{m['terms.sec9_1_link']()}</a>.
+      </p>
+      <h3>{m['terms.sec9_2_title']()}</h3>
+      <p>{m['terms.sec9_2_text']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec10_title']()}</h2>
+      <p>{m['terms.sec10_p1']()}</p>
+      <p>{m['terms.sec10_p2']()}</p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec11_title']()}</h2>
+      <h3>{m['terms.sec11_1_title']()}</h3>
+      <p>{m['terms.sec11_1_text']()}</p>
+      <h3>{m['terms.sec11_2_title']()}</h3>
+      <p>{m['terms.sec11_2_text']()}</p>
+      <h3>{m['terms.sec11_3_title']()}</h3>
+      <p>
+        {m['terms.sec11_3_text_before']()} <a href="mailto:info@circulab.pt">info@circulab.pt</a> {m['terms.sec11_3_text_after']()}
+      </p>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['terms.sec12_title']()}</h2>
+      <h3>{m['terms.sec12_1_title']()}</h3>
+      <p>{m['terms.sec12_1_text']()}</p>
+      <h3>{m['terms.sec12_2_title']()}</h3>
+      <p>{m['terms.sec12_2_text']()}</p>
+      <h3>{m['terms.sec12_3_title']()}</h3>
+      <p>{m['terms.sec12_3_text']()}</p>
+      <h3>{m['terms.sec12_4_title']()}</h3>
+      <p>{m['terms.sec12_4_text']()}</p>
+      <h3>{m['terms.sec12_5_title']()}</h3>
+      <p>{m['terms.sec12_5_intro']()}</p>
+      <ul class="legal-page__contact-list">
+        <li><strong>{m['terms.sec12_5_email_label']()}:</strong> <a href="mailto:info@circulab.pt">info@circulab.pt</a></li>
+        <li><strong>{m['terms.sec12_5_address_label']()}:</strong> {m['terms.sec12_5_address_value']()}</li>
+      </ul>
+      <p class="legal-page__acknowledgment">
+        <strong>{m['terms.acknowledgment']()}</strong>
+      </p>
     </section>
   </article>
 </Layout>
@@ -83,9 +201,48 @@ import { m } from '@/paraglide/messages.js'
   color: var(--wa-color-neutral-90);
 }
 
+.legal-page__section h3 {
+  font-size: var(--wa-font-size-l);
+  color: var(--wa-color-neutral-90);
+  margin-block-start: var(--wa-space-xs);
+}
+
 .legal-page__section p {
   font-size: var(--wa-font-size-m);
   line-height: 1.6;
   color: var(--wa-color-neutral-80);
+}
+
+.legal-page__section ul {
+  padding-inline-start: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.legal-page__section li {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__section a {
+  color: var(--wa-color-brand-60);
+  text-decoration: underline;
+}
+
+.legal-page__section a:hover {
+  color: var(--wa-color-brand-50);
+}
+
+.legal-page__contact-list {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.legal-page__acknowledgment {
+  margin-block-start: var(--wa-space-s);
+  padding-block-start: var(--wa-space-m);
+  border-block-start: 1px solid var(--wa-color-neutral-100);
 }
 </style>
