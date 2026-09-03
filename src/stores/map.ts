@@ -1,7 +1,7 @@
 import { atom } from 'nanostores'
 import type { MapLayer } from '@/types'
 
-const basemapsApiKey = import.meta.env.BASEMAPS_API_KEY
+const basemapsApiKey = import.meta.env.PUBLIC_BASEMAPS_API_KEY || import.meta.env.BASEMAPS_API_KEY
 
 export const MAP_LAYERS: MapLayer[] = [
   {
