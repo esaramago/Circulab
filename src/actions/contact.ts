@@ -16,7 +16,7 @@ export const submitContact = defineAction({
       const supabase = createClient({ request, cookies })
 
       // 1. Store message in Supabase
-      const { error: dbError } = await supabase
+      const { data: dbData, error: dbError } = await supabase
         .from('contact_messages')
         .insert({
           name,
@@ -25,9 +25,12 @@ export const submitContact = defineAction({
           message,
           status: 'unread',
         })
+        .select()
 
       if (dbError) {
         console.error('[Contact Action] Supabase insert error:', dbError)
+      } else {
+        console.log('[Contact Action] Supabase insert success:', dbData)
       }
 
       // 2. Dispatch email notification via Brevo
@@ -38,14 +41,17 @@ export const submitContact = defineAction({
         message,
       })
 
-      if (!emailResult.success && !emailResult.skipped) {
+      if (!emailResult.success) {
         console.warn('[Contact Action] Brevo dispatch warning:', emailResult.error)
       }
 
-      // Fail only if both database persistence and email dispatch failed
-      if (dbError && !emailResult.success && !emailResult.skipped) {
+      if (dbError || !emailResult.success) {
+        const errors: string[] = []
+        if (dbError) errors.push(`Base de dados: ${dbError.message}`)
+        if (!emailResult.success) errors.push(`Email: ${emailResult.error}`)
+
         throw new ActionError({
-          message: 'Não foi possível enviar a mensagem. Por favor, tente novamente mais tarde.',
+          message: `Falha no envio: ${errors.join(' — ')}`,
           code: 'INTERNAL_SERVER_ERROR',
         })
       }

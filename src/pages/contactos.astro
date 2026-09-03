@@ -5,31 +5,12 @@ import Container from '@/components/ui/Container.vue'
 import Grid from '@/components/ui/Grid.vue'
 import Icon from '@/components/ui/Icon.vue'
 import Headline from '@/components/ui/Headline.vue'
-import { submitContact } from '@/actions/contact'
+import ContactForm from '@/components/contacts/ContactForm.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
-
-let errorMessage = ''
-let successMessage = ''
-
-if (Astro.request.method === 'POST') {
-  try {
-    const formData = await Astro.request.formData()
-    const { data, error } = await Astro.callAction(submitContact, formData)
-    if (error) {
-      errorMessage = error.message || m['contacts.error']()
-    } else if (data?.success) {
-      successMessage = data.message || m['contacts.success']()
-    }
-  } catch (err: any) {
-    errorMessage = err.message || m['contacts.error']()
-  }
-}
 ---
 
 <script>
   import '@awesome.me/webawesome/dist/components/button/button.js'
-  import '@awesome.me/webawesome/dist/components/input/input.js'
-  import '@awesome.me/webawesome/dist/components/textarea/textarea.js'
   import '@awesome.me/webawesome/dist/components/card/card.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/callout/callout.js'
@@ -83,65 +64,7 @@ if (Astro.request.method === 'POST') {
 
       <wa-card class="form-card">
         <h2>{m['contacts.form_title']()}</h2>
-
-        {successMessage && (
-          <wa-callout variant="success" class="status-message">
-            <wa-icon slot="icon" name="circle-check"></wa-icon>
-            {successMessage}
-          </wa-callout>
-        )}
-
-        {errorMessage && (
-          <wa-callout variant="danger" class="status-message">
-            <wa-icon slot="icon" name="triangle-exclamation"></wa-icon>
-            {errorMessage}
-          </wa-callout>
-        )}
-
-        <form method="post">
-          <Grid gap="m" direction="column">
-            <wa-input
-              id="name"
-              name="name"
-              type="text"
-              label={m['contacts.name']()}
-              placeholder={m['contacts.name_placeholder']()}
-              required
-            ></wa-input>
-
-            <wa-input
-              id="email"
-              name="email"
-              type="email"
-              label={m['contacts.email']()}
-              placeholder={m['contacts.email_placeholder']()}
-              required
-            ></wa-input>
-
-            <wa-input
-              id="subject"
-              name="subject"
-              type="text"
-              label={m['contacts.subject']()}
-              placeholder={m['contacts.subject_placeholder']()}
-              required
-            ></wa-input>
-
-            <wa-textarea
-              id="message"
-              name="message"
-              label={m['contacts.message']()}
-              placeholder={m['contacts.message_placeholder']()}
-              rows={5}
-              required
-            ></wa-textarea>
-
-            <wa-button variant="brand" type="submit" size="l">
-              <wa-icon name="paper-plane" slot="start"></wa-icon>
-              {m['contacts.send']()}
-            </wa-button>
-          </Grid>
-        </form>
+        <ContactForm client:load />
       </wa-card>
     </div>
   </Container>
@@ -242,9 +165,5 @@ if (Astro.request.method === 'POST') {
 
   .info-callout {
     margin-block-start: var(--wa-space-m);
-  }
-
-  .status-message {
-    margin-block-end: var(--wa-space-m);
   }
 </style>
