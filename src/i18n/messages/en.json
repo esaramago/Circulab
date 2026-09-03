@@ -37,7 +37,8 @@
 		"edit": "Edit",
 		"suggest_edit": "Suggest edit",
 		"loading": "Loading...",
-		"error": "Error"
+		"error": "Error",
+		"schedule_heading": "Schedule"
 	},
 	"about": {
 		"title": "About",

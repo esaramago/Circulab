@@ -37,7 +37,8 @@
 		"edit": "Editar",
 		"suggest_edit": "Sugerir edição",
 		"loading": "Carregando...",
-		"error": "Erro"
+		"error": "Erro",
+		"schedule_heading": "Horário"
 	},
 	"about": {
 		"title": "Sobre",
