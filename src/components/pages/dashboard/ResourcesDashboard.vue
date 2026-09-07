@@ -304,7 +304,7 @@ function showOpeningHours(resource: FullResource) {
 wa-card {
   > img {
     object-fit: cover;
-    height: 180px;
+    max-height: 40rem;
   }
   &::part(body) {
     flex: 1;

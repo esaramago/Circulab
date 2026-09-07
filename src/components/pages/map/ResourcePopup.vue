@@ -184,7 +184,7 @@ watch(() => props.resourceId, async () => {
 }
 .popup__image {
   width: 100%;
-  height: 20rem;
+  max-height: 40rem;
   object-fit: cover;
   border-radius: var(--wa-border-radius-m);
 }
