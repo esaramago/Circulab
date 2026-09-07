@@ -258,7 +258,7 @@ export const getFullResources = defineAction({
         ),
         coordinates: get_geojson,
         status
-      `)
+      `).order('created_date', { ascending: false })
 
       if (error) {
         console.error('[Action] getFullResources error from Supabase:', error)
