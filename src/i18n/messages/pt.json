@@ -312,6 +312,8 @@
 		"terms_of_use": "Termos de Uso",
 		"cookie_preferences": "Preferências de Cookies",
 		"legal_notice": "Aviso Legal e Licença",
+		"eco_design": "Eco-design e sustentabilidade",
+		"developed_by": "Desenvolvido por",
 		"rights_reserved": "Todos os direitos reservados."
 	},
 	"privacy": {
@@ -453,5 +455,28 @@
 		"save": "Guardar preferências",
 		"accept_all": "Aceitar todos",
 		"close": "Fechar"
+	},
+	"ecodesign": {
+		"title": "Eco-design e sustentabilidade digital",
+		"subtitle": "Compromisso com o baixo impacto ambiental, transparência técnica e código aberto.",
+		"last_updated": "Última atualização: Setembro de 2026",
+		"sec1_title": "1. Desenvolvimento e código aberto",
+		"sec1_p1": "A plataforma web do Circulab foi desenvolvida por Emanuel Saramago.",
+		"sec1_p2": "Acreditamos na partilha de conhecimento e na transparência: todo o código fonte da plataforma é aberto e está disponível no GitHub sob licença comunitária.",
+		"sec1_repo_label": "Repositório do projeto no GitHub",
+		"sec1_author_label": "Perfil do programador (Emanuel Saramago)",
+		"sec2_title": "2. Arquitetura e tecnologias",
+		"sec2_intro": "A seleção tecnológica foi orientada pela sobriedade, desempenho e durabilidade:",
+		"sec2_astro": "Astro (SSR): Renderização no servidor que entrega HTML limpo e pré-computado, eliminando o envio de JavaScript desnecessário para o navegador.",
+		"sec2_vue": "Vue 3: Utilizado apenas sob a forma de ilhas dinâmicas estritamente nos componentes que exigem interação em tempo real.",
+		"sec2_webawesome": "WebAwesome: Biblioteca de componentes web nativos, reduzindo dependências pesadas e garantindo conformidade com os padrões web.",
+		"sec2_leaflet": "Leaflet & OpenStreetMap: Cartografia leve e ágil sem recurso a serviços comerciais pesados de mapeamento.",
+		"sec2_supabase": "Supabase: Gestão de base de dados escalável e eficiente.",
+		"sec3_title": "3. Redução da pegada digital e consumo energético",
+		"sec3_intro": "A sustentabilidade digital é parte indissociável da nossa missão ecológica:",
+		"sec3_item1": "Eficiência de dados: Menor volume de dados transferidos traduz-se diretamente em menor consumo energético nos servidores, redes e baterias dos utilizadores.",
+		"sec3_item2": "Otimização de formatos: Utilização prioritária de gráficos vetoriais (SVG) e imagens modernas em WebP com compressão eficiente.",
+		"sec3_item3": "Sem rastreamento invasivo: Não utilizamos cookies de publicidade nem scripts pesados de analítica comercial de terceiros.",
+		"sec3_item4": "Modo escuro por defeito: A paleta escura contribui para a poupança de energia em ecrãs com tecnologia OLED/AMOLED."
 	}
 }

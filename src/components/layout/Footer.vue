@@ -44,28 +44,32 @@ function openCookiePreferences(event: Event) {
 
         <div>
           <h2 class="footer__heading">{{ m['footer.quick_links']() }}</h2>
-          <ul class="footer__links">
+          <Grid class="navigation" tag="ul" direction="column" gap="xs">
             <li><a :href="localizeHref('/')">{{ m['nav.home']() }}</a></li>
             <li><a :href="localizeHref('/mapa')">{{ m['map.title']() }}</a></li>
             <li><a :href="localizeHref('/sobre')">{{ m['about.title']() }}</a></li>
             <li><a :href="localizeHref('/contactos')">{{ m['contacts.title']() }}</a></li>
-          </ul>
+          </Grid>
         </div>
 
         <div>
           <h2 class="footer__heading">{{ m['footer.legal']() }}</h2>
-          <ul class="footer__links">
+          <Grid class="navigation" tag="ul" direction="column" gap="xs">
             <li><a :href="localizeHref('/privacidade')">{{ m['footer.privacy_policy']() }}</a></li>
             <li><a :href="localizeHref('/termos')">{{ m['footer.terms_of_use']() }}</a></li>
-            <li><a href="#" @click="openCookiePreferences">{{ m['footer.cookie_preferences']() }}</a></li>
+            <li><button @click="openCookiePreferences">{{ m['footer.cookie_preferences']() }}</button></li>
             <li><a :href="localizeHref('/aviso-legal')">{{ m['footer.legal_notice']() }}</a></li>
-          </ul>
+            <li><a :href="localizeHref('/eco-design')">{{ m['footer.eco_design']() }}</a></li>
+          </Grid>
         </div>
       </Grid>
 
       <div class="footer__bottom">
-        <Grid justify="space-between" align="center" wrap>
+        <Grid justify="space-between" align="center" wrap gap="xs">
           <p>&copy; {{ new Date().getFullYear() }} {{ m.site_title() }}. {{ m['footer.rights_reserved']() }}</p>
+          <p class="footer__credits">
+            {{ m['footer.developed_by']() }} <a href="https://github.com/esaramago" target="_blank" rel="noopener noreferrer">Emanuel Saramago</a>
+          </p>
         </Grid>
       </div>
     </Container>
@@ -89,23 +93,20 @@ function openCookiePreferences(event: Event) {
   margin-block-end: var(--wa-space-s);
 }
 
-.footer__links {
+.navigation {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-xs);
 }
 
-.footer__links a {
+.navigation :where(a, button) {
   color: var(--wa-color-neutral-70);
   text-decoration: none;
   font-size: var(--wa-font-size-s);
   transition: color 0.2s ease;
 }
 
-.footer__links a:hover {
+.navigation :where(a, button):hover {
   color: var(--wa-color-brand-60);
 }
 
