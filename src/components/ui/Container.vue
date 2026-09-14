@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  width?: 'xs' | 's' | 'm'
+  width?: 'xs' | 's' | 'm' | 'l'
 }>()
 </script>
 
@@ -27,6 +27,9 @@ const props = defineProps<{
 }
 .l-container--width-s {
   --width: 80rem;
+}
+.l-container--width-l {
+  --width: 140rem;
 }
 
 </style>
