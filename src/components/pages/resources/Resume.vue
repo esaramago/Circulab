@@ -13,7 +13,8 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
 import GalleryItem from '@/components/ui/GalleryItem.vue'
-import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
+import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
+
 
 type AddResourcePayload = DescriptionDraft & LocationDraft
 
@@ -189,63 +190,15 @@ async function handleSubmit() {
           <GalleryItem v-for="image in resumeData.images" :key="image.id" :src="image.url" :alt="image.alt" />
         </template>
       </Gallery>
-      <div>
-        <h2>{{ resumeData.title }}</h2>
-        <p>{{ category }} ({{ typology }})</p>
-        <p v-if="characteristics">{{ characteristics }}</p>
-      </div>
 
-      <Grid gap="xs" direction="column" class="list">
-        <div>
-          <wa-icon name="location-dot"></wa-icon>
-          <template v-if="resumeData.location_name">{{resumeData.location_name}}, </template>{{resumeData.address}},
-          {{ resumeData.postal_code }}
-        </div>
-        <div v-if="resumeData.coordinates">
-          <wa-icon name="map"></wa-icon>
-          <a
-            :href="`https://www.google.com/maps/search/?api=1&query=${resumeData.coordinates?.latitude},${resumeData.coordinates?.longitude}`"
-            target="_blank"
-            :title="m['map.open_google_maps']()"
-          >
-            {{ resumeData.coordinates?.latitude }}, {{ resumeData.coordinates?.longitude }}
-          </a>
-        </div>
-        <div v-if="resumeData.email">
-          <wa-icon name="at"></wa-icon>
-          {{ resumeData.email }}
-        </div>
-        <div v-if="resumeData.phone">
-          <wa-icon name="phone"></wa-icon>
-          +{{resumeData.phone_area_code}} {{ resumeData.phone }}
-        </div>
-        <template v-if="resumeData.networks && resumeData.networks.length > 0">
-          <div v-for="net in resumeData.networks" :key="net.slug">
-            <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
-            <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
-          </div>
-        </template>
-        <div v-if="resumeData.access">
-          <template v-if="resumeData.access === 'private'">
-            <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-            <span>{{ m['map.access_limited']() }}</span>
-          </template>
-          <template v-else-if="resumeData.access === 'public'">
-            <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-            <span>{{ m['map.access_public']() }}</span>
-          </template>
-        </div>
-      </Grid>
-
-      <div v-if="resumeData.has_opening_hours" class="schedule-section">
-        <strong>{{ m['resources.schedule_heading']() }}</strong>
-        <OpeningHoursTable :opening-hours="resumeData.opening_hours" />
-      </div>
-
-      <div>
-        <strong>{{ m['resources.description_label']() }}</strong>
-        <p>{{ resumeData.description }}</p>
-      </div>
+      <ResourceSummary
+        :resource="{
+          ...resumeData,
+          category,
+          typology,
+          characteristics,
+        }"
+      />
 
     </Grid>
   </wa-card>
@@ -263,10 +216,3 @@ async function handleSubmit() {
   </Grid>
 </template>
 
-<style scoped>
-.list {
-  wa-icon {
-    padding-inline-end: var(--wa-space-xs);
-  }
-}
-</style>

@@ -42,3 +42,24 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   has_opening_hours?: boolean
   opening_hours?: WeekSchedule | null
 } & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone' | 'phone_area_code'>
+
+export type ResourceSummaryData = {
+  title?: string | null
+  category?: string | null
+  typology?: string | null
+  characteristics?: string | null
+  location?: string | null
+  location_name?: string | null
+  address?: string | null
+  postal_code?: string | null
+  coordinates?: { latitude: number; longitude: number } | GeoJsonPoint | null
+  email?: string | null
+  phone?: string | number | null
+  phone_area_code?: string | number | null
+  networks?: { slug: string; name?: string; value: string; icon?: string | null }[] | null
+  access?: string | null
+  has_opening_hours?: boolean | null
+  opening_hours?: WeekSchedule | null
+  description?: string | null
+}
+

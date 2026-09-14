@@ -20,6 +20,8 @@ import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
 import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
+import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
+
 
 const resources = ref<FullResource[]>([])
 const typologies = ref<TypologyRow[]>([])
@@ -204,51 +206,15 @@ function showOpeningHours(resource: FullResource) {
           <p>{{ resource?.category }} ({{ resource?.typology }})</p>
         </div>
         
-        <Grid gap="xs" direction="column">
-          <div>
-            <wa-icon name="location-dot"></wa-icon>
-            <template v-if="resource.location">{{resource.location}}, </template>{{resource.address}},
-            {{ resource.postal_code }}
-          </div>
-          <div v-if="resource?.coordinates">
-            <wa-icon name="map"></wa-icon>
-            <a
-              :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
-              target="_blank"
-              :title="m['map.open_google_maps']()"
-            >
-              {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
-            </a>
-          </div>
-          <div v-if="resource?.email">
-            <wa-icon name="at"></wa-icon>
-            {{ resource.email }}
-          </div>
-          <div v-if="resource?.phone">
-            <wa-icon name="phone"></wa-icon>
-            {{ resource.phone }}
-          </div>
-          <div v-if="resource?.access">
-            <template v-if="resource.access === 'private'">
-              <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-              <span>{{ m['map.access_limited']() }}</span>
-            </template>
-            <template v-else-if="resource.access === 'public'">
-              <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-              <span>{{ m['map.access_public']() }}</span>
-            </template>
-          </div>
-          <div v-if="resource?.has_opening_hours">
-            <wa-icon name="clock"></wa-icon>
-            <button
-              class="c-link"
-              data-dialog="open opening-hours-dialog"
-              @click="showOpeningHours(resource)"
-            >
-              {{ m['map.schedule_heading']() }}
-            </button>
-          </div>
-        </Grid>
+        <ResourceSummary
+          :resource="resource"
+          :show-header="false"
+          :show-description="false"
+          :show-networks="false"
+          schedule-mode="button"
+          @open-schedule="showOpeningHours(resource)"
+        />
+
 
         <Grid slot="footer" justify="end" gap="s">
           <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
