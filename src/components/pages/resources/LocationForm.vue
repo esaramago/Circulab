@@ -272,9 +272,8 @@ function handleSubmit(event: Event) {
         <p v-else-if="isAdressValid" class="u-text-success">{{ m['resources.address_valid']() }}</p>
       </Grid>
       <wa-input name="postal_code" required :label="m['resources.postal_code_label']()" :pattern="postCodeRegex.source" :hint="m['resources.postal_code_hint']()" @change="handleChange" :value="draft.postal_code"></wa-input>
-      
 
-      <wa-radio-group :label="m['resources.access_label']()" name="access" @change="handleInput" required :value="draft.access">
+      <wa-radio-group :label="m['resources.access_label']()" name="access" @change="handleInput" :value="draft.access">
         <wa-radio value="public">{{ m['resources.access_public']() }}</wa-radio>
         <wa-radio value="private">{{ m['resources.access_private']() }}</wa-radio>
       </wa-radio-group>
