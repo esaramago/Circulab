@@ -148,7 +148,7 @@ async function handleSubmit() {
       email: resumeData.value?.email || undefined,
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
-      accessibility: resumeData.value?.accessibility || undefined,
+      access: resumeData.value?.access || undefined,
       has_opening_hours: resumeData.value?.has_opening_hours ?? false,
       opening_hours: resumeData.value?.has_opening_hours ? (resumeData.value?.opening_hours || undefined) : undefined,
       networks: resumeData.value?.networks ? resumeData.value.networks.map(n => ({ slug: n.slug, value: n.value })) : undefined,
@@ -225,12 +225,12 @@ async function handleSubmit() {
             <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
           </div>
         </template>
-        <div v-if="resumeData.accessibility">
-          <template v-if="resumeData.accessibility === 'private'">
+        <div v-if="resumeData.access">
+          <template v-if="resumeData.access === 'private'">
             <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
             <span>{{ m['map.access_limited']() }}</span>
           </template>
-          <template v-else-if="resumeData.accessibility === 'public'">
+          <template v-else-if="resumeData.access === 'public'">
             <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
             <span>{{ m['map.access_public']() }}</span>
           </template>

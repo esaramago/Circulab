@@ -165,8 +165,8 @@ function handleInput(event: Event) {
   }
 
 
-  if (name === 'accessibility') {
-    updateDraft({ [key]: field.value as LocationDraft['accessibility'] })
+  if (name === 'access') {
+    updateDraft({ [key]: field.value as LocationDraft['access'] })
     return
   }
 
@@ -274,9 +274,9 @@ function handleSubmit(event: Event) {
       <wa-input name="postal_code" required :label="m['resources.postal_code_label']()" :pattern="postCodeRegex.source" :hint="m['resources.postal_code_hint']()" @change="handleChange" :value="draft.postal_code"></wa-input>
       
 
-      <wa-radio-group :label="m['resources.accessibility_label']()" name="accessibility" @change="handleInput" required :value="draft.accessibility">
-        <wa-radio value="public">{{ m['resources.accessibility_public']() }}</wa-radio>
-        <wa-radio value="private">{{ m['resources.accessibility_private']() }}</wa-radio>
+      <wa-radio-group :label="m['resources.access_label']()" name="access" @change="handleInput" required :value="draft.access">
+        <wa-radio value="public">{{ m['resources.access_public']() }}</wa-radio>
+        <wa-radio value="private">{{ m['resources.access_private']() }}</wa-radio>
       </wa-radio-group>
 
       <Grid v-if="inModal" justify="end" gap="xs">

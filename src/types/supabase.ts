@@ -122,7 +122,7 @@ export type Database = {
       }
       locations: {
         Row: {
-          accessibility: string | null
+          access: string | null
           address: string | null
           coordinates: unknown
           created_at: string
@@ -138,7 +138,7 @@ export type Database = {
           get_geojson: Json | null
         }
         Insert: {
-          accessibility?: string | null
+          access?: string | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
@@ -153,7 +153,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          accessibility?: string | null
+          access?: string | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
