@@ -314,6 +314,8 @@
 		"terms_of_use": "Terms of Use",
 		"cookie_preferences": "Cookie Preferences",
 		"legal_notice": "Legal Notice & License",
+		"eco_design": "Eco-design & sustainability",
+		"developed_by": "Developed by",
 		"rights_reserved": "All rights reserved."
 	},
 	"privacy": {
@@ -455,5 +457,28 @@
 		"save": "Save preferences",
 		"accept_all": "Accept all",
 		"close": "Close"
+	},
+	"ecodesign": {
+		"title": "Eco-design and digital sustainability",
+		"subtitle": "Commitment to low environmental impact, technical transparency, and open source.",
+		"last_updated": "Last updated: September 2026",
+		"sec1_title": "1. Development and open source",
+		"sec1_p1": "The Circulab web platform was developed by Emanuel Saramago.",
+		"sec1_p2": "We believe in knowledge sharing and transparency: all source code of the platform is open source and available on GitHub under a community license.",
+		"sec1_repo_label": "Project repository on GitHub",
+		"sec1_author_label": "Developer profile (Emanuel Saramago)",
+		"sec2_title": "2. Architecture and technologies",
+		"sec2_intro": "The technical stack was chosen with focus on sobriety, performance, and durability:",
+		"sec2_astro": "Astro (SSR): Server-side rendering delivering lean, pre-computed HTML, eliminating unnecessary JavaScript sent to the browser.",
+		"sec2_vue": "Vue 3: Used exclusively as dynamic islands strictly for components that require real-time user interaction.",
+		"sec2_webawesome": "WebAwesome: Native web component library, reducing heavy dependencies and adhering to modern web standards.",
+		"sec2_leaflet": "Leaflet & OpenStreetMap: Lightweight, fast mapping without heavy commercial mapping tracking.",
+		"sec2_supabase": "Supabase: Scalable and efficient database management.",
+		"sec3_title": "3. Digital footprint and energy reduction",
+		"sec3_intro": "Digital sustainability is an essential part of our ecological mission:",
+		"sec3_item1": "Data efficiency: Lower data transfer directly translates into less energy consumption across servers, network infrastructure, and user devices.",
+		"sec3_item2": "Asset optimization: Prioritizing vector graphics (SVG) and modern WebP images with high compression.",
+		"sec3_item3": "No invasive tracking: No advertising cookies or heavy third-party commercial analytics scripts.",
+		"sec3_item4": "Dark mode by default: The dark palette helps save power on OLED/AMOLED displays."
 	}
 }

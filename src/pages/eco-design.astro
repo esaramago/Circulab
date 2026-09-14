@@ -1,0 +1,132 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { m } from '@/paraglide/messages.js'
+---
+
+<Layout title={m['ecodesign.title']()}>
+  <article class="legal-page">
+    <header class="legal-page__header">
+      <h1>{m['ecodesign.title']()}</h1>
+      <p class="legal-page__subtitle">{m['ecodesign.subtitle']()}</p>
+      <p class="legal-page__date">{m['ecodesign.last_updated']()}</p>
+    </header>
+
+    <section class="legal-page__section">
+      <h2>{m['ecodesign.sec1_title']()}</h2>
+      <p>{m['ecodesign.sec1_p1']()}</p>
+      <p>{m['ecodesign.sec1_p2']()}</p>
+      <ul>
+        <li>
+          <a href="https://github.com/esaramago" target="_blank" rel="noopener noreferrer">
+            {m['ecodesign.sec1_author_label']()}
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/esaramago/Circulab" target="_blank" rel="noopener noreferrer">
+            {m['ecodesign.sec1_repo_label']()}
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['ecodesign.sec2_title']()}</h2>
+      <p>{m['ecodesign.sec2_intro']()}</p>
+      <ul>
+        <li>{m['ecodesign.sec2_astro']()}</li>
+        <li>{m['ecodesign.sec2_vue']()}</li>
+        <li>{m['ecodesign.sec2_webawesome']()}</li>
+        <li>{m['ecodesign.sec2_leaflet']()}</li>
+        <li>{m['ecodesign.sec2_supabase']()}</li>
+      </ul>
+    </section>
+
+    <section class="legal-page__section">
+      <h2>{m['ecodesign.sec3_title']()}</h2>
+      <p>{m['ecodesign.sec3_intro']()}</p>
+      <ul>
+        <li>{m['ecodesign.sec3_item1']()}</li>
+        <li>{m['ecodesign.sec3_item2']()}</li>
+        <li>{m['ecodesign.sec3_item3']()}</li>
+        <li>{m['ecodesign.sec3_item4']()}</li>
+      </ul>
+    </section>
+  </article>
+</Layout>
+
+<style>
+.legal-page {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-block: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xl);
+}
+
+.legal-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+  border-block-end: 1px solid var(--wa-color-neutral-100);
+  padding-block-end: var(--wa-space-m);
+}
+
+.legal-page__header h1 {
+  font-size: var(--wa-font-size-3xl);
+  color: var(--wa-color-brand-60);
+  line-height: 1.2;
+}
+
+.legal-page__subtitle {
+  font-size: var(--wa-font-size-l);
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__date {
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-neutral-60);
+}
+
+.legal-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-s);
+}
+
+.legal-page__section h2 {
+  font-size: var(--wa-font-size-xl);
+  color: var(--wa-color-neutral-90);
+}
+
+.legal-page__section p {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__section ul {
+  padding-inline-start: var(--wa-space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.legal-page__section li {
+  font-size: var(--wa-font-size-m);
+  line-height: 1.6;
+  color: var(--wa-color-neutral-80);
+}
+
+.legal-page__section a {
+  color: var(--wa-color-brand-60);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease;
+}
+
+.legal-page__section a:hover {
+  color: var(--wa-color-brand-50);
+}
+</style>
+
