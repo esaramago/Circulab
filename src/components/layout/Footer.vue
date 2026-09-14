@@ -22,13 +22,13 @@ function openCookiePreferences(event: Event) {
       <Grid fullWidth break="mobile">
         <Grid direction="column" gap="xs">
           <a :href="localizeHref('/')" class="footer__logo">
-            <img src="/img/circulab-logo.svg" alt="Circulab" height="32" />
+            <img src="/img/circulab-logo.svg" :alt="m.site_title()" height="32" />
           </a>
           <p class="u-text-small">{{ m['footer.tagline']() }}</p>
         </Grid>
 
         <div>
-          <h2 class="footer__heading">Apoio</h2>
+          <h2 class="footer__heading">{{ m['footer.support']() }}</h2>
           <Grid align="center" gap="s">
             <a href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
               <img src="/img/rizoma-logo.svg" alt="Rizoma Cooperativa Integral" height="80" />
