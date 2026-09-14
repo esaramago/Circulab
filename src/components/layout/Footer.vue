@@ -104,6 +104,7 @@ function openCookiePreferences(event: Event) {
   text-decoration: none;
   font-size: var(--wa-font-size-s);
   transition: color 0.2s ease;
+  cursor: pointer;
 }
 
 .navigation :where(a, button):hover {
