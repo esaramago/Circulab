@@ -228,12 +228,12 @@ function showOpeningHours(resource: FullResource) {
             <wa-icon name="phone"></wa-icon>
             {{ resource.phone }}
           </div>
-          <div v-if="resource?.accessibility">
-            <template v-if="resource.accessibility === 'private'">
+          <div v-if="resource?.access">
+            <template v-if="resource.access === 'private'">
               <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
               <span>{{ m['map.access_limited']() }}</span>
             </template>
-            <template v-else-if="resource.accessibility === 'public'">
+            <template v-else-if="resource.access === 'public'">
               <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
               <span>{{ m['map.access_public']() }}</span>
             </template>
@@ -304,7 +304,7 @@ function showOpeningHours(resource: FullResource) {
 wa-card {
   > img {
     object-fit: cover;
-    height: 180px;
+    max-height: 40rem;
   }
   &::part(body) {
     flex: 1;

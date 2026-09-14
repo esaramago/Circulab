@@ -102,12 +102,12 @@ watch(() => props.resourceId, async () => {
                 <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
               </div>
             </template>
-            <div v-if="resource?.accessibility">
-              <template v-if="resource.accessibility === 'private'">
+            <div v-if="resource?.access">
+              <template v-if="resource.access === 'private'">
                 <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
                 <span>{{ m['map.access_limited']() }}</span>
               </template>
-              <template v-else-if="resource.accessibility === 'public'">
+              <template v-else-if="resource.access === 'public'">
                 <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
                 <span>{{ m['map.access_public']() }}</span>
               </template>
@@ -184,7 +184,7 @@ watch(() => props.resourceId, async () => {
 }
 .popup__image {
   width: 100%;
-  height: 20rem;
+  max-height: 40rem;
   object-fit: cover;
   border-radius: var(--wa-border-radius-m);
 }

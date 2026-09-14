@@ -7,23 +7,22 @@ import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
 import { onMounted, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
-import type { Database } from '@/types/supabase'
 import { useTypologyCascade } from '@/composables/useTypologyCascade'
 import { $descriptionDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded, clearAddResourceDraft } from '@/stores/addResource'
 import type { DescriptionDraft, DescriptionImageDraft } from '@/types/add-resource-draft'
+import type { TypologyRow } from '@/types/database'
 import { getImage } from '@/utils/imageStore'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 
-type typologiesType = Database['public']['Tables']['typologies']['Row'][]
-
 const props = withDefaults(
   defineProps<{
-    typologies: typologiesType | null
+    typologies?: TypologyRow[] | null
     inModal?: boolean
   }>(),
   {
     inModal: false,
+    typologies: null,
   }
 )
 
@@ -38,13 +37,18 @@ const isEdit = computed(() => !!editingResourceId.value)
 const isMounted = ref(false)
 
 const {
+  typologies,
   categories,
   characteristics,
+  loadTypologies,
   loadCategories,
   loadCharacteristics,
-} = useTypologyCascade()
+} = useTypologyCascade(props.typologies)
 
 onMounted(async () => {
+  if (!typologies.value.length) {
+    await loadTypologies()
+  }
   const urlParams = new URLSearchParams(window.location.search)
   const id = urlParams.get('id')
   if (id) {
@@ -199,10 +203,16 @@ function handleSubmit(event: Event) {
         :value="draft.typology_id"
         required
         @input="handleChange"
+        :key="`typology-${typologies.length}`"
       >
-        <template v-if="typologies && typologies.length > 0">
-          <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">{{ typology.name }}</wa-option>
-        </template>
+        <wa-option
+          v-for="typology in typologies"
+          :key="typology.id"
+          :value="typology.id"
+          :label="typology.name"
+        >
+          {{ typology.name }}
+        </wa-option>
       </wa-select>
       <wa-select
         v-if="draft.typology_id"
@@ -211,10 +221,16 @@ function handleSubmit(event: Event) {
         required
         :value="draft.category_id"
         @input="handleChange"
+        :key="`category-${draft.typology_id}-${categories.length}`"
       >
-        <template v-if="categories.length > 0">
-          <wa-option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</wa-option>
-        </template>
+        <wa-option
+          v-for="category in categories"
+          :key="category.id"
+          :value="category.id"
+          :label="category.name"
+        >
+          {{ category.name }}
+        </wa-option>
       </wa-select>
       <wa-select
         v-if="draft.category_id && characteristics.length > 0"
@@ -223,10 +239,16 @@ function handleSubmit(event: Event) {
         :value="draft.characteristics_ids"
         @input="handleChange"
         multiple
+        :key="`characteristics-${draft.category_id}-${characteristics.length}`"
       >
-        <template v-if="characteristics.length > 0">
-          <wa-option v-for="characteristic in characteristics" :key="characteristic.id" :value="characteristic.id">{{ characteristic.name }}</wa-option>
-        </template>
+        <wa-option
+          v-for="characteristic in characteristics"
+          :key="characteristic.id"
+          :value="characteristic.id"
+          :label="characteristic.name"
+        >
+          {{ characteristic.name }}
+        </wa-option>
       </wa-select>
 
       <Grid v-if="inModal" justify="end" gap="s">

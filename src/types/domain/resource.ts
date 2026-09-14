@@ -36,7 +36,7 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   characteristics_ids?: string[]
   location: LocationRow['name']
   coordinates: GeoJsonPoint
-  accessibility: LocationRow['accessibility']
+  access: LocationRow['access']
   status?: PinRow['status']
   networks?: { slug: string; name: string; value: string; icon?: string | null }[]
   has_opening_hours?: boolean

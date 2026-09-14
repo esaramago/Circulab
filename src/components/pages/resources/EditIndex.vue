@@ -18,13 +18,6 @@ import {
 } from '@/stores/addResource'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
-import type { Database } from '@/types/supabase'
-
-type typologiesType = Database['public']['Tables']['typologies']['Row'][]
-
-defineProps<{
-  typologies: typologiesType | null
-}>()
 
 const editingResourceId = useStore($editingResourceId)
 
@@ -75,7 +68,7 @@ const detailedChanges = computed(() => {
     if (currLoc.coordinates?.latitude !== initLoc.coordinates?.latitude || currLoc.coordinates?.longitude !== initLoc.coordinates?.longitude) {
       changes.push(m['resources.coordinates']().replace(':', ''))
     }
-    if (currLoc.accessibility !== initLoc.accessibility) changes.push(m['resources.accessibility_label']())
+    if (currLoc.access !== initLoc.access) changes.push(m['resources.access_label']())
   }
 
   if (savedChanges.value.has('contacts') && initLoc) {
@@ -214,7 +207,6 @@ function handleDialogHide(type: string, event: Event) {
     >
       <DescriptionForm
         v-if="activeModal === 'description'"
-        :typologies="typologies"
         :in-modal="true"
         @save="handleSaveModal('description')"
         @cancel="handleCancelModal"

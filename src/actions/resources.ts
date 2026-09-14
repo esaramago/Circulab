@@ -113,7 +113,7 @@ export const getResource = defineAction({
           email,
           phone,
           phone_area_code,
-          accessibility,
+          access,
           has_opening_hours,
           opening_hours,
           location_networks (
@@ -163,7 +163,7 @@ export const getResource = defineAction({
         phone: data.location?.phone || null,
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
-        accessibility: data.location?.accessibility || null,
+        access: data.location?.access || null,
         has_opening_hours: data.location?.has_opening_hours ?? false,
         opening_hours: (data.location?.opening_hours as any) || null,
         networks,
@@ -252,13 +252,13 @@ export const getFullResources = defineAction({
           email,
           phone,
           phone_area_code,
-          accessibility,
+          access,
           has_opening_hours,
           opening_hours
         ),
         coordinates: get_geojson,
         status
-      `)
+      `).order('created_date', { ascending: false })
 
       if (error) {
         console.error('[Action] getFullResources error from Supabase:', error)
@@ -286,7 +286,7 @@ export const getFullResources = defineAction({
         phone: resource.location?.phone || null,
         phone_area_code: resource.location?.phone_area_code || null,
         coordinates: resource.coordinates,
-        accessibility: resource.location?.accessibility || null,
+        access: resource.location?.access || null,
         has_opening_hours: resource.location?.has_opening_hours ?? false,
         opening_hours: (resource.location?.opening_hours as any) || null,
         status: resource.status,
@@ -329,7 +329,7 @@ export const addResource = defineAction({
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
-        accessibility: input.accessibility || null,
+        access: input.access || null,
         has_opening_hours: input.has_opening_hours ?? false,
         opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
@@ -522,7 +522,7 @@ export const editResource = defineAction({
         email: input.email || '',
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
-        accessibility: input.accessibility || null,
+        access: input.access || null,
         has_opening_hours: input.has_opening_hours ?? false,
         opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
