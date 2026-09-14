@@ -8,7 +8,8 @@ import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { m } from '@/paraglide/messages.js'
-import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
+import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
+
 
 const props = defineProps<{
   resourceId: string | null
@@ -66,62 +67,8 @@ watch(() => props.resourceId, async () => {
         <Grid gap="l" direction="column">
 
           <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0]?.url" :alt="resource?.title" />
-          <div>
-            <h2>{{ resource?.title }}</h2>
-            <p>{{ resource?.category }} ({{ resource?.typology }})</p>
-            <p v-if="resource?.characteristics">{{ resource?.characteristics }}</p>
-          </div>
 
-          <Grid gap="xs" direction="column" class="list">
-            <div>
-              <wa-icon name="location-dot"></wa-icon>
-              <template v-if="resource.location">{{resource.location}}, </template>{{resource.address}},
-              {{ resource.postal_code }}
-            </div>
-            <div v-if="resource?.coordinates">
-              <wa-icon name="map"></wa-icon>
-              <a
-                :href="`https://www.google.com/maps/search/?api=1&query=${resource.coordinates.coordinates[1]},${resource.coordinates.coordinates[0]}`"
-                target="_blank"
-                :title="m['map.open_google_maps']()"
-              >
-                {{ resource.coordinates.coordinates[1] }}, {{ resource.coordinates.coordinates[0] }}
-              </a>
-            </div>
-            <div v-if="resource?.email">
-              <wa-icon name="at"></wa-icon>
-              {{ resource.email }}
-            </div>
-            <div v-if="resource?.phone">
-              <wa-icon name="phone"></wa-icon>
-              {{ resource.phone }}
-            </div>
-            <template v-if="resource?.networks && resource.networks.length > 0">
-              <div v-for="net in resource.networks" :key="net.slug">
-                <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
-                <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
-              </div>
-            </template>
-            <div v-if="resource?.access">
-              <template v-if="resource.access === 'private'">
-                <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-                <span>{{ m['map.access_limited']() }}</span>
-              </template>
-              <template v-else-if="resource.access === 'public'">
-                <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-                <span>{{ m['map.access_public']() }}</span>
-              </template>
-            </div>
-            <div v-if="resource?.has_opening_hours" class="popup-schedule">
-              <div>
-                <wa-icon name="clock"></wa-icon>
-                <span>{{ m['resources.schedule_heading']() }}</span>
-              </div>
-              <OpeningHoursTable :opening-hours="resource.opening_hours" />
-            </div>
-          </Grid>
-
-          <p>{{ resource?.description }}</p>
+          <ResourceSummary :resource="resource" />
 
           <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
 
@@ -188,17 +135,5 @@ watch(() => props.resourceId, async () => {
   object-fit: cover;
   border-radius: var(--wa-border-radius-m);
 }
-
-.list {
-  wa-icon {
-    padding-inline-end: var(--wa-space-xs);
-  }
-}
-
-.popup-schedule {
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-xxs);
-  margin-block-start: var(--wa-space-xxs);
-}
 </style>
+

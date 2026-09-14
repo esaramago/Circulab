@@ -25,7 +25,7 @@ export const resourceSchema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   phone: z.number().optional(),
   phone_area_code: z.number().optional(),
-  access: z.string(),
+  access: z.string().optional().nullable(),
   has_opening_hours: z.boolean().optional(),
   opening_hours: z.record(z.string(), z.any()).optional().nullable(),
   networks: z.array(
