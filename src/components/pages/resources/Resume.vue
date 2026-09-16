@@ -150,6 +150,7 @@ async function handleSubmit() {
       phone: resumeData.value?.phone != null ? resumeData.value.phone : undefined,
       phone_area_code: resumeData.value?.phone_area_code != null ? resumeData.value.phone_area_code : undefined,
       access: resumeData.value?.access || undefined,
+      accessibility: resumeData.value?.accessibility ?? null,
       has_opening_hours: resumeData.value?.has_opening_hours ?? false,
       opening_hours: resumeData.value?.has_opening_hours ? (resumeData.value?.opening_hours || undefined) : undefined,
       networks: resumeData.value?.networks ? resumeData.value.networks.map(n => ({ slug: n.slug, value: n.value })) : undefined,

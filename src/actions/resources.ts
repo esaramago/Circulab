@@ -114,6 +114,7 @@ export const getResource = defineAction({
           phone,
           phone_area_code,
           access,
+          accessibility,
           has_opening_hours,
           opening_hours,
           location_networks (
@@ -164,6 +165,7 @@ export const getResource = defineAction({
         phone_area_code: data.location?.phone_area_code || null,
         coordinates: data.coordinates,
         access: data.location?.access || null,
+        accessibility: data.location?.accessibility ?? null,
         has_opening_hours: data.location?.has_opening_hours ?? false,
         opening_hours: (data.location?.opening_hours as any) || null,
         networks,
@@ -253,6 +255,7 @@ export const getFullResources = defineAction({
           phone,
           phone_area_code,
           access,
+          accessibility,
           has_opening_hours,
           opening_hours
         ),
@@ -287,6 +290,7 @@ export const getFullResources = defineAction({
         phone_area_code: resource.location?.phone_area_code || null,
         coordinates: resource.coordinates,
         access: resource.location?.access || null,
+        accessibility: resource.location?.accessibility ?? null,
         has_opening_hours: resource.location?.has_opening_hours ?? false,
         opening_hours: (resource.location?.opening_hours as any) || null,
         status: resource.status,
@@ -330,6 +334,7 @@ export const addResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         access: input.access || null,
+        accessibility: input.accessibility ?? null,
         has_opening_hours: input.has_opening_hours ?? false,
         opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }
@@ -523,6 +528,7 @@ export const editResource = defineAction({
         phone: input.phone != null ? String(input.phone) : null,
         phone_area_code: input.phone_area_code || null,
         access: input.access || null,
+        accessibility: input.accessibility ?? null,
         has_opening_hours: input.has_opening_hours ?? false,
         opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
       }

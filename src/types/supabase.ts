@@ -123,6 +123,7 @@ export type Database = {
       locations: {
         Row: {
           access: string | null
+          accessibility: boolean | null
           address: string | null
           coordinates: unknown
           created_at: string
@@ -139,6 +140,7 @@ export type Database = {
         }
         Insert: {
           access?: string | null
+          accessibility?: boolean | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
@@ -154,6 +156,7 @@ export type Database = {
         }
         Update: {
           access?: string | null
+          accessibility?: boolean | null
           address?: string | null
           coordinates?: unknown
           created_at?: string
