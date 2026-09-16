@@ -170,6 +170,12 @@ function handleInput(event: Event) {
     return
   }
 
+  if (name === 'accessibility') {
+    const value = field.value === 'true' ? true : field.value === 'false' ? false : null
+    updateDraft({ accessibility: value })
+    return
+  }
+
   if (!field.value) {
     updateDraft({ [key]: '' })
     return
@@ -276,6 +282,18 @@ function handleSubmit(event: Event) {
       <wa-radio-group :label="m['resources.access_label']()" name="access" @change="handleInput" :value="draft.access">
         <wa-radio value="public">{{ m['resources.access_public']() }}</wa-radio>
         <wa-radio value="private">{{ m['resources.access_private']() }}</wa-radio>
+      </wa-radio-group>
+
+      <wa-radio-group
+        :label="m['resources.accessibility_label']()"
+        :hint="m['resources.accessibility_hint']()"
+        name="accessibility"
+        @change="handleInput"
+        :value="draft.accessibility === true ? 'true' : draft.accessibility === false ? 'false' : 'null'"
+      >
+        <wa-radio value="true">{{ m['resources.accessibility_yes']() }}</wa-radio>
+        <wa-radio value="false">{{ m['resources.accessibility_no']() }}</wa-radio>
+        <wa-radio value="null">{{ m['resources.accessibility_unknown']() }}</wa-radio>
       </wa-radio-group>
 
       <Grid v-if="inModal" justify="end" gap="xs">

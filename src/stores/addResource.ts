@@ -109,6 +109,7 @@ export async function ensureDraftLoaded(id: string) {
       longitude: data.coordinates ? geojson.getLongitude(data.coordinates) : 0,
     },
     access: (data.access as LocationDraft['access']) || '',
+    accessibility: data.accessibility ?? null,
     has_opening_hours: data.has_opening_hours ?? false,
     opening_days: [],
     opening_hours: (data.opening_hours as any) || {},

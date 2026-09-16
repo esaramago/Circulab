@@ -69,6 +69,7 @@ const detailedChanges = computed(() => {
       changes.push(m['resources.coordinates']().replace(':', ''))
     }
     if (currLoc.access !== initLoc.access) changes.push(m['resources.access_label']())
+    if (currLoc.accessibility !== initLoc.accessibility) changes.push(m['resources.accessibility_label']())
   }
 
   if (savedChanges.value.has('contacts') && initLoc) {

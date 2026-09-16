@@ -46,6 +46,7 @@ export type LocationDraft = {
     longitude: number
   }
   access: '' | 'public' | 'private'
+  accessibility: boolean | null
   has_opening_hours: boolean
   opening_days: string[]
   opening_hours: Record<string, DaySchedule>
@@ -84,6 +85,7 @@ export const initialLocationDraft: LocationDraft = {
     longitude: 0,
   },
   access: '',
+  accessibility: null,
   has_opening_hours: false,
   opening_days: [],
   opening_hours: {},

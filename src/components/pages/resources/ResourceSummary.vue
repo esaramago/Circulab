@@ -125,6 +125,17 @@ const telURL = computed(() => {
         </template>
       </Grid>
 
+      <Grid gap="xs" align="center" v-if="resource.accessibility !== null && resource.accessibility !== undefined">
+        <template v-if="resource.accessibility">
+          <wa-icon name="wheelchair" size="sm" class="u-color-success"></wa-icon>
+          <span>{{ m['map.accessibility_accessible']() }}</span>
+        </template>
+        <template v-else>
+          <wa-icon name="wheelchair" size="sm" class="u-color-danger"></wa-icon>
+          <span>{{ m['map.accessibility_not_accessible']() }}</span>
+        </template>
+      </Grid>
+
       <Grid gap="xs" align="center" v-if="scheduleMode === 'button' && resource.has_opening_hours">
         <wa-icon name="clock"></wa-icon>
         <button

@@ -37,6 +37,7 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
   location: LocationRow['name']
   coordinates: GeoJsonPoint
   access?: LocationRow['access']
+  accessibility?: LocationRow['accessibility']
   status?: PinRow['status']
   networks?: { slug: string; name: string; value: string; icon?: string | null }[]
   has_opening_hours?: boolean
@@ -58,6 +59,7 @@ export type ResourceSummaryData = {
   phone_area_code?: string | number | null
   networks?: { slug: string; name?: string; value: string; icon?: string | null }[] | null
   access?: string | null
+  accessibility?: boolean | null
   has_opening_hours?: boolean | null
   opening_hours?: WeekSchedule | null
   description?: string | null
