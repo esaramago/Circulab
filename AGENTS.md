@@ -37,14 +37,7 @@ Allways use WebAwesome components when possible.
 - Do not create Astro components in the `src/components` folder.
 - Astro components should be used only for pages and layouts.
 
-## Business rules
-- The documentation of the project is in the `docs` folder.
-- The documentation should be in English.
-
 ## Project structure
-### docs
-The `docs` folder contains the documentation of the project.
-### `src`
 The `src` folder contains the source code of the project.
 - `src/actions`: contains the Astro Actions (server actions)
 - `src/composables`: contains the Vue Composables (like helpers with reactive state)
