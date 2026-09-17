@@ -193,7 +193,10 @@ function toggleFilters() {
       @input="setCategory(($event.target as HTMLSelectElement).value)"
       with-clear
     >
-      <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+      <wa-option v-for="item in categories" :key="item.id" :value="item.id" :label="item.name">
+        {{ item.name }}<br>
+        <span class="u-text-small" v-if="item.description">{{ item.description }}</span>
+      </wa-option>
     </wa-select>
     <wa-select
       v-if="category && characteristics?.length"
