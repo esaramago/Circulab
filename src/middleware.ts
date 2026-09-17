@@ -25,10 +25,11 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     locals.locale = getLocale()
 
     const isLoginRoute = pathname.startsWith('/login')
-    const isDashboardRoute = pathname.startsWith('/dashboard')
+    const isModerationRoute = pathname.startsWith('/dashboard/moderacao')
+    const isDashboardRoute = pathname.startsWith('/dashboard') && !isModerationRoute
     const isResourceRoute = pathname.startsWith('/recursos')
     const isBackofficeRoute = pathname.startsWith('/backoffice')
-    const isPrivateRoute = isDashboardRoute || isResourceRoute || isBackofficeRoute
+    const isPrivateRoute = isDashboardRoute || isResourceRoute || isBackofficeRoute || isModerationRoute
 
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
@@ -43,6 +44,9 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
       return redirect(target)
     } else if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
       console.log('[Middleware] User not authorized for dashboard. Redirecting to /')
+      return redirect(localizeHref('/'))
+    } else if (isModerationRoute && locals.user && !userHasAccess(locals.user, 'moderation')) {
+      console.log('[Middleware] User not authorized for moderation. Redirecting to /')
       return redirect(localizeHref('/'))
     } else if (isBackofficeRoute && locals.user && !userHasAccess(locals.user, 'backoffice')) {
       console.log('[Middleware] User not authorized for backoffice. Redirecting to /')

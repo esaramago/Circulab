@@ -9,6 +9,8 @@ import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
 import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
+import '@webawesome/dialog/dialog.js'
+import '@webawesome/button/button.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
@@ -21,8 +23,13 @@ type AddResourcePayload = DescriptionDraft & LocationDraft
 const resumeData = ref<AddResourcePayload | null>(null)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const suggestionDialogOpen = ref(false)
 const editingResourceId = useStore($editingResourceId)
 const isEdit = computed(() => !!editingResourceId.value)
+
+function goToMap() {
+  window.location.href = localizeHref('/mapa')
+}
 
 const category = ref<string | null>(null)
 const typology = ref<string | null>(null)
@@ -157,18 +164,24 @@ async function handleSubmit() {
       images: uploadedImages,
     }
 
-    const { error } = isEdit.value
+    const result = isEdit.value
       ? await actions.editResource(payload)
       : await actions.addResource(payload)
 
-    if (error) {
-      throw new Error(error.message || 'Erro ao guardar o recurso.')
+    if (result.error) {
+      throw new Error(result.error.message || 'Erro ao guardar o recurso.')
     }
 
     // 3. Clear local storage/IndexedDB on success
     clearAddResourceDraft()
     await clearImages()
-    window.location.href = localizeHref('/mapa')
+
+    if (result.data?.isSuggestion) {
+      suggestionDialogOpen.value = true
+      return
+    }
+
+    goToMap()
   } catch (err: any) {
     console.error(err)
     errorMessage.value = err.message || 'Ocorreu um erro ao submeter o recurso.'
@@ -215,5 +228,27 @@ async function handleSubmit() {
       {{ isEdit ? m['resources.save']() : m['resources.add']() }}
     </wa-button>
   </Grid>
+
+  <wa-dialog
+    id="suggestion-submitted-dialog"
+    :label="m['resources.suggestion_submitted_title']()"
+    :open="suggestionDialogOpen ? '' : null"
+    @wa-after-hide="goToMap"
+  >
+    <p>{{ m['resources.suggestion_submitted_msg']() }}</p>
+    <div slot="footer" class="dialog-footer">
+      <wa-button variant="brand" @click="goToMap">
+        {{ m['resources.suggestion_submitted_action']() }}
+      </wa-button>
+    </div>
+  </wa-dialog>
 </template>
+
+<style scoped>
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--wa-space-l);
+}
+</style>
 

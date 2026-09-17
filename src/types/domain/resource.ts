@@ -65,3 +65,10 @@ export type ResourceSummaryData = {
   description?: string | null
 }
 
+export type SuggestedResource = FullResource & {
+  suggestion_id: string
+  pin_id: string | null
+  suggested_by_email?: string | null
+  created_at: string
+}
+

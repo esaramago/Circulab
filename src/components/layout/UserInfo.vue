@@ -39,6 +39,10 @@ function goto(route: string) {
       <wa-icon name="table-list" :label="m['nav.dashboard']()"></wa-icon>
       {{ m['nav.dashboard']() }}
     </wa-dropdown-item>
+    <wa-dropdown-item v-if="userHasAccess(user, 'moderation')" @click="goto('/dashboard/moderacao')">
+      <wa-icon name="clipboard-check" :label="m['nav.moderation']()"></wa-icon>
+      {{ m['nav.moderation']() }}
+    </wa-dropdown-item>
     <wa-dropdown-item v-if="userHasAccess(user, 'backoffice')" @click="goto('/backoffice')">
       <wa-icon name="gear" :label="m['nav.backoffice']()"></wa-icon>
       {{ m['nav.backoffice']() }}

@@ -1,8 +1,8 @@
 import type { AppUser } from '@/types/domain/user'
 
-export function userHasAccess(user: AppUser, access: 'dashboard' | 'form' | 'backoffice') {
+export function userHasAccess(user: AppUser, access: 'dashboard' | 'form' | 'backoffice' | 'moderation') {
 
-  if (access === 'dashboard') {
+  if (access === 'dashboard' || access === 'moderation') {
     return ['moderator', 'admin'].includes(user?.role?.code || '')
   } else if (access === 'backoffice') {
     return user?.role?.code === 'admin'
