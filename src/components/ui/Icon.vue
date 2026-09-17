@@ -1,6 +1,7 @@
 <template>
-  <div :class="['icon', computedClass, className]">
-    <wa-icon :name="name" :style="styles"></wa-icon>
+  <div :class="['icon', computedClass, className]" :style="colorStyle">
+    <wa-icon v-if="src" :src="src" :style="sizeStyle"></wa-icon>
+    <wa-icon v-else :name="name" :style="sizeStyle"></wa-icon>
   </div>
 </template>
 
@@ -12,43 +13,47 @@ const props = defineProps<{
   color?: string
   appearance?: 'filled'
   class?: string
+  src?: string
 }>()
 
 const className = computed(() => props.class)
-
-const styles = computed(() => {
-  const styles: Record<string, string> = {} 
-
-  if (props.size) styles.fontSize = getSizeStyle(props.size)
-  if (props.color) styles.color = getColorStyle(props.color)
-
-  return styles
-})
 
 const computedClass = computed(() => {
   if (props.appearance) return `appearance--${props.appearance}`
 })
 
-function getSizeStyle(size: string) {
-  return `var(--wa-font-size-${size})`
-}
-function getColorStyle(color: string) {
-  return `var(--wa-color-${color})`
-}
+const sizeStyle = computed(() => {
+  const size = props.size
+  if (!size) return ''
+  return {fontSize: `var(--wa-font-size-${size})`}
+})
+const colorStyle = computed(() => {
+  const color = props.color
+  if (!color) return ''
+  const isHexColor = color.startsWith('#')
+  const colorStyle = isHexColor ? color : `var(--wa-color-${color})`
+  return {'--color': colorStyle}
+})
 </script>
 
 <style scoped>
 .icon {
   display: inline-block;
+  > wa-icon {
+    color: var(--color, #FFF);
+  }
 }
 .appearance--filled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--wa-color-brand-50);
   width: min-content;
   padding: var(--wa-space-xs);
   border-radius: var(--wa-border-radius-circle);
   aspect-ratio: 1/1;
+  background-color: var(--color, var(--wa-color-brand-50));
+  > wa-icon {
+    color: #FFF;
+  }
 }
 </style>
