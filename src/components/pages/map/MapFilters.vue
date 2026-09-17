@@ -172,7 +172,7 @@ function toggleFilters() {
             @click="handleTypologyClick(item.id)"
             :id="`typology-${item.id}`"
           />
-          <label :for="`typology-${item.id}`" class="typologies__label">
+          <label :for="`typology-${item.id}`" class="typologies__label" :title="item.description || undefined">
             <wa-icon
               v-if="item.icon"
               :src="isUrlIcon(item.icon) ? CONFIG.images_url + 'pin-images/' + item.icon : undefined"
