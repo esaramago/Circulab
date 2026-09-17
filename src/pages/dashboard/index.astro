@@ -1,11 +1,12 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import ResourcesDashboard from '@/components/pages/dashboard/ResourcesDashboard.vue'
+import { m } from '@/paraglide/messages.js'
 
 ---
 
-<Layout title="Dashboard" fullWidth={true}>
-  <h1>Dashboard</h1>
+<Layout title={m['dashboard.title']()} fullWidth>
+  <h1>{m['dashboard.title']()}</h1>
 
   <ResourcesDashboard client:only="vue" />
 </Layout>

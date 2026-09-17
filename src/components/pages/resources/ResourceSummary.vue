@@ -117,11 +117,11 @@ const telURL = computed(() => {
       <Grid gap="xs" align="center" v-if="resource.access">
         <template v-if="resource.access === 'private'">
           <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-          <span title="{{ m['map.access_limited_title']() }}">{{ m['map.access_limited']() }}</span>
+          <span :title="m['map.access_limited_title']()">{{ m['map.access_limited']() }}</span>
         </template>
         <template v-else-if="resource.access === 'public'">
           <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-          <span title="{{ m['map.access_public_title']() }}">{{ m['map.access_public']() }}</span>
+          <span :title="m['map.access_public_title']()">{{ m['map.access_public']() }}</span>
         </template>
       </Grid>
 
