@@ -13,7 +13,6 @@ import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { clearAddResourceDraft } from '@/stores/addResource'
-import { fetchDB } from '@/utils/fetchDB'
 import type { FullResource } from '@/types/domain/resource'
 import type { WeekSchedule } from '@/types/add-resource-draft'
 import Grid from '@/components/ui/Grid.vue'
@@ -47,11 +46,11 @@ async function getResources() {
 }
 
 async function getTypologies() {
-  const { data, error } = await fetchDB('typologies').select('*').order('name', { ascending: true })
+  const { data, error } = await actions.getTypologies()
   if (error) {
     console.error('[ResourcesDashboard] Error fetching typologies:', error)
   } else {
-    typologies.value = (data ?? []) as TypologyRow[]
+    typologies.value = (data?.typologies ?? []) as TypologyRow[]
   }
 }
 
