@@ -32,4 +32,5 @@
   --wa-color-text-quiet: var(--wa-color-neutral-80);
 
   --wa-form-control-border-radius: var(--wa-border-radius-l);
+  --wa-form-control-activated-color: var(--wa-color-brand-30);
 }

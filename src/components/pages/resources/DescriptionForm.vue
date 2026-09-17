@@ -211,7 +211,8 @@ function handleSubmit(event: Event) {
           :value="typology.id"
           :label="typology.name"
         >
-          {{ typology.name }}
+          {{ typology.name }}<br>
+          <span class="u-text-small" v-if="typology.description">{{ typology.description }}</span>
         </wa-option>
       </wa-select>
       <wa-select
@@ -229,7 +230,8 @@ function handleSubmit(event: Event) {
           :value="category.id"
           :label="category.name"
         >
-          {{ category.name }}
+          {{ category.name }}<br>
+          <span class="u-text-small" v-if="category.description">{{ category.description }}</span>
         </wa-option>
       </wa-select>
       <wa-select

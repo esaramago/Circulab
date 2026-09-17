@@ -141,15 +141,17 @@ function toggleFilters() {
 
 <template>
   <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
-    <button type="button" @click="toggleFilters" class="filters__header">
-      <Grid justify="space-between">
-        <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
-        <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-large"></Icon>
-      </Grid>
-    </button>
-    <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
-      {{ m['map.clear_filters']() }}
-    </wa-button>
+    <Grid justify="space-between" align="center">
+      <button type="button" @click="toggleFilters" class="filters__header">
+        <Grid justify="space-between">
+          <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
+          <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-large"></Icon>
+        </Grid>
+      </button>
+      <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
+        {{ m['map.clear_filters']() }}
+      </wa-button>
+    </Grid>
     <wa-input 
       type="text"
       :label="m['map.search_label']()"
@@ -170,7 +172,7 @@ function toggleFilters() {
             @click="handleTypologyClick(item.id)"
             :id="`typology-${item.id}`"
           />
-          <label :for="`typology-${item.id}`" class="typologies__label">
+          <label :for="`typology-${item.id}`" class="typologies__label" :title="item.description || undefined">
             <wa-icon
               v-if="item.icon"
               :src="isUrlIcon(item.icon) ? CONFIG.images_url + 'pin-images/' + item.icon : undefined"
@@ -191,7 +193,10 @@ function toggleFilters() {
       @input="setCategory(($event.target as HTMLSelectElement).value)"
       with-clear
     >
-      <wa-option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+      <wa-option v-for="item in categories" :key="item.id" :value="item.id" :label="item.name">
+        {{ item.name }}<br>
+        <span class="u-text-small" v-if="item.description">{{ item.description }}</span>
+      </wa-option>
     </wa-select>
     <wa-select
       v-if="category && characteristics?.length"
