@@ -8,9 +8,12 @@
 		"menu": "Menu",
 		"user": "User",
 		"add_resource": "Add resource",
-		"dashboard": "Dashboard",
+		"dashboard": "All resources",
 		"backoffice": "Backoffice",
 		"logout": "Log out"
+	},
+	"dashboard": {
+		"title": "All resources"
 	},
 	"home": {
 		"hero_title": "Collaborative map for agroecology and circularity.",

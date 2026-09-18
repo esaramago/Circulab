@@ -1,29 +1,45 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { ResourceSummaryData } from '@/types/domain/resource'
 import Grid from '@/components/ui/Grid.vue'
 import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 import { m } from '@/paraglide/messages.js'
 import '@webawesome/icon/icon.js'
+import '@webawesome/dialog/dialog.js'
 
 interface Props {
   resource: ResourceSummaryData | null
   showHeader?: boolean
   showDescription?: boolean
   showNetworks?: boolean
-  scheduleMode?: 'table' | 'button' | 'none'
+  showSchedule?: boolean
+  scheduleMode?: 'dialog' | 'none' | 'table' | 'button'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showHeader: true,
   showDescription: true,
   showNetworks: true,
-  scheduleMode: 'table'
+  showSchedule: true,
+  scheduleMode: 'dialog'
 })
 
 const emit = defineEmits<{
   (e: 'open-schedule'): void
 }>()
+
+const isScheduleDialogOpen = ref(false)
+
+const shouldShowSchedule = computed(() => {
+  if (!props.showSchedule) return false
+  if (props.scheduleMode === 'none') return false
+  return Boolean(props.resource?.has_opening_hours)
+})
+
+function handleOpenSchedule() {
+  isScheduleDialogOpen.value = true
+  emit('open-schedule')
+}
 
 const coordinates = computed(() => {
   if (!props.resource?.coordinates) return null
@@ -57,8 +73,12 @@ const formattedPhone = computed(() => {
 })
 
 const gMapsURL = computed(() => {
-  if (!coordinates.value) return undefined
-  return `https://www.google.com/maps/search/?api=1&query=${coordinates.value.latitude},${coordinates.value.longitude}`
+  if (!coordinates.value || !props.resource) return undefined
+
+  if (props.resource?.title) {
+    const encondedName = encodeURIComponent(props.resource.title)
+    return `https://maps.google.com/?q=${encondedName}&ll=${coordinates.value.latitude},${coordinates.value.longitude}`
+  }
 })
 
 const telURL = computed(() => {
@@ -108,20 +128,20 @@ const telURL = computed(() => {
 
 
       <template v-if="showNetworks && resource.networks && resource.networks.length > 0">
-        <div v-for="net in resource.networks" :key="net.slug">
+        <Grid gap="xs" align="center" v-for="net in resource.networks" :key="net.slug">
           <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
           <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
-        </div>
+        </Grid>
       </template>
 
       <Grid gap="xs" align="center" v-if="resource.access">
         <template v-if="resource.access === 'private'">
           <wa-icon name="door-closed" size="sm" class="u-color-danger"></wa-icon>
-          <span title="{{ m['map.access_limited_title']() }}">{{ m['map.access_limited']() }}</span>
+          <span :title="m['map.access_limited_title']()">{{ m['map.access_limited']() }}</span>
         </template>
         <template v-else-if="resource.access === 'public'">
           <wa-icon name="door-open" size="sm" class="u-color-success"></wa-icon>
-          <span title="{{ m['map.access_public_title']() }}">{{ m['map.access_public']() }}</span>
+          <span :title="m['map.access_public_title']()">{{ m['map.access_public']() }}</span>
         </template>
       </Grid>
 
@@ -136,25 +156,27 @@ const telURL = computed(() => {
         </template>
       </Grid>
 
-      <Grid gap="xs" align="center" v-if="scheduleMode === 'button' && resource.has_opening_hours">
+      <Grid gap="xs" align="center" v-if="shouldShowSchedule">
         <wa-icon name="clock"></wa-icon>
         <button
+          type="button"
           class="c-link"
-          data-dialog="open opening-hours-dialog"
-          @click="emit('open-schedule')"
+          @click="handleOpenSchedule"
         >
-          {{ m['map.schedule_heading']() }}
+          {{ m['resources.schedule_heading']() }}
         </button>
       </Grid>
     </Grid>
 
-    <div v-if="scheduleMode === 'table' && resource.has_opening_hours" class="resource-summary__schedule">
-      <div class="resource-summary__schedule-heading">
-        <wa-icon name="clock"></wa-icon>
-        <strong>{{ m['resources.schedule_heading']() }}</strong>
-      </div>
+    <wa-dialog
+      v-if="shouldShowSchedule"
+      :label="m['resources.schedule_heading']()"
+      :open="isScheduleDialogOpen || null"
+      light-dismiss
+      @wa-after-hide="isScheduleDialogOpen = false"
+    >
       <OpeningHoursTable :opening-hours="resource.opening_hours" />
-    </div>
+    </wa-dialog>
 
     <slot name="description" :description="resource.description">
       <div v-if="showDescription && resource.description" class="resource-summary__description">
@@ -164,19 +186,4 @@ const telURL = computed(() => {
     </slot>
   </Grid>
 </template>
-
-<style scoped>
-.resource-summary__schedule {
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-xxs);
-  margin-block-start: var(--wa-space-xxs);
-}
-
-.resource-summary__schedule-heading {
-  display: flex;
-  align-items: center;
-  gap: var(--wa-space-xs);
-}
-</style>
 
