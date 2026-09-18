@@ -108,10 +108,10 @@ const telURL = computed(() => {
 
 
       <template v-if="showNetworks && resource.networks && resource.networks.length > 0">
-        <div v-for="net in resource.networks" :key="net.slug">
+        <Grid gap="xs" align="center" v-for="net in resource.networks" :key="net.slug">
           <wa-icon :name="net.icon || 'link'" :family="net.icon === 'instagram' || net.icon === 'facebook' ? 'brands' : undefined"></wa-icon>
           <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
-        </div>
+        </Grid>
       </template>
 
       <Grid gap="xs" align="center" v-if="resource.access">
