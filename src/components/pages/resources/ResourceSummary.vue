@@ -73,8 +73,12 @@ const formattedPhone = computed(() => {
 })
 
 const gMapsURL = computed(() => {
-  if (!coordinates.value) return undefined
-  return `https://www.google.com/maps/search/?api=1&query=${coordinates.value.latitude},${coordinates.value.longitude}`
+  if (!coordinates.value || !props.resource) return undefined
+
+  if (props.resource?.title) {
+    const encondedName = encodeURIComponent(props.resource.title)
+    return `https://maps.google.com/?q=${encondedName}&ll=${coordinates.value.latitude},${coordinates.value.longitude}`
+  }
 })
 
 const telURL = computed(() => {
