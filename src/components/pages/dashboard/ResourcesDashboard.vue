@@ -14,18 +14,15 @@ import '@webawesome/option/option.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { clearAddResourceDraft } from '@/stores/addResource'
 import type { FullResource } from '@/types/domain/resource'
-import type { WeekSchedule } from '@/types/add-resource-draft'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
-import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
 
 
 const resources = ref<FullResource[]>([])
 const typologies = ref<TypologyRow[]>([])
 const categories = ref<CategoryRow[]>([])
-const openingHours = ref<WeekSchedule | null>(null)
 
 const search = ref('')
 const selectedTypology = ref('')
@@ -146,10 +143,6 @@ async function handleDelete() {
     resourceToDelete.value = null
   }
 }
-
-function showOpeningHours(resource: FullResource) {
-  openingHours.value = resource.opening_hours ?? null
-}
 </script>
 
 <template>
@@ -210,8 +203,6 @@ function showOpeningHours(resource: FullResource) {
           :show-header="false"
           :show-description="false"
           :show-networks="false"
-          schedule-mode="button"
-          @open-schedule="showOpeningHours(resource)"
         />
 
 
@@ -243,14 +234,6 @@ function showOpeningHours(resource: FullResource) {
     <p>{{ m['resources.delete_confirm_msg']({ title: resourceToDelete?.title || '' }) }}</p>
     <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
   </ConfirmationDialog>
-
-  <wa-dialog
-    id="opening-hours-dialog"
-    :label="m['map.schedule_heading']()"
-    light-dismiss
-  >
-    <OpeningHoursTable :opening-hours="openingHours" />
-  </wa-dialog>
 </template>
 
 <style scoped>
