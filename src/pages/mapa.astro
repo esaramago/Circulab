@@ -10,22 +10,67 @@ import { CONFIG } from '@/config'
 const defaultTypologyCode = Astro.url.searchParams.get('code')
 ---
 
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/icon/icon.js'
+  import '@awesome.me/webawesome/dist/components/dropdown/dropdown.js'
+  import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js'
+  import { navigate } from 'astro:transitions/client'
+
+  const setupMapActions = () => {
+    const dropdown = document.querySelector('#map-actions wa-dropdown')
+    if (!dropdown || dropdown.dataset.initialized) return
+    dropdown.dataset.initialized = 'true'
+
+    dropdown.addEventListener('wa-select', (event: any) => {
+      const href = event.detail?.item?.value
+      if (href) {
+        if (typeof navigate === 'function') {
+          navigate(href)
+        } else {
+          window.location.href = href
+        }
+      }
+    })
+  }
+
+  setupMapActions()
+  document.addEventListener('astro:page-load', setupMapActions)
+</script>
+
 <Layout title={m['map.title']()} fullWidth={true}>
   <div class="wrapper">
-    <Grid justify="space-between" class="header" break="small">
+    <Grid justify="space-between" align="center" class="header">
       <h1>{m['map.title']()}</h1>
-      <Grid justify="end" wrap>
-        <wa-button href={localizeHref('/contactos')}>
-          <wa-icon name="envelope"></wa-icon>
-          {m['map.send_feedback']()}
-        </wa-button>
-        {CONFIG.can_suggest &&
-          <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
-            <wa-icon name="plus"></wa-icon>
-            {m['map.suggest_resource']()}
+      <div id="map-actions">
+        <Grid justify="end" wrap class="is-hidden-mobile">
+          <wa-button href={localizeHref('/contactos')}>
+            <wa-icon name="envelope"></wa-icon>
+            {m['map.send_feedback']()}
           </wa-button>
-        }
-      </Grid>
+          {CONFIG.can_suggest &&
+            <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
+              <wa-icon name="plus"></wa-icon>
+              {m['map.suggest_resource']()}
+            </wa-button>
+          }
+        </Grid>
+        <wa-dropdown placement="bottom-end" class="is-hidden-desktop">
+          <wa-button slot="trigger" variant="neutral">
+            <wa-icon name="ellipsis-vertical" label={m['backoffice.actions']()}></wa-icon>
+          </wa-button>
+          {CONFIG.can_suggest &&
+            <wa-dropdown-item value={localizeHref('/recursos/novo')}>
+              <wa-icon slot="icon" name="plus"></wa-icon>
+              {m['map.suggest_resource']()}
+            </wa-dropdown-item>
+          }
+          <wa-dropdown-item value={localizeHref('/contactos')}>
+            <wa-icon slot="icon" name="envelope"></wa-icon>
+            {m['map.send_feedback']()}
+          </wa-dropdown-item>
+        </wa-dropdown>
+      </div>
     </Grid>
     <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
     <Map class="map" client:only="vue" />
@@ -53,6 +98,10 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 }
 .header {
   grid-area: header;
+}
+#map-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 .filters {
   grid-area: filters;
