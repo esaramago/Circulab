@@ -116,11 +116,12 @@ watch(() => props.resourceId, async () => {
   gap: var(--wa-space-s);
   max-height: 100%;
   box-sizing: border-box;
+  overflow: auto;
   padding: var(--padding);
   background-color: var(--wa-color-neutral-20);
   border-radius: calc(var(--border-radius) + var(--padding) / 2);
   @media (max-width: 600px) {
-    max-height: 50vh;
+    max-height: 70vh;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
@@ -134,6 +135,10 @@ watch(() => props.resourceId, async () => {
   max-height: 40rem;
   object-fit: cover;
   border-radius: var(--wa-border-radius-m);
+  @media (max-height: 768px) {
+    max-height: 20rem;
+    aspect-ratio: 16 / 9;
+  }
 }
 </style>
 

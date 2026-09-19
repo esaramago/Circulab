@@ -12,9 +12,9 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 
 <Layout title={m['map.title']()} fullWidth={true}>
   <div class="wrapper">
-    <Grid justify="space-between" class="header">
+    <Grid justify="space-between" class="header" break="small">
       <h1>{m['map.title']()}</h1>
-      <Grid justify="end">
+      <Grid justify="end" wrap>
         <wa-button href={localizeHref('/contactos')}>
           <wa-icon name="envelope"></wa-icon>
           {m['map.send_feedback']()}

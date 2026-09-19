@@ -141,17 +141,15 @@ function toggleFilters() {
 
 <template>
   <form class="filters" @submit.prevent="" :class="{ 'is-open': isOpen }">
-    <Grid justify="space-between" align="center">
-      <button type="button" @click="toggleFilters" class="filters__header">
-        <Grid justify="space-between">
-          <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
-          <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-large"></Icon>
-        </Grid>
-      </button>
-      <wa-button size="s" appearance="plain" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
-        {{ m['map.clear_filters']() }}
-      </wa-button>
-    </Grid>
+    <button type="button" @click="toggleFilters" class="filters__header">
+      <Grid justify="space-between">
+        <h3>{{ m['map.filters']() }} <Icon name="filter" color="neutral-70" size="s"></Icon></h3>
+        <Icon :name="isOpen ? 'circle-xmark' : 'circle-chevron-up'" size="xl" class="is-hidden-large"></Icon>
+      </Grid>
+    </button>
+    <wa-button size="s" @click="clearFilters" v-if="typology || category || (characteristics && characteristics.length) || search">
+      {{ m['map.clear_filters']() }}
+    </wa-button>
     <wa-input 
       type="text"
       :label="m['map.search_label']()"
