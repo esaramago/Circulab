@@ -63,7 +63,10 @@ const ogLocale = Astro.locals.locale === 'pt' ? 'pt_PT' : 'en_US'
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <script is:inline defer src="https://analytics.circulab.pt/script.js" data-website-id="535c2e82-6e93-4a89-bc16-d933190ff12c"></script>
+    {
+      process.env.NODE_ENV === 'production' &&
+      <script is:inline defer src="https://analytics.circulab.pt/script.js" data-website-id="535c2e82-6e93-4a89-bc16-d933190ff12c"></script>
+    }
     <ClientRouter />
   </head>
 	<body class="wa-dark wa-custom-theme">
