@@ -3,8 +3,11 @@ import { createServerClient, parseCookieHeader } from '@supabase/ssr'
 import type { AstroCookies } from 'astro'
 import type { Database } from '../types/supabase'
 
-const supabaseUrl = `https://${import.meta.env.PUBLIC_SUPABASE_PROJECT_ID}.supabase.co`
-const supabasePublishableKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY
+const rawSupabaseUrl =
+  import.meta.env.PUBLIC_SUPABASE_URL ||
+  `https://${import.meta.env.PUBLIC_SUPABASE_PROJECT_ID}.supabase.co`
+const supabaseUrl = rawSupabaseUrl.replace(/\/+$/, '')
+const supabasePublishableKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 
 /** Base client (e.g. server actions, scripts). Prefer `createClient` for cookie-aware auth in pages/middleware. */
 export const supabase = createSupabaseJsClient<Database>(supabaseUrl, supabasePublishableKey)
