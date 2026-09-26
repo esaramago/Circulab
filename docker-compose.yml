@@ -6,6 +6,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-}
+        PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-}
+        PUBLIC_SUPABASE_PROJECT_ID: ${PUBLIC_SUPABASE_PROJECT_ID:-}
+        PUBLIC_CAN_SUGGEST: ${PUBLIC_CAN_SUGGEST:-}
+        PUBLIC_BASEMAPS_API_KEY: ${PUBLIC_BASEMAPS_API_KEY:-}
+        SITE: ${SITE:-}
     image: circulab:latest
     container_name: circulab
     ports:
