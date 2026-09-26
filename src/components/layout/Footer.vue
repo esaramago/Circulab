@@ -29,15 +29,15 @@ function openCookiePreferences(event: Event) {
 
         <div>
           <h2 class="footer__heading">{{ m['footer.support']() }}</h2>
-          <Grid align="center" gap="s">
-            <a href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
-              <img src="/img/rizoma-logo.svg" alt="Rizoma Cooperativa Integral" height="50" />
+          <Grid align="center">
+            <a href="https://www.rizomacoop.pt/" target="_blank" title="RizomaCoop">
+              <img src="/img/rizoma-logo.svg" alt="Rizoma Cooperativa Integral" height="60" />
             </a>
-            <a href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
-              <img src="/img/lisboa-repair-map.webp" alt="Lisboa Repair Project" height="50" />
+            <a href="https://www.rizomacoop.pt/" target="_blank" title="Lisboa Repair Project">
+              <img src="/img/lisboa-repair-map.webp" alt="Lisboa Repair Project" height="60" />
             </a>
-            <a href="https://bipzip.cm-lisboa.pt/" target="_blank" rel="noopener noreferrer">
-              <img src="/img/bipzip-logo.svg" alt="BIpZip" height="60" />
+            <a href="https://bipzip.cm-lisboa.pt/" target="_blank" title="BipZip">
+              <img src="/img/bipzip-logo.svg" alt="BIpZip" height="70" />
             </a>
           </Grid>
         </div>

@@ -10,6 +10,7 @@ The [README](README.md) provides more context and instructions.
 - Keep changes scoped to the request and the affected package. Do not refactor unrelated code.
 - Respect existing worktree changes. Do not revert user changes unless explicitly asked.
 - Use sentence case for headings, titles, labels, and documentation text.
+- Always ask for explicit user permission before making any database changes.
 
 ## Stack
 - **PNPM**: For package management.
@@ -82,3 +83,10 @@ The `src` folder contains the source code of the project.
 ### DevOps
 - The project uses Docker and docker-compose for the development environment.
 - The project uses the Supabase CLI for the database.
+
+### Database access
+- Database access is available via the MCP server (`supabase-db`).
+- Access requires an active SSH tunnel to the staging environment. Run `pnpm db:tunnel` to start the tunnel in the background (or check status with `bash scripts/supabase-tunnel.sh status`).
+- The tunnel configuration uses `SUPABASE_SSH_HOST` and `SUPABASE_DB_CONTAINER_IP` from `.env`.
+- Read-only inspection queries (schema, table definitions, SELECTs for diagnosis) are permitted.
+- **CRITICAL**: You must always ask for explicit user permission before executing any database operations that modify data or alter database schemas (e.g. `INSERT`, `UPDATE`, `DELETE`, `ALTER`, `DROP`, or applying database migrations).

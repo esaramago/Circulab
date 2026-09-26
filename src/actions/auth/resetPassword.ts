@@ -1,6 +1,7 @@
-import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
+import { defineAction, ActionError } from 'astro:actions'
 import { z } from 'astro/zod'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 const siteUrl = import.meta.env.SITE
 
@@ -9,7 +10,7 @@ export const resetPassword = defineAction({
   input: z.object({
     email: z.email(),
   }),
-  handler: async ({ email }, { request, cookies }) => {
+  handler: async ({ email }, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const redirectTo = `${siteUrl}/auth/confirm`
@@ -19,23 +20,25 @@ export const resetPassword = defineAction({
       })
 
       if (error) {
+        const isRateLimit = error.code === 'over_email_send_rate_limit' || error.status === 429
         throw new ActionError({
-          message: error.message || 'Failed to send reset email',
-          code: error.code as ActionErrorCode,
+          message: isRateLimit
+            ? m['auth.reset_rate_limit']({}, { locale: locals.locale })
+            : m['auth.failed_send_reset']({}, { locale: locals.locale }),
+          code: isRateLimit ? 'TOO_MANY_REQUESTS' : 'BAD_REQUEST',
         })
       }
 
       return {
         success: true,
-        message: 'If an account exists for this email, you will receive a password reset link shortly.',
+        message: m['auth.reset_password_success']({}, { locale: locals.locale }),
       }
     } catch (error: unknown) {
       if (error instanceof ActionError) {
         throw error
       }
-      const message = error instanceof Error ? error.message : 'Failed to send reset email'
       throw new ActionError({
-        message,
+        message: m['auth.failed_send_reset']({}, { locale: locals.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
