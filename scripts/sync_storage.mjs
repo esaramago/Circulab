@@ -11,8 +11,8 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 
 if (!SERVICE_ROLE_KEY) {
-  console.error("Erro: Defina a variável SUPABASE_SERVICE_ROLE_KEY com a service_role key do Staging.")
-  console.error("Exemplo: SUPABASE_SERVICE_ROLE_KEY=\"eyJ...\" node sync_storage.mjs")
+  console.error("Error: Set the SUPABASE_SERVICE_ROLE_KEY variable with the staging service_role key.")
+  console.error("Example: SUPABASE_SERVICE_ROLE_KEY=\"eyJ...\" node sync_storage.mjs")
   process.exit(1)
 }
 
@@ -179,8 +179,8 @@ const files = [
 async function main() {
   console.log("Target URL:", TARGET_URL)
 
-  // Diagnóstico direto: obter a resposta completa do servidor
-  console.log("A testar upload direto com resposta detalhada...")
+  // Direct diagnostic: get full server response
+  console.log("Testing direct upload with detailed response...")
   try {
     const testRes = await fetch(`${TARGET_URL}/storage/v1/object/pin-images/test_diag.txt`, {
       method: "POST",
@@ -193,29 +193,29 @@ async function main() {
       body: "hello",
     })
     const testBody = await testRes.text()
-    console.log("Diagnóstico HTTP Status:", testRes.status)
-    console.log("Diagnóstico Resposta do Servidor:", testBody)
+    console.log("Diagnostic HTTP status:", testRes.status)
+    console.log("Diagnostic server response:", testBody)
   } catch (diagErr) {
-    console.log("Erro de rede no teste:", diagErr.message)
+    console.log("Network error in test:", diagErr.message)
   }
 
-  console.log("\nA verificar bucket pin-images no Staging...")
+  console.log("\nChecking pin-images bucket on staging...")
   const { data: buckets, error: listError } = await supabase.storage.listBuckets()
   if (listError) {
-    console.error("Erro ao listar buckets:", listError.message, listError)
+    console.error("Error listing buckets:", listError.message, listError)
   } else {
     const exists = buckets?.some((b) => b.name === "pin-images" || b.id === "pin-images")
     if (!exists) {
-      console.log("Bucket pin-images não encontrado. A criar bucket...")
+      console.log("pin-images bucket not found. Creating bucket...")
       const { error: createError } = await supabase.storage.createBucket("pin-images", { public: true })
-      if (createError) console.error("Erro ao criar bucket:", createError.message)
-      else console.log("Bucket criado com sucesso!")
+      if (createError) console.error("Error creating bucket:", createError.message)
+      else console.log("Bucket created successfully!")
     } else {
-      console.log("Bucket pin-images encontrado.")
+      console.log("pin-images bucket found.")
     }
   }
 
-  console.log(`A sincronizar ${files.length} ficheiros para o Staging...\n`)
+  console.log(`Syncing ${files.length} files to staging...\n`)
   let success = 0
   let failed = 0
 
@@ -226,7 +226,7 @@ async function main() {
     try {
       const res = await fetch(sourceUrl)
       if (!res.ok) {
-        console.log(`Erro no download HTTP ${res.status}`)
+        console.log(`Download HTTP error ${res.status}`)
         failed++
         continue
       }
@@ -247,19 +247,19 @@ async function main() {
       })
 
       if (!uploadRes.ok) {
-        console.log(`Erro no upload HTTP ${uploadRes.status}: ${await uploadRes.text()}`)
+        console.log(`Upload HTTP error ${uploadRes.status}: ${await uploadRes.text()}`)
         failed++
       } else {
         console.log("OK!")
         success++
       }
     } catch (err) {
-      console.log(`Erro: ${err.message}`)
+      console.log(`Error: ${err.message}`)
       failed++
     }
   }
 
-  console.log(`\nConcluído: ${success} transferidos com sucesso, ${failed} falhas.`)
+  console.log(`\nCompleted: ${success} transferred successfully, ${failed} failures.`)
 }
 
 main()

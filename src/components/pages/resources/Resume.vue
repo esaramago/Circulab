@@ -86,7 +86,7 @@ async function handleSubmit() {
     // 0. Sync client-side supabase session with cookie session
     const { data: sessionData, error: sessionError } = await actions.getSession()
     if (sessionError) {
-      throw new Error(`Erro ao obter sessão: ${sessionError.message}`)
+      throw new Error(m['resources.error_get_session']({ error: sessionError.message }))
     }
     
     let userId = ''
@@ -96,11 +96,11 @@ async function handleSubmit() {
         refresh_token: sessionData.refresh_token,
       })
       if (setSessionError) {
-        throw new Error(`Erro ao autenticar cliente: ${setSessionError.message}`)
+        throw new Error(m['resources.error_auth_client']({ error: setSessionError.message }))
       }
       userId = authData.user?.id || ''
     } else {
-      throw new Error('Utilizador não autenticado.')
+      throw new Error(m['resources.user_not_authenticated']())
     }
 
     const pinId = isEdit.value ? editingResourceId.value! : crypto.randomUUID()
@@ -111,18 +111,18 @@ async function handleSubmit() {
     for (const img of draftImages) {
       const blob = await getImage(img.id)
       if (blob) {
-        const extension = img.alt.split('.').pop() || 'jpg'
+        const extension = blob.type === 'image/webp' ? 'webp' : (img.alt.split('.').pop() || 'jpg')
         const path = userId ? `${userId}/${pinId}/${img.id}.${extension}` : `${pinId}/${img.id}.${extension}`
 
         const { error: uploadError } = await supabase.storage
           .from('pin-images')
           .upload(path, blob, {
-            cacheControl: '3600',
+            cacheControl: '31536000, immutable',
             upsert: false,
           })
 
         if (uploadError) {
-          throw new Error(`Erro ao carregar a imagem: ${uploadError.message}`)
+          throw new Error(m['resources.error_upload_image']({ error: uploadError.message }))
         }
 
         uploadedImages.push({
@@ -169,7 +169,7 @@ async function handleSubmit() {
       : await actions.addResource(payload)
 
     if (result.error) {
-      throw new Error(result.error.message || 'Erro ao guardar o recurso.')
+      throw new Error(result.error.message || m['resources.error_save']())
     }
 
     // 3. Clear local storage/IndexedDB on success
@@ -184,7 +184,7 @@ async function handleSubmit() {
     goToMap()
   } catch (err: any) {
     console.error(err)
-    errorMessage.value = err.message || 'Ocorreu um erro ao submeter o recurso.'
+    errorMessage.value = err.message || m['resources.error_submit']()
   } finally {
     isSubmitting.value = false
   }

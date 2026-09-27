@@ -22,7 +22,8 @@ import { localizeHref } from '@/paraglide/runtime.js'
     </Grid>
   </Grid>
   <Map client:only="vue" hide-filters={true} class="map" />
-  <Grid justify="center">
+  <Grid justify="center" align="center" direction="column" gap="m">
+    <p>{m['home.about_description']()}</p>
     <wa-button href={localizeHref('/sobre')} size="l">{m['home.learn_more']()}</wa-button>
   </Grid>
 </Layout>

@@ -40,6 +40,7 @@
 	"home": {
 		"hero_title": "Mapa colaborativo para a agroecologia e a circularidade.",
 		"hero_description": "Plataforma de cartografia participativa dedicada à identificação e valorização de recursos urbanos subutilizados ou desperdiçados.",
+		"about_description": "Acreditamos na força da colaboração comunitária e do conhecimento aberto. Descobre como mapeamos projetos locais, promovemos a reparação e apoiamos a regeneração dos nossos territórios.",
 		"learn_more": "Saber mais",
 		"explore_resources": "Explorar recursos"
 	},
@@ -173,6 +174,14 @@
 		"add_images_label": "Adicione imagens ao recurso",
 		"image_added_singular": "1 imagem adicionada",
 		"image_added_plural": "{count} imagens adicionadas",
+		"crop_image_title": "Cortar imagem",
+		"crop_image_instructions": "Ajuste a imagem dentro da área quadrada",
+		"crop_image_confirm": "Aplicar corte",
+		"crop_image_cancel": "Cancelar",
+		"crop_image_zoom_in": "Aproximar",
+		"crop_image_zoom_out": "Afastar",
+		"crop_image_rotate": "Rodar",
+		"crop_image_progress": "Imagem {current} de {total}",
 		"back": "Voltar",
 		"continue": "Continuar",
 		"coordinates": "Coordenadas:",
@@ -241,7 +250,14 @@
 		"add_period": "Adicionar período",
 		"remove_period": "Remover período",
 		"apply_to_weekdays": "Copiar para os dias úteis (Segunda a Sexta)",
-		"apply_to_all_days": "Copiar para todos os dias"
+		"apply_to_all_days": "Copiar para todos os dias",
+		"error_get_session": "Erro ao obter sessão: {error}",
+		"error_auth_client": "Erro ao autenticar cliente: {error}",
+		"user_not_authenticated": "Utilizador não autenticado.",
+		"error_upload_image": "Erro ao carregar a imagem: {error}",
+		"error_save": "Erro ao guardar o recurso.",
+		"error_submit": "Ocorreu um erro ao submeter o recurso.",
+		"required_fields_error": "Tens de preencher todos os assinalados para continuar"
 	},
 	"days": {
 		"sunday": "Domingo",
@@ -288,7 +304,11 @@
 		"edit_typology": "Editar tipologia",
 		"allow_category_color": "Permitir cor nas categorias",
 		"typology_updated": "Tipologia atualizada com sucesso!",
-		"no_typologies_found": "Nenhuma tipologia encontrada."
+		"no_typologies_found": "Nenhuma tipologia encontrada.",
+		"error_upload_icon": "Erro ao carregar o ícone: {error}",
+		"error_save_category": "Ocorreu um erro ao guardar a categoria.",
+		"error_delete_category": "Ocorreu um erro ao eliminar a categoria.",
+		"error_save_typology": "Ocorreu um erro ao guardar a tipologia."
 	},
 	"common": {
 		"confirm": "Confirmar",
