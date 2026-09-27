@@ -11,6 +11,7 @@ The [README](README.md) provides more context and instructions.
 - Respect existing worktree changes. Do not revert user changes unless explicitly asked.
 - Use sentence case for headings, titles, labels, and documentation text.
 - Always ask for explicit user permission before making any database changes.
+- Do not commit or push any changes
 
 ## Coding conventions
 - Keep changes scoped to the request: avoid broad refactors or unrelated files.
@@ -27,6 +28,8 @@ The [README](README.md) provides more context and instructions.
 - **Paraglide**: For the internationalization.
 - **Nanostores**: For the state management.
 - **PWA**: It is a Progressive Web App
+- **Docker**: For the development environment.
+- **Coolify**: For the hosting.
 
 ## Components
 ### WebAwesome
@@ -83,17 +86,15 @@ The `src` folder contains the source code of the project.
 - Global styles should be in the `src/css/global` folder.
 - Always use CSS Logical Properties (e.g. `margin-block-start`) instead of `margin-top` and `margin-bottom`.
 
-### DevOps
-- The project uses Docker and docker-compose for the development environment.
-- The project uses the Supabase for the database.
-- Do not commit or push any changes
-
-### Issues
-Developments tasks should be tracked in the project's [GitHub issues](https://github.com/users/esaramago/projects/5/views/1).
-
-### Database access
+### Database
+- This project uses Supabase for the database.
+- Supabase is hosted in Coolify. It has a staging environment and a production environment.
+- The staging environment is used for local development and staging.
 - Database access is available via the MCP server (`supabase-db`).
 - Access requires an active SSH tunnel to the staging environment. Run `pnpm db:tunnel` to start the tunnel in the background (or check status with `bash scripts/supabase-tunnel.sh status`).
 - The tunnel configuration uses `SUPABASE_SSH_HOST` and `SUPABASE_DB_CONTAINER_IP` from `.env`.
 - Read-only inspection queries (schema, table definitions, SELECTs for diagnosis) are permitted.
 - **CRITICAL**: You must always ask for explicit user permission before executing any database operations that modify data or alter database schemas (e.g. `INSERT`, `UPDATE`, `DELETE`, `ALTER`, `DROP`, or applying database migrations).
+
+### Issues
+Developments tasks should be tracked in the project's [GitHub issues](https://github.com/users/esaramago/projects/5/views/1).
