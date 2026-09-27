@@ -18,8 +18,10 @@ import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
+import type { AppUser } from '@/types/domain/user'
+import { userHasAccess } from '@/utils/userHasAccess'
 
-
+const user = ref<AppUser | null>(null)
 const resources = ref<FullResource[]>([])
 const typologies = ref<TypologyRow[]>([])
 const categories = ref<CategoryRow[]>([])
@@ -28,7 +30,19 @@ const search = ref('')
 const selectedTypology = ref('')
 const selectedCategory = ref('')
 
+const isCanEdit = computed(() => {
+  return user.value ? userHasAccess(user.value, 'moderation') : false
+})
+
+const isCanDelete = computed(() => {
+  return user.value ? userHasAccess(user.value, 'moderation') : false
+})
+
 onMounted(async () => {
+  const { data } = await actions.checkUser()
+  if (data) {
+    user.value = data as AppUser
+  }
   await getResources()
   await getTypologies()
 })
@@ -206,12 +220,23 @@ async function handleDelete() {
         />
 
 
-        <Grid slot="footer" justify="end" gap="s">
-          <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
+        <Grid v-if="isCanEdit || CONFIG.can_suggest || isCanDelete" slot="footer" justify="end" gap="s">
+          <wa-button
+            v-if="isCanEdit || CONFIG.can_suggest"
+            size="s"
+            variant="primary"
+            :href="localizeHref(`/recursos/editar?id=${resource.id}`)"
+            @click="clearAddResourceDraft"
+          >
             <wa-icon name="pen"></wa-icon>
-            {{ m['map.edit']() }}
+            {{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}
           </wa-button>
-          <wa-button size="s" variant="danger" @click="confirmDelete(resource)">
+          <wa-button
+            v-if="isCanDelete"
+            size="s"
+            variant="danger"
+            @click="confirmDelete(resource)"
+          >
             <wa-icon name="trash"></wa-icon>
             {{ m['resources.delete']() }}
           </wa-button>

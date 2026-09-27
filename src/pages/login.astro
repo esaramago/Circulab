@@ -6,8 +6,6 @@ import Container from '@/components/ui/Container.vue'
 import { getSafeRedirectPath, localizeRedirectPath } from '@/utils/authRedirect'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
-import { userHasAccess } from '@/utils/userHasAccess'
-import type { AppUser } from '@/types/domain/user'
 
 let errorMessage = ''
 let successMessage = ''
@@ -44,17 +42,7 @@ if (Astro.request.method === 'POST') {
     }
 
     if (loginData?.success) {
-      const user = (loginData.user || Astro.locals.user) as AppUser | undefined
-      const hasAccessToDashboard = user ? (userHasAccess(user, 'dashboard') || user.role_id === 2 || user.role_id === 3) : false
-
-      if (hasAccessToDashboard) {
-        return Astro.redirect(localizeRedirectPath(redirectTarget || '/dashboard', Astro.locals.locale))
-      }
-
-      const target = redirectTarget && !redirectTarget.startsWith('/dashboard') && !redirectTarget.startsWith('/backoffice')
-        ? redirectTarget
-        : '/mapa'
-      return Astro.redirect(localizeRedirectPath(target, Astro.locals.locale, '/mapa'))
+      return Astro.redirect(localizeRedirectPath(redirectTarget || '/dashboard', Astro.locals.locale))
     } else {
       errorMessage = loginData?.message || m['auth.failed_sign_in']()
     }

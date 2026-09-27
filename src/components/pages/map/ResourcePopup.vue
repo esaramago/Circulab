@@ -26,7 +26,7 @@ const isLoading = ref(false)
 const hasError = ref(false)
 
 const isCanEdit = computed(() => {
-  return user.value ? userHasAccess(user.value, 'dashboard') : false
+  return user.value ? userHasAccess(user.value, 'moderation') : false
 })
 
 onMounted(async () => {

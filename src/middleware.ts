@@ -26,20 +26,14 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
 
     const isLoginRoute = pathname.startsWith('/login')
     const isModerationRoute = pathname.startsWith('/dashboard/moderacao')
-    const isDashboardRoute = pathname.startsWith('/dashboard') && !isModerationRoute
     const isResourceRoute = pathname.startsWith('/recursos')
     const isBackofficeRoute = pathname.startsWith('/backoffice')
-    const isPrivateRoute = isDashboardRoute || isResourceRoute || isBackofficeRoute || isModerationRoute
+    const isPrivateRoute = isModerationRoute || isResourceRoute || isBackofficeRoute
 
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
       const redirectParam = new URL(request.url).searchParams.get('redirect')
-      const hasDashboardAccess = userHasAccess(locals.user, 'dashboard') || locals.user.role_id === 2 || locals.user.role_id === 3
-      const target = hasDashboardAccess
-        ? localizeRedirectPath(redirectParam, locals.locale)
-        : (redirectParam && !redirectParam.startsWith('/dashboard') && !redirectParam.startsWith('/backoffice')
-            ? localizeRedirectPath(redirectParam, locals.locale, '/mapa')
-            : localizeHref('/mapa', locals.locale ? { locale: locals.locale } : undefined))
+      const target = localizeRedirectPath(redirectParam, locals.locale)
       console.log(`[Middleware] Logged in user on login route. Redirecting to: ${target}`)
       return redirect(target)
     } else if (isPrivateRoute && !locals.user) {
@@ -47,9 +41,6 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
       const target = buildLoginRedirectUrl(returnPath, locals.locale)
       console.log(`[Middleware] Guest user on private route. Redirecting to login: ${target}`)
       return redirect(target)
-    } else if (isDashboardRoute && locals.user && !userHasAccess(locals.user, 'dashboard')) {
-      console.log('[Middleware] User not authorized for dashboard. Redirecting to /')
-      return redirect(localizeHref('/'))
     } else if (isModerationRoute && locals.user && !userHasAccess(locals.user, 'moderation')) {
       console.log('[Middleware] User not authorized for moderation. Redirecting to /')
       return redirect(localizeHref('/'))

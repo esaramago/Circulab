@@ -31,11 +31,11 @@ function goto(route: string) {
       <wa-icon name="user" :label="m['nav.user']()"></wa-icon>
       <span class="is-hidden-mobile">{{ user?.email }}</span>
     </wa-button>
-    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/recursos/novo')">
+    <wa-dropdown-item @click="goto('/recursos/novo')">
       <wa-icon name="plus"></wa-icon>
       {{ m['nav.add_resource']() }}
     </wa-dropdown-item>
-    <wa-dropdown-item v-if="userHasAccess(user, 'dashboard')" @click="goto('/dashboard')">
+    <wa-dropdown-item @click="goto('/dashboard')">
       <wa-icon name="table-list" :label="m['nav.dashboard']()"></wa-icon>
       {{ m['nav.dashboard']() }}
     </wa-dropdown-item>
