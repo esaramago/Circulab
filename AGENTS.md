@@ -12,6 +12,9 @@ The [README](README.md) provides more context and instructions.
 - Use sentence case for headings, titles, labels, and documentation text.
 - Always ask for explicit user permission before making any database changes.
 
+## Coding conventions
+- Keep changes scoped to the request: avoid broad refactors or unrelated files.
+
 ## Stack
 - **PNPM**: For package management.
 - **Node.js**: Use the latest LTS version.
@@ -38,10 +41,6 @@ Allways use WebAwesome components when possible.
 - Do not create Astro components in the `src/components` folder.
 - Astro components should be used only for pages and layouts.
 
-## Business rules
-- The documentation of the project is in the `docs` folder.
-- The documentation should be in English.
-
 ## Project structure
 ### docs
 The `docs` folder contains the documentation of the project.
@@ -62,9 +61,6 @@ The `src` folder contains the source code of the project.
 - `src/utils` contains the utility functions
 - `src/middleware.ts` is where we check user authentication and page access.
 
-## Coding conventions
-- Keep changes scoped to the request: avoid broad refactors or unrelated files.
-- Check `.editorconfig` and `.vscode/settings.json` for coding conventions.
 
 ### Typescript
 - All type definitions should be in `src/types`.
@@ -89,7 +85,8 @@ The `src` folder contains the source code of the project.
 
 ### DevOps
 - The project uses Docker and docker-compose for the development environment.
-- The project uses the Supabase CLI for the database.
+- The project uses the Supabase for the database.
+- Do not commit or push any changes
 
 ### Issues
 Developments tasks should be tracked in the project's [GitHub issues](https://github.com/users/esaramago/projects/5/views/1).
