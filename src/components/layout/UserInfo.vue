@@ -33,7 +33,7 @@ function goto(route: string) {
     </wa-button>
     <wa-dropdown-item @click="goto('/recursos/novo')">
       <wa-icon name="plus"></wa-icon>
-      {{ m['nav.add_resource']() }}
+      {{ user?.role?.code === 'contributor' ? m['nav.suggest_resource']() : m['nav.add_resource']() }}
     </wa-dropdown-item>
     <wa-dropdown-item @click="goto('/dashboard')">
       <wa-icon name="table-list" :label="m['nav.dashboard']()"></wa-icon>

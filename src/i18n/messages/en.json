@@ -8,6 +8,7 @@
 		"menu": "Menu",
 		"user": "User",
 		"add_resource": "Add resource",
+		"suggest_resource": "Suggest resource",
 		"dashboard": "All resources",
 		"moderation": "Moderation",
 		"backoffice": "Backoffice",
@@ -162,8 +163,10 @@
 	},
 	"resources": {
 		"add_title": "Add resource",
+		"suggest_title": "Suggest resource",
 		"edit_title": "Edit resource",
 		"add_desc": "Add a new resource to share with the community.",
+		"suggest_desc": "Suggest a new resource to share with the community.",
 		"edit_desc": "Edit the resource information.",
 		"step_validation": "Validation",
 		"step_description": "Description",

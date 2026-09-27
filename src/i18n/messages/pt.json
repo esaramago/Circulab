@@ -8,6 +8,7 @@
 		"menu": "Menu",
 		"user": "Utilizador",
 		"add_resource": "Adicionar recurso",
+		"suggest_resource": "Sugerir recurso",
 		"dashboard": "Todos os recursos",
 		"moderation": "Moderação",
 		"backoffice": "Backoffice",
@@ -160,8 +161,10 @@
 	},
 	"resources": {
 		"add_title": "Adicionar recurso",
+		"suggest_title": "Sugerir recurso",
 		"edit_title": "Editar recurso",
 		"add_desc": "Adicione um novo recurso para partilhar com a comunidade.",
+		"suggest_desc": "Sugira um novo recurso para partilhar com a comunidade.",
 		"edit_desc": "Edite as informações do recurso.",
 		"step_validation": "Validação",
 		"step_description": "Descrição",
