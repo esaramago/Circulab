@@ -1,0 +1,12 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import ModerationDashboard from '@/components/pages/moderation/ModerationDashboard.vue'
+import { m } from '@/paraglide/messages.js'
+---
+
+<Layout title={m['moderation.title']()} fullWidth>
+  <h1>{m['moderation.title']()}</h1>
+
+  <ModerationDashboard client:only="vue" />
+</Layout>
+

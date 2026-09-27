@@ -8,6 +8,13 @@ import { getPins, addResource, getResources, getResource, getFullResources, dele
 import { addCategory, updateCategory, deleteCategory, getCategories, getCategoryById } from './categories'
 import { updateTypology, getTypologies, getTypologyById } from './typologies'
 import { submitContact } from './contact'
+import {
+  getSuggestedResources,
+  getSuggestedResource,
+  updateSuggestedResource,
+  acceptSuggestedResource,
+  rejectSuggestedResource,
+} from './moderation'
 
 export const server = {
   signIn,
@@ -33,5 +40,10 @@ export const server = {
   getTypologies,
   getTypologyById,
   submitContact,
+  getSuggestedResources,
+  getSuggestedResource,
+  updateSuggestedResource,
+  acceptSuggestedResource,
+  rejectSuggestedResource,
 }
 

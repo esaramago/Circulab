@@ -321,6 +321,51 @@ export const addResource = defineAction({
           code: 'UNAUTHORIZED',
         })
       }
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('*, roles(*)')
+        .eq('id', auth.user.id)
+        .single()
+
+      const isModeratorOrAdmin = ['admin', 'moderator'].includes(userProfile?.roles?.code || '')
+
+      if (!isModeratorOrAdmin) {
+        const { error: suggestionError } = await supabase.from('suggested_pins').insert({
+          pin_id: null,
+          status: 'standby',
+          title: input.title || '',
+          description: input.description || '',
+          images: input.images || [],
+          coordinates: geographyPointEwkt(
+            Number(input.coordinates?.longitude),
+            Number(input.coordinates?.latitude),
+          ),
+          category_id: input.category_id,
+          characteristics_ids: input.characteristics_ids || [],
+          location_name: input.location_name || '',
+          address: input.address || '',
+          postal_code: input.postal_code || '',
+          email: input.email || '',
+          phone: input.phone != null ? String(input.phone) : null,
+          phone_area_code: input.phone_area_code != null ? Number(input.phone_area_code) : null,
+          access: input.access || null,
+          accessibility: input.accessibility ?? null,
+          has_opening_hours: input.has_opening_hours ?? false,
+          opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
+          networks: input.networks || [],
+          created_by: auth.user.id,
+        })
+
+        if (suggestionError) {
+          console.error('[Action] addResource suggestion error:', suggestionError)
+          throw new ActionError({
+            message: suggestionError.message || 'Failed to submit suggestion',
+            code: mapErrorCode(suggestionError.code),
+          })
+        }
+
+        return { success: true, isSuggestion: true }
+      }
 
       const locationInsert: LocationInsert = {
         name: input.location_name || '',
@@ -399,6 +444,8 @@ export const addResource = defineAction({
           code: mapErrorCode(pinsError?.code),
         })
       }
+
+      return { success: true, isSuggestion: false }
 
     } catch (error: any) {
       if (error instanceof ActionError) throw error
@@ -494,13 +541,6 @@ export const editResource = defineAction({
         .eq('id', auth.user.id)
         .single()
 
-      if (profileError || !['admin', 'moderator'].includes(userProfile?.roles?.code || '')) {
-        throw new ActionError({
-          message: 'Not authorized',
-          code: 'UNAUTHORIZED',
-        })
-      }
-
       // 1. Get the existing pin to find its location_id
       const { data: existingPin, error: pinFetchError } = await supabase
         .from('pins')
@@ -513,6 +553,46 @@ export const editResource = defineAction({
           message: pinFetchError?.message || 'Resource not found',
           code: 'NOT_FOUND',
         })
+      }
+
+      const isModeratorOrAdmin = ['admin', 'moderator'].includes(userProfile?.roles?.code || '')
+
+      if (!isModeratorOrAdmin) {
+        const { error: suggestionError } = await supabase.from('suggested_pins').insert({
+          pin_id: input.id,
+          status: 'standby',
+          title: input.title || '',
+          description: input.description || '',
+          images: input.images || [],
+          coordinates: geographyPointEwkt(
+            Number(input.coordinates?.longitude),
+            Number(input.coordinates?.latitude),
+          ),
+          category_id: input.category_id,
+          characteristics_ids: input.characteristics_ids || [],
+          location_name: input.location_name || '',
+          address: input.address || '',
+          postal_code: input.postal_code || '',
+          email: input.email || '',
+          phone: input.phone != null ? String(input.phone) : null,
+          phone_area_code: input.phone_area_code != null ? Number(input.phone_area_code) : null,
+          access: input.access || null,
+          accessibility: input.accessibility ?? null,
+          has_opening_hours: input.has_opening_hours ?? false,
+          opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
+          networks: input.networks || [],
+          created_by: auth.user.id,
+        })
+
+        if (suggestionError) {
+          console.error('[Action] editResource suggestion error:', suggestionError)
+          throw new ActionError({
+            message: suggestionError.message || 'Failed to submit edit suggestion',
+            code: mapErrorCode(suggestionError.code),
+          })
+        }
+
+        return { success: true, isSuggestion: true }
       }
 
       // 2. Update the location
@@ -599,7 +679,7 @@ export const editResource = defineAction({
         })
       }
 
-      return { success: true }
+      return { success: true, isSuggestion: false }
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       console.error('[Action] editResource catch error:', error)
