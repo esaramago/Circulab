@@ -91,6 +91,9 @@ The `src` folder contains the source code of the project.
 - The project uses Docker and docker-compose for the development environment.
 - The project uses the Supabase CLI for the database.
 
+### Issues
+Developments tasks should be tracked in the project's [GitHub issues](https://github.com/users/esaramago/projects/5/views/1).
+
 ### Database access
 - Database access is available via the MCP server (`supabase-db`).
 - Access requires an active SSH tunnel to the staging environment. Run `pnpm db:tunnel` to start the tunnel in the background (or check status with `bash scripts/supabase-tunnel.sh status`).
