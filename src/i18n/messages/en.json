@@ -120,7 +120,12 @@
 		"name_placeholder": "Your name",
 		"email_placeholder": "your.email@example.com",
 		"subject_placeholder": "Message subject",
-		"message_placeholder": "Write your message here..."
+		"message_placeholder": "Write your message here...",
+		"name_min": "Name must have at least 2 characters",
+		"email_invalid": "Invalid email address",
+		"subject_min": "Subject must have at least 3 characters",
+		"message_min": "Message must have at least 10 characters",
+		"process_error": "An error occurred while processing the message"
 	},
 	"not_found": {
 		"title": "Page not found",

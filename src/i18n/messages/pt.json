@@ -118,7 +118,12 @@
 		"name_placeholder": "O teu nome",
 		"email_placeholder": "o.teu.email@exemplo.com",
 		"subject_placeholder": "Assunto da mensagem",
-		"message_placeholder": "Escreve a tua mensagem aqui..."
+		"message_placeholder": "Escreve a tua mensagem aqui...",
+		"name_min": "O nome deve ter pelo menos 2 caracteres",
+		"email_invalid": "Endereço de email inválido",
+		"subject_min": "O assunto deve ter pelo menos 3 caracteres",
+		"message_min": "A mensagem deve ter pelo menos 10 caracteres",
+		"process_error": "Ocorreu um erro ao processar a mensagem"
 	},
 	"not_found": {
 		"title": "Página não encontrada",
