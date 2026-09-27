@@ -10,6 +10,7 @@
     "build": "pnpm run compile:paraglide && astro build",
     "compile:paraglide": "node ./project.inlang/compile-paraglide.mjs",
     "gen:supabase": "bash -c 'set -a && [ -f .env ] && . ./.env; set +a; supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > src/types/supabase.ts'",
+    "db:tunnel": "bash ./scripts/supabase-tunnel.sh",
     "preview": "astro preview",
     "astro": "astro",
     "machine-translate": "inlang machine translate --project project.inlang"
