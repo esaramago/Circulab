@@ -104,13 +104,13 @@ async function handleSubmit() {
     for (const img of draftImages) {
       const blob = await getImage(img.id)
       if (blob) {
-        const extension = img.alt.split('.').pop() || 'jpg'
+        const extension = blob.type === 'image/webp' ? 'webp' : (img.alt.split('.').pop() || 'jpg')
         const path = userId ? `${userId}/${pinId}/${img.id}.${extension}` : `${pinId}/${img.id}.${extension}`
 
         const { error: uploadError } = await supabase.storage
           .from('pin-images')
           .upload(path, blob, {
-            cacheControl: '3600',
+            cacheControl: '31536000, immutable',
             upsert: false,
           })
 
