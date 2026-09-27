@@ -1,11 +1,12 @@
-
 <script setup lang="ts">
+import { ref } from 'vue'
 import '@webawesome/input/input.js'
 import '@webawesome/button/button.js'
 import InputFile from '@/components/ui/InputFile.vue'
 import Gallery from '@/components/ui/Gallery.vue'
 import GalleryItem from '@/components/ui/GalleryItem.vue'
 import Grid from '@/components/ui/Grid.vue'
+import ImageCropperModal from '@/components/ui/ImageCropperModal.vue'
 import type { DescriptionImageDraft } from '@/types/add-resource-draft'
 import { saveImage, deleteImage } from '@/utils/imageStore'
 import { m } from '@/paraglide/messages.js'
@@ -18,20 +19,44 @@ const emit = defineEmits<{
   change: [images: DescriptionImageDraft[]]
 }>()
 
-const handleImagesChange = async (files: FileList) => {
-  if (!files) return
-  const next = [...props.images]
-  for (const file of files) {
-    const id = crypto.randomUUID()
-    const url = URL.createObjectURL(file)
-    await saveImage(id, file)
-    next.push({
-      id,
-      url,
-      alt: file.name || '',
-    })
-  }
+const fileQueue = ref<File[]>([])
+const currentQueueIndex = ref(0)
+const isCropperOpen = ref(false)
+const currentFileToCrop = ref<File | null>(null)
+
+const handleImagesChange = (files: FileList) => {
+  if (!files || files.length === 0) return
+  fileQueue.value = Array.from(files)
+  currentQueueIndex.value = 0
+  currentFileToCrop.value = fileQueue.value[0]
+  isCropperOpen.value = true
+}
+
+const handleCroppedImage = async (croppedFile: File) => {
+  const id = crypto.randomUUID()
+  const url = URL.createObjectURL(croppedFile)
+  await saveImage(id, croppedFile)
+  const next = [...props.images, {
+    id,
+    url,
+    alt: croppedFile.name || '',
+  }]
   emit('change', next)
+
+  currentQueueIndex.value++
+  if (currentQueueIndex.value < fileQueue.value.length) {
+    currentFileToCrop.value = fileQueue.value[currentQueueIndex.value]
+  } else {
+    isCropperOpen.value = false
+    currentFileToCrop.value = null
+    fileQueue.value = []
+  }
+}
+
+const handleCropperCancel = () => {
+  isCropperOpen.value = false
+  currentFileToCrop.value = null
+  fileQueue.value = []
 }
 
 const handleRemoveImage = async (image: { src: string, alt: string }) => {
@@ -44,7 +69,6 @@ const handleRemoveImage = async (image: { src: string, alt: string }) => {
   }
 }
 </script>
-
 
 <template>
   <Grid gap="s" direction="column">
@@ -71,5 +95,14 @@ const handleRemoveImage = async (image: { src: string, alt: string }) => {
       <template v-if="images.length === 1">{{ m['resources.image_added_singular']() }}</template>
       <template v-else-if="images.length > 1">{{ m['resources.image_added_plural']({ count: images.length }) }}</template>
     </p>
+
+    <ImageCropperModal
+      :open="isCropperOpen"
+      :file="currentFileToCrop"
+      :current="currentQueueIndex + 1"
+      :total="fileQueue.length"
+      @crop="handleCroppedImage"
+      @cancel="handleCropperCancel"
+    />
   </Grid>
 </template>

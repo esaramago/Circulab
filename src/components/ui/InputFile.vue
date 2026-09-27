@@ -25,10 +25,12 @@ const emit = defineEmits<{
 }>()
 
 const handleImagesChange = (event: Event) => {
-  const files = (event.target as HTMLInputElement).files
-  if (files) {
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  if (files && files.length > 0) {
     emit('change', files)
   }
+  target.value = ''
 }
 
 </script>
