@@ -235,9 +235,11 @@ async function handleSubmit() {
     :open="suggestionDialogOpen ? '' : null"
     @wa-after-hide="goToMap"
   >
-    <p>{{ m['resources.suggestion_submitted_msg']() }}</p>
+    <wa-callout variant="success">
+      {{ m['resources.suggestion_submitted_msg']() }}
+    </wa-callout>
     <div slot="footer" class="dialog-footer">
-      <wa-button variant="brand" @click="goToMap">
+      <wa-button variant="brand" appearance="plain" @click="goToMap">
         {{ m['resources.suggestion_submitted_action']() }}
       </wa-button>
     </div>
@@ -249,6 +251,9 @@ async function handleSubmit() {
   display: flex;
   justify-content: flex-end;
   margin-block-start: var(--wa-space-l);
+}
+#suggestion-submitted-dialog {
+  --width: 60rem;
 }
 </style>
 
