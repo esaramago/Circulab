@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onBeforeUnmount, computed } from 'vue'
+import { ref, watch, nextTick, onMounted, onBeforeUnmount, computed } from 'vue'
 import '@webawesome/dialog/dialog.js'
 import '@webawesome/button/button.js'
 import Icon from '@/components/ui/Icon.vue'
@@ -30,7 +30,9 @@ const imgRef = ref<HTMLImageElement | null>(null)
 const cropperContainerRef = ref<HTMLDivElement | null>(null)
 const isProcessing = ref(false)
 const isReady = ref(false)
+const isDialogShown = ref(false)
 let cropperInstance: any = null
+let resizeObserver: ResizeObserver | null = null
 
 const modalTitle = computed(() => {
   if (props.total > 1) {
@@ -59,7 +61,13 @@ function cleanupCropper() {
 }
 
 async function initCropper() {
-  if (!imgRef.value || !imageSrc.value) return
+  if (!imgRef.value || !imageSrc.value || !cropperContainerRef.value) return
+
+  const rect = cropperContainerRef.value.getBoundingClientRect()
+  if (rect.width === 0 || rect.height === 0) {
+    return
+  }
+
   isReady.value = false
 
   try {
@@ -72,9 +80,9 @@ async function initCropper() {
     cropperInstance = new Cropper(imgRef.value, {
       template: `
         <cropper-canvas background>
-          <cropper-image rotatable scalable translatable></cropper-image>
+          <cropper-image initial-fit="contain" rotatable scalable translatable></cropper-image>
           <cropper-shade></cropper-shade>
-          <cropper-selection aspect-ratio="1" initial-coverage="0.9" movable resizable>
+          <cropper-selection aspect-ratio="1" initial-coverage="0.8" movable resizable>
             <cropper-grid role="grid" bordered covered></cropper-grid>
             <cropper-crosshair centered></cropper-crosshair>
             <cropper-handle action="move" theme-color="rgba(255, 255, 255, 0.35)"></cropper-handle>
@@ -90,10 +98,33 @@ async function initCropper() {
         </cropper-canvas>
       `,
     })
+
+    const cropperImage = cropperInstance.getCropperImage()
+    const selection = cropperInstance.getCropperSelection()
+
+    if (cropperImage) {
+      await cropperImage.$ready()
+      await nextTick()
+      cropperImage.$center('contain')
+    }
+    if (selection) {
+      selection.$center()
+    }
     isReady.value = true
   } catch (err) {
     console.error('Failed to initialize Cropper:', err)
   }
+}
+
+function handleDialogAfterShow() {
+  isDialogShown.value = true
+  initCropper()
+}
+
+function handleDialogAfterHide() {
+  isDialogShown.value = false
+  cleanupCropper()
+  emit('cancel')
 }
 
 watch(
@@ -103,6 +134,10 @@ watch(
       cleanupCropper()
       await nextTick()
       imageSrc.value = URL.createObjectURL(file)
+      if (isDialogShown.value) {
+        await nextTick()
+        initCropper()
+      }
     } else if (!isOpen) {
       cleanupCropper()
     }
@@ -110,7 +145,35 @@ watch(
   { immediate: true }
 )
 
+onMounted(() => {
+  if (typeof window !== 'undefined' && window.ResizeObserver && cropperContainerRef.value) {
+    resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          if (!cropperInstance && imageSrc.value && isDialogShown.value) {
+            initCropper()
+          } else if (cropperInstance && isReady.value) {
+            const cropperImage = cropperInstance.getCropperImage()
+            const selection = cropperInstance.getCropperSelection()
+            if (cropperImage) {
+              cropperImage.$center('contain')
+            }
+            if (selection) {
+              selection.$center()
+            }
+          }
+        }
+      }
+    })
+    resizeObserver.observe(cropperContainerRef.value)
+  }
+})
+
 onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
   cleanupCropper()
 })
 
@@ -190,7 +253,8 @@ function handleCancel() {
   <wa-dialog
     :label="modalTitle"
     :open="open ? '' : null"
-    @wa-after-hide="handleCancel"
+    @wa-after-show="handleDialogAfterShow"
+    @wa-after-hide="handleDialogAfterHide"
   >
     <div class="crop-body">
       <p class="crop-instructions">{{ m['resources.crop_image_instructions']() }}</p>
@@ -290,18 +354,14 @@ wa-dialog {
   background-color: var(--wa-color-neutral-95);
   border-radius: var(--wa-border-radius-m);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .crop-image {
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
+  display: none;
 }
 
 .crop-container :deep(cropper-canvas) {
+  display: block;
   width: 100%;
   height: 100%;
 }
