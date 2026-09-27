@@ -78,6 +78,7 @@ The `src` folder contains the source code of the project.
 - Do not set default values on the attributes of the components (ex: `<wa-button size="m">`).
 
 ### CSS
+- Avoid creating new css. Allways try reuse existing code (web awesome, grid, components, etc).
 - Use WebAwesome custom properties instead of hardcoded values.
 - Keep styles aligned with tokens in `src/css/base/variables.css`.
 - Do not use inline styles.
@@ -85,6 +86,11 @@ The `src` folder contains the source code of the project.
 - Components specific styles should be in the component file (.vue or .astro).
 - Global styles should be in the `src/css/global` folder.
 - Always use CSS Logical Properties (e.g. `margin-block-start`) instead of `margin-top` and `margin-bottom`.
+
+### Grid component
+-  Grid component in the `src/components/ui` folder was created for the layout.
+- Allways prefer using the Grid component for the layout instead of creating new css.
+- Do not set default values on the attributes of the components (ex: `<Grid gap="m">`).
 
 ### Database
 - This project uses Supabase for the database.
