@@ -14,19 +14,15 @@ import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
 import '@webawesome/badge/badge.js'
 import type { SuggestedResource } from '@/types/domain/resource'
-import type { WeekSchedule } from '@/types/add-resource-draft'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
-import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
-import geojson from '@/utils/geojson'
 
 const suggestions = ref<SuggestedResource[]>([])
 const typologies = ref<TypologyRow[]>([])
 const categories = ref<CategoryRow[]>([])
 const editCategories = ref<CategoryRow[]>([])
-const openingHours = ref<WeekSchedule | null>(null)
 
 const search = ref('')
 const selectedTypology = ref('')
@@ -202,6 +198,20 @@ async function handleReject() {
   }
 }
 
+function extractCoordinates(coords: any): { latitude: number; longitude: number } {
+  if (!coords) return { latitude: 0, longitude: 0 }
+  if (typeof coords.latitude === 'number' && typeof coords.longitude === 'number') {
+    return { latitude: coords.latitude, longitude: coords.longitude }
+  }
+  if (Array.isArray(coords.coordinates) && coords.coordinates.length >= 2) {
+    return {
+      latitude: Number(coords.coordinates[1]) || 0,
+      longitude: Number(coords.coordinates[0]) || 0,
+    }
+  }
+  return { latitude: 0, longitude: 0 }
+}
+
 async function startEdit(resource: SuggestedResource) {
   editingSuggestion.value = {
     suggestion_id: resource.suggestion_id,
@@ -221,10 +231,7 @@ async function startEdit(resource: SuggestedResource) {
     accessibility: resource.accessibility ?? null,
     has_opening_hours: resource.has_opening_hours ?? false,
     opening_hours: resource.opening_hours || null,
-    coordinates: {
-      latitude: resource.coordinates ? geojson.getLatitude(resource.coordinates) : 0,
-      longitude: resource.coordinates ? geojson.getLongitude(resource.coordinates) : 0,
-    },
+    coordinates: extractCoordinates(resource.coordinates),
     images: resource.images || [],
     networks: resource.networks || [],
   }
@@ -252,6 +259,11 @@ async function handleSaveEdit() {
   feedback.value = null
 
   try {
+    const rawPhone = editingSuggestion.value.phone ? String(editingSuggestion.value.phone).trim() : ''
+    const rawAreaCode = editingSuggestion.value.phone_area_code != null && editingSuggestion.value.phone_area_code !== ''
+      ? Number(editingSuggestion.value.phone_area_code)
+      : undefined
+
     const payload = {
       suggestion_id: editingSuggestion.value.suggestion_id,
       id: editingSuggestion.value.id,
@@ -264,8 +276,8 @@ async function handleSaveEdit() {
       address: editingSuggestion.value.address,
       postal_code: editingSuggestion.value.postal_code,
       email: editingSuggestion.value.email || undefined,
-      phone: editingSuggestion.value.phone ? editingSuggestion.value.phone : undefined,
-      phone_area_code: editingSuggestion.value.phone_area_code != null ? editingSuggestion.value.phone_area_code : undefined,
+      phone: rawPhone || undefined,
+      phone_area_code: rawAreaCode && !isNaN(rawAreaCode) ? rawAreaCode : undefined,
       access: editingSuggestion.value.access || undefined,
       accessibility: editingSuggestion.value.accessibility,
       has_opening_hours: editingSuggestion.value.has_opening_hours,
@@ -292,10 +304,6 @@ async function handleSaveEdit() {
   } finally {
     savingEdit.value = false
   }
-}
-
-function showOpeningHours(resource: SuggestedResource) {
-  openingHours.value = resource.opening_hours ?? null
 }
 </script>
 
@@ -369,8 +377,6 @@ function showOpeningHours(resource: SuggestedResource) {
           :show-header="false"
           :show-description="false"
           :show-networks="false"
-          schedule-mode="button"
-          @open-schedule="showOpeningHours(resource)"
         />
 
         <Grid slot="footer" justify="end" gap="s">
@@ -517,14 +523,6 @@ function showOpeningHours(resource: SuggestedResource) {
         </wa-button>
       </div>
     </form>
-  </wa-dialog>
-
-  <wa-dialog
-    id="opening-hours-dialog"
-    :label="m['map.schedule_heading']()"
-    light-dismiss
-  >
-    <OpeningHoursTable :opening-hours="openingHours" />
   </wa-dialog>
 </template>
 

@@ -20,7 +20,7 @@ async function logout() {
 }
 
 function goto(route: string) {
-  window.open(localizeHref(route))
+  window.location.href = localizeHref(route)
 }
 
 </script>

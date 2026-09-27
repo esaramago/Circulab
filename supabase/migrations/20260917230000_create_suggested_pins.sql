@@ -74,3 +74,9 @@ CREATE POLICY suggested_pins_delete_moderator
 -- Grant privileges to authenticated role
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.suggested_pins TO authenticated;
 
+-- Indexes on foreign keys and frequently filtered columns
+CREATE INDEX IF NOT EXISTS idx_suggested_pins_pin_id ON public.suggested_pins(pin_id);
+CREATE INDEX IF NOT EXISTS idx_suggested_pins_category_id ON public.suggested_pins(category_id);
+CREATE INDEX IF NOT EXISTS idx_suggested_pins_created_by ON public.suggested_pins(created_by);
+CREATE INDEX IF NOT EXISTS idx_suggested_pins_status ON public.suggested_pins(status);
+

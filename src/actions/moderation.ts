@@ -304,7 +304,7 @@ export const updateSuggestedResource = defineAction({
         updated_at: new Date().toISOString(),
       }
 
-      if (input.coordinates?.latitude && input.coordinates?.longitude) {
+      if (input.coordinates?.latitude != null && input.coordinates?.longitude != null) {
         updateData.coordinates = geographyPointEwkt(
           Number(input.coordinates.longitude),
           Number(input.coordinates.latitude),
@@ -408,7 +408,7 @@ export const acceptSuggestedResource = defineAction({
           access: suggestion.access || null,
           accessibility: suggestion.accessibility ?? null,
           has_opening_hours: suggestion.has_opening_hours ?? false,
-          opening_hours: suggestion.opening_hours || null,
+          opening_hours: suggestion.has_opening_hours ? (suggestion.opening_hours || null) : null,
         }
 
         const { error: locationUpdateError } = await supabase
@@ -485,7 +485,7 @@ export const acceptSuggestedResource = defineAction({
           access: suggestion.access || null,
           accessibility: suggestion.accessibility ?? null,
           has_opening_hours: suggestion.has_opening_hours ?? false,
-          opening_hours: suggestion.opening_hours || null,
+          opening_hours: suggestion.has_opening_hours ? (suggestion.opening_hours || null) : null,
         }
 
         const { data: locationData, error: locationError } = await supabase
