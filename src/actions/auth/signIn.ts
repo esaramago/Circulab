@@ -42,13 +42,13 @@ export const signIn = defineAction({
           role:roles(*)
         `)
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (userError || !userData) {
         throw new ActionError({
           message:
             userError?.message ||
-            `No users row found for authenticated id ${userId}`,
+            'User profile not found',
           code: 'NOT_FOUND'
         })
       }
