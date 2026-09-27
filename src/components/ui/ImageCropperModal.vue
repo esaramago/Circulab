@@ -215,24 +215,20 @@ async function handleCrop() {
 
     const canvas = await selection.$toCanvas({ width: targetSize, height: targetSize })
 
-    // Optimize in terms of KB: convert canvas to WebP with fallback to JPEG at quality 0.82
+    // Optimize in terms of KB: convert canvas to JPEG at quality 0.82 (max 1080x1080)
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob((b: Blob | null) => {
         if (b) {
           resolve(b)
         } else {
-          canvas.toBlob((fallbackB: Blob | null) => {
-            if (fallbackB) resolve(fallbackB)
-            else reject(new Error('Failed to convert canvas to blob'))
-          }, 'image/jpeg', 0.82)
+          reject(new Error('Failed to convert canvas to blob'))
         }
-      }, 'image/webp', 0.82)
+      }, 'image/jpeg', 0.82)
     })
 
     const originalName = props.file.name || 'image'
     const baseName = originalName.replace(/\.[^/.]+$/, '')
-    const extension = blob.type === 'image/webp' ? 'webp' : 'jpg'
-    const croppedFile = new File([blob], `${baseName}.${extension}`, { type: blob.type })
+    const croppedFile = new File([blob], `${baseName}.jpg`, { type: 'image/jpeg' })
 
     cleanupCropper()
     emit('crop', croppedFile)
