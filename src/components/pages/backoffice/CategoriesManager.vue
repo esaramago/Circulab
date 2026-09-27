@@ -161,7 +161,7 @@ async function saveCategory() {
           })
 
       if (uploadError) {
-        throw new Error(`Erro ao carregar o ícone: ${uploadError.message}`)
+        throw new Error(m['backoffice.error_upload_icon']({ error: uploadError.message }))
       }
       iconPath = path
     }
@@ -214,7 +214,7 @@ async function saveCategory() {
     }
   } catch (err: any) {
     console.error(err)
-    dialogError.value = err.message || 'Ocorreu um erro ao guardar a categoria.'
+    dialogError.value = err.message || m['backoffice.error_save_category']()
   } finally {
     saving.value = false
   }
@@ -241,7 +241,7 @@ async function deleteCategory() {
     }
   } catch (err: any) {
     console.error(err)
-    feedback.value = { type: 'danger', message: err.message || 'Ocorreu um erro ao eliminar a categoria.' }
+    feedback.value = { type: 'danger', message: err.message || m['backoffice.error_delete_category']() }
     deleteDialogOpen.value = false
   } finally {
     deleting.value = false

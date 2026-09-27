@@ -224,7 +224,14 @@
 		"add_period": "Adicionar período",
 		"remove_period": "Remover período",
 		"apply_to_weekdays": "Copiar para os dias úteis (Segunda a Sexta)",
-		"apply_to_all_days": "Copiar para todos os dias"
+		"apply_to_all_days": "Copiar para todos os dias",
+		"error_get_session": "Erro ao obter sessão: {error}",
+		"error_auth_client": "Erro ao autenticar cliente: {error}",
+		"user_not_authenticated": "Utilizador não autenticado.",
+		"error_upload_image": "Erro ao carregar a imagem: {error}",
+		"error_save": "Erro ao guardar o recurso.",
+		"error_submit": "Ocorreu um erro ao submeter o recurso.",
+		"required_fields_error": "Tens de preencher todos os assinalados para continuar"
 	},
 	"days": {
 		"sunday": "Domingo",
@@ -271,7 +278,11 @@
 		"edit_typology": "Editar tipologia",
 		"allow_category_color": "Permitir cor nas categorias",
 		"typology_updated": "Tipologia atualizada com sucesso!",
-		"no_typologies_found": "Nenhuma tipologia encontrada."
+		"no_typologies_found": "Nenhuma tipologia encontrada.",
+		"error_upload_icon": "Erro ao carregar o ícone: {error}",
+		"error_save_category": "Ocorreu um erro ao guardar a categoria.",
+		"error_delete_category": "Ocorreu um erro ao eliminar a categoria.",
+		"error_save_typology": "Ocorreu um erro ao guardar a tipologia."
 	},
 	"common": {
 		"confirm": "Confirmar",

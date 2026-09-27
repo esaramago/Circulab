@@ -226,7 +226,14 @@
 		"add_period": "Add period",
 		"remove_period": "Remove period",
 		"apply_to_weekdays": "Copy to weekdays (Monday to Friday)",
-		"apply_to_all_days": "Copy to all days"
+		"apply_to_all_days": "Copy to all days",
+		"error_get_session": "Error getting session: {error}",
+		"error_auth_client": "Error authenticating client: {error}",
+		"user_not_authenticated": "User not authenticated.",
+		"error_upload_image": "Error uploading image: {error}",
+		"error_save": "Error saving resource.",
+		"error_submit": "An error occurred while submitting the resource.",
+		"required_fields_error": "You must fill in all marked fields to continue"
 	},
 	"days": {
 		"sunday": "Sunday",
@@ -273,7 +280,11 @@
 		"edit_typology": "Edit typology",
 		"allow_category_color": "Allow category color",
 		"typology_updated": "Typology updated successfully!",
-		"no_typologies_found": "No typologies found."
+		"no_typologies_found": "No typologies found.",
+		"error_upload_icon": "Error uploading icon: {error}",
+		"error_save_category": "An error occurred while saving the category.",
+		"error_delete_category": "An error occurred while deleting the category.",
+		"error_save_typology": "An error occurred while saving the typology."
 	},
 	"common": {
 		"confirm": "Confirm",

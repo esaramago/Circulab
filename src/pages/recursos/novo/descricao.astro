@@ -12,7 +12,7 @@ if (Astro.request.method === 'POST') {
   if ((formData.get('title') || formData.get('name')) && formData.get('description') && formData.get('typology') && formData.get('category')) {
     return Astro.redirect(localizeHref('/recursos/novo/localizacao'))
   } else {
-    errorMessage = 'Tens de preencher todos os assinalados para continuar'
+    errorMessage = m['resources.required_fields_error']()
   }
 }
 
