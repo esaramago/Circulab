@@ -34,7 +34,12 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     // If the user is logged in and tries to access the login page, redirect away
     if (locals.user && isLoginRoute) {
       const redirectParam = new URL(request.url).searchParams.get('redirect')
-      const target = localizeRedirectPath(redirectParam, locals.locale)
+      const hasDashboardAccess = userHasAccess(locals.user, 'dashboard') || locals.user.role_id === 2 || locals.user.role_id === 3
+      const target = hasDashboardAccess
+        ? localizeRedirectPath(redirectParam, locals.locale)
+        : (redirectParam && !redirectParam.startsWith('/dashboard') && !redirectParam.startsWith('/backoffice')
+            ? localizeRedirectPath(redirectParam, locals.locale, '/mapa')
+            : localizeHref('/mapa', locals.locale ? { locale: locals.locale } : undefined))
       console.log(`[Middleware] Logged in user on login route. Redirecting to: ${target}`)
       return redirect(target)
     } else if (isPrivateRoute && !locals.user) {

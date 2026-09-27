@@ -37,7 +37,10 @@ export const signIn = defineAction({
 
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*')
+        .select(`
+          *,
+          role:roles(*)
+        `)
         .eq('id', userId)
         .single()
 
@@ -51,11 +54,12 @@ export const signIn = defineAction({
       }
 
       // Set the user in the locals
-      context.locals.user = userData
+      context.locals.user = userData as any
 
       return {
         success: true,
         message: 'Sign in successful',
+        user: userData as any,
       }
     } catch (error: any) {
       throw new ActionError({
