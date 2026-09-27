@@ -18,6 +18,7 @@
 	"home": {
 		"hero_title": "Collaborative map for agroecology and circularity.",
 		"hero_description": "Participatory mapping platform dedicated to identifying and valuing underutilized or wasted urban resources.",
+		"about_description": "We believe in the power of community collaboration and open knowledge. Discover how we map local projects, promote repair, and support the regeneration of our territories.",
 		"learn_more": "Learn more",
 		"explore_resources": "Explore resources"
 	},
@@ -153,6 +154,14 @@
 		"add_images_label": "Add images to the resource",
 		"image_added_singular": "1 image added",
 		"image_added_plural": "{count} images added",
+		"crop_image_title": "Crop image",
+		"crop_image_instructions": "Adjust the image inside the square area",
+		"crop_image_confirm": "Apply crop",
+		"crop_image_cancel": "Cancel",
+		"crop_image_zoom_in": "Zoom in",
+		"crop_image_zoom_out": "Zoom out",
+		"crop_image_rotate": "Rotate",
+		"crop_image_progress": "Image {current} of {total}",
 		"back": "Back",
 		"continue": "Continue",
 		"coordinates": "Coordinates:",
@@ -217,7 +226,14 @@
 		"add_period": "Add period",
 		"remove_period": "Remove period",
 		"apply_to_weekdays": "Copy to weekdays (Monday to Friday)",
-		"apply_to_all_days": "Copy to all days"
+		"apply_to_all_days": "Copy to all days",
+		"error_get_session": "Error getting session: {error}",
+		"error_auth_client": "Error authenticating client: {error}",
+		"user_not_authenticated": "User not authenticated.",
+		"error_upload_image": "Error uploading image: {error}",
+		"error_save": "Error saving resource.",
+		"error_submit": "An error occurred while submitting the resource.",
+		"required_fields_error": "You must fill in all marked fields to continue"
 	},
 	"days": {
 		"sunday": "Sunday",
@@ -264,7 +280,11 @@
 		"edit_typology": "Edit typology",
 		"allow_category_color": "Allow category color",
 		"typology_updated": "Typology updated successfully!",
-		"no_typologies_found": "No typologies found."
+		"no_typologies_found": "No typologies found.",
+		"error_upload_icon": "Error uploading icon: {error}",
+		"error_save_category": "An error occurred while saving the category.",
+		"error_delete_category": "An error occurred while deleting the category.",
+		"error_save_typology": "An error occurred while saving the typology."
 	},
 	"common": {
 		"confirm": "Confirm",

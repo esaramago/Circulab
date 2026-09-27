@@ -126,7 +126,7 @@ async function saveTypology() {
         })
 
       if (uploadError) {
-        throw new Error(`Erro ao carregar o ícone: ${uploadError.message}`)
+        throw new Error(m['backoffice.error_upload_icon']({ error: uploadError.message }))
       }
       iconPath = path
     }
@@ -157,7 +157,7 @@ async function saveTypology() {
     }
   } catch (err: any) {
     console.error(err)
-    dialogError.value = err.message || 'Ocorreu um erro ao guardar a tipologia.'
+    dialogError.value = err.message || m['backoffice.error_save_typology']()
   } finally {
     saving.value = false
   }

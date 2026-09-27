@@ -53,8 +53,8 @@ export default defineConfig({
     vue({
       template: {
         compilerOptions: {
-          // treat any tag that starts with wa- as custom elements
-          isCustomElement: (tag) => tag.startsWith('wa-'),
+          // treat any tag that starts with wa- or cropper- as custom elements
+          isCustomElement: (tag) => tag.startsWith('wa-') || tag.startsWith('cropper-'),
         },
       },
     }),
