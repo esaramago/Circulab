@@ -380,15 +380,15 @@ async function handleSaveEdit() {
         />
 
         <Grid slot="footer" justify="end" gap="s">
-          <wa-button size="s" appearance="outlined" @click="startEdit(resource)">
+          <wa-button size="s" @click="startEdit(resource)">
             <wa-icon name="pen"></wa-icon>
             {{ m['moderation.edit']() }}
           </wa-button>
-          <wa-button size="s" variant="danger" appearance="outlined" @click="confirmReject(resource)">
+          <wa-button size="s" variant="danger" @click="confirmReject(resource)">
             <wa-icon name="ban"></wa-icon>
             {{ m['moderation.reject']() }}
           </wa-button>
-          <wa-button size="s" variant="brand" @click="confirmAccept(resource)">
+          <wa-button size="s" variant="success" @click="confirmAccept(resource)">
             <wa-icon name="circle-check"></wa-icon>
             {{ m['moderation.accept']() }}
           </wa-button>

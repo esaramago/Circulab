@@ -2,6 +2,12 @@ wa-button {
   &::part(base) {
     transition: all 0.3s ease;
   }
+
+  &[appearance="accent"][variant="neutral"] {
+    &::part(base):hover {
+      background-color: var(--wa-color-neutral-on-quiet);
+    }
+  }
 }
 
 wa-input,
