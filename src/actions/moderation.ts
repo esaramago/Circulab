@@ -543,6 +543,7 @@ export const acceptSuggestedResource = defineAction({
 
         if (pinInsertError) {
           console.error('[Action] acceptSuggestedResource pin insert error:', pinInsertError)
+          await supabase.from('locations').delete().eq('id', locationData.id)
           throw new ActionError({
             message: pinInsertError.message || 'Failed to create pin',
             code: 'INTERNAL_SERVER_ERROR',
