@@ -61,3 +61,11 @@ export function resetMapFilters() {
   $mapFilters.set({ ...initialMapFilters })
 }
 
+export type MapViewMode = 'map' | 'cards'
+
+export const $mapView = atom<MapViewMode>('map')
+
+export function setMapView(view: MapViewMode) {
+  $mapView.set(view)
+}
+

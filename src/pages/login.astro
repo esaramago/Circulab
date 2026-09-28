@@ -42,7 +42,7 @@ if (Astro.request.method === 'POST') {
     }
 
     if (loginData?.success) {
-      return Astro.redirect(localizeRedirectPath(redirectTarget || '/dashboard', Astro.locals.locale))
+      return Astro.redirect(localizeRedirectPath(redirectTarget || '/mapa', Astro.locals.locale))
     } else {
       errorMessage = loginData?.message || m['auth.failed_sign_in']()
     }

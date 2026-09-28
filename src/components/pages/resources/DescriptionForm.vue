@@ -151,7 +151,7 @@ async function setCharacteristics(ids: string[]) {
 
 // #region Handle Events
 function handleBack() {
-  window.location.href = localizeHref(isEdit.value ? '/dashboard' : '/recursos/novo')
+  window.location.href = localizeHref(isEdit.value ? '/mapa?view=cards' : '/recursos/novo')
 }
 
 function handleCancel() {

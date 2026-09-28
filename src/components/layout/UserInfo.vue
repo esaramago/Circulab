@@ -27,16 +27,12 @@ function goto(route: string) {
 
 <template>
   <wa-dropdown>
-    <wa-button variant="neutral" size="s" slot="trigger">
+    <wa-button pill variant="neutral" size="s" slot="trigger">
       <wa-icon name="user" :label="m['nav.user']()"></wa-icon>
     </wa-button>
     <wa-dropdown-item @click="goto('/recursos/novo')">
       <wa-icon name="plus"></wa-icon>
       {{ user?.role?.code === 'contributor' ? m['nav.suggest_resource']() : m['nav.add_resource']() }}
-    </wa-dropdown-item>
-    <wa-dropdown-item @click="goto('/dashboard')">
-      <wa-icon name="table-list" :label="m['nav.dashboard']()"></wa-icon>
-      {{ m['nav.dashboard']() }}
     </wa-dropdown-item>
     <wa-dropdown-item v-if="userHasAccess(user, 'moderation')" @click="goto('/dashboard/moderacao')">
       <wa-icon name="clipboard-check" :label="m['nav.moderation']()"></wa-icon>

@@ -2,34 +2,79 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
+import ResourceCards from '@/components/pages/map/ResourceCards.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
 import Grid from '@/components/ui/Grid.vue'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { CONFIG } from '@/config'
 
 const defaultTypologyCode = Astro.url.searchParams.get('code')
+const initialView = Astro.url.searchParams.get('view') === 'cards' ? 'cards' : 'map'
 ---
 
 <script>
   import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/button-group/button-group.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/dropdown/dropdown.js'
   import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js'
   import { navigate } from 'astro:transitions/client'
+  import { setMapView, type MapViewMode } from '@/stores/map'
+
+  const applyView = (mode: MapViewMode, updateUrl = true) => {
+    setMapView(mode)
+    const btnMap = document.getElementById('btn-view-map')
+    const btnCards = document.getElementById('btn-view-cards')
+    if (mode === 'map') {
+      btnMap?.setAttribute('variant', 'brand')
+      btnCards?.removeAttribute('variant')
+    } else {
+      btnCards?.setAttribute('variant', 'brand')
+      btnMap?.removeAttribute('variant')
+    }
+
+    if (updateUrl) {
+      const url = new URL(window.location.href)
+      if (mode === 'cards') {
+        url.searchParams.set('view', 'cards')
+      } else {
+        url.searchParams.delete('view')
+      }
+      window.history.replaceState(null, '', url.toString())
+    }
+  }
 
   const setupMapActions = () => {
-    const dropdown = document.querySelector('#map-actions wa-dropdown')
-    if (!dropdown || dropdown.dataset.initialized) return
-    dropdown.dataset.initialized = 'true'
+    const mapActions = document.getElementById('map-actions')
+    if (!mapActions) return
 
-    dropdown.addEventListener('wa-select', (event: any) => {
+    const currentUrl = new URL(window.location.href)
+    const currentView = currentUrl.searchParams.get('view') === 'cards' ? 'cards' : 'map'
+    applyView(currentView, false)
+
+    if (mapActions.dataset.initialized) return
+    mapActions.dataset.initialized = 'true'
+
+    const btnMap = document.getElementById('btn-view-map')
+    const btnCards = document.getElementById('btn-view-cards')
+    btnMap?.addEventListener('click', () => applyView('map'))
+    btnCards?.addEventListener('click', () => applyView('cards'))
+
+    const dropdown = document.querySelector('#map-actions wa-dropdown')
+    dropdown?.addEventListener('wa-select', (event: any) => {
       const href = event.detail?.item?.value
-      if (href) {
-        if (typeof navigate === 'function') {
-          navigate(href)
-        } else {
-          window.location.href = href
-        }
+      if (!href) return
+
+      if (href.startsWith('view:')) {
+        const mode = href.split(':')[1] as MapViewMode
+        applyView(mode)
+        return
+      }
+
+      if (typeof navigate === 'function') {
+        navigate(href)
+      } else {
+        window.location.href = href
       }
     })
   }
@@ -43,37 +88,32 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
     <Grid justify="space-between" align="center" class="header">
       <h1>{m['map.title']()}</h1>
       <div id="map-actions">
-        <Grid justify="end" wrap class="is-hidden-mobile">
-          <wa-button href={localizeHref('/contactos')}>
-            <wa-icon name="envelope"></wa-icon>
-            {m['map.send_feedback']()}
-          </wa-button>
+        <Grid justify="end" wrap>
           {CONFIG.can_suggest &&
             <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
               <wa-icon name="plus"></wa-icon>
-              {m['map.suggest_resource']()}
+              <span class="is-hidden-mobile">{m['map.suggest_resource']()}</span>
             </wa-button>
           }
+          <wa-button-group label="Visualização">
+            <wa-button id="btn-view-map" variant={initialView === 'map' ? 'brand' : undefined}>
+              <wa-icon name="map" label="Vista de mapa"></wa-icon>
+            </wa-button>
+            <wa-button id="btn-view-cards" variant={initialView === 'cards' ? 'brand' : undefined}>
+              <wa-icon name="border-all" label="Vista de cartões"></wa-icon>
+            </wa-button>
+            <!-- <wa-button>
+              <wa-icon name="table-list" label="Vista de tabela"></wa-icon>
+            </wa-button> -->
+          </wa-button-group>
         </Grid>
-        <wa-dropdown placement="bottom-end" class="is-hidden-desktop">
-          <wa-button slot="trigger" variant="neutral">
-            <wa-icon name="ellipsis-vertical" label={m['backoffice.actions']()}></wa-icon>
-          </wa-button>
-          {CONFIG.can_suggest &&
-            <wa-dropdown-item value={localizeHref('/recursos/novo')}>
-              <wa-icon slot="icon" name="plus"></wa-icon>
-              {m['map.suggest_resource']()}
-            </wa-dropdown-item>
-          }
-          <wa-dropdown-item value={localizeHref('/contactos')}>
-            <wa-icon slot="icon" name="envelope"></wa-icon>
-            {m['map.send_feedback']()}
-          </wa-dropdown-item>
-        </wa-dropdown>
       </div>
     </Grid>
     <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
-    <Map class="map" client:only="vue" />
+    <div class="content">
+      <Map class="map" client:only="vue" />
+      <ResourceCards class="cards" client:only="vue" />
+    </div>
   </div>
 </Layout>
 
@@ -81,10 +121,10 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 .wrapper {
   display: grid;
   grid-template-rows: min-content auto;
-  grid-template-columns: 34rem auto;
+  grid-template-columns: 34rem minmax(0, 1fr);
   grid-template-areas:
     "header header"
-    "filters map";
+    "filters content";
   align-items: start;
   gap: var(--wa-space-l);
   flex: 1;
@@ -93,7 +133,7 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
     grid-template-columns: 1fr;
     grid-template-areas:
       "header"
-      "map";
+      "content";
   }
 }
 .header {
@@ -106,8 +146,14 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 .filters {
   grid-area: filters;
 }
+.content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  align-self: stretch;
+}
 .map {
-  grid-area: map;
   align-self: stretch;
 }
 </style>

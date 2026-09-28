@@ -62,7 +62,7 @@ const navItems = [
     <a href={langs.find((lang) => lang.locale !== currentLocale)?.href} class="nav-lang">{langs.find((lang) => lang.locale !== currentLocale)?.label}</a>
     {
       user && userHasAccess(user, 'moderation') && (
-        <wa-button href="/dashboard/moderacao" size="s" title={ m['nav.moderation']() }>
+        <wa-button pill href="/dashboard/moderacao" size="s" title={ m['nav.moderation']() }>
           <wa-icon name="clipboard-check" label={m['nav.moderation']()}></wa-icon>
         </wa-button>
       )
@@ -71,7 +71,7 @@ const navItems = [
       user ? (
         <UserInfo user={user} client:only="vue" />
       ) : (
-        <wa-button href={localizeHref('/login')} variant="primary" size="s">
+        <wa-button pill href={localizeHref('/login')} variant="primary" size="s">
           <wa-icon name="arrow-right-to-bracket"></wa-icon>
         </wa-button>
       )

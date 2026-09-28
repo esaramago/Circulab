@@ -46,8 +46,7 @@
 	},
 	"map": {
 		"title": "Mapa",
-		"send_feedback": "Enviar comentário",
-		"suggest_resource": "Sugerir novo recurso",
+		"suggest_resource": "Sugerir recurso",
 		"filters": "Filtros",
 		"clear_filters": "Limpar filtros",
 		"search_placeholder": "Pesquisar",

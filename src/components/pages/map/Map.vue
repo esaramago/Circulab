@@ -9,7 +9,7 @@ import ResourcePopup from './ResourcePopup.vue'
 import type { Pin } from '@/types/domain/resource.ts'
 import { CONFIG } from '@/config'
 import { useStore } from '@nanostores/vue'
-import { $selectedLayerId, MAP_LAYERS, selectLayer, $mapFilters } from '@/stores/map'
+import { $selectedLayerId, MAP_LAYERS, selectLayer, $mapFilters, $mapView } from '@/stores/map'
 import '@webawesome/button/button.js'
 import '@webawesome/dropdown/dropdown.js'
 import '@webawesome/dropdown-item/dropdown-item.js'
@@ -19,6 +19,7 @@ import isColorDark from '@/utils/isColorDark'
 
 const selectedLayerId = useStore($selectedLayerId)
 const filters = useStore($mapFilters)
+const mapView = useStore($mapView)
 
 const pins = ref<Pin[]>([])
 const mapContainer = ref<HTMLElement | null>(null)
@@ -94,6 +95,15 @@ watch(filteredPins, (newPins) => {
     addPins(newPins, mapInstance.value, markersLayer.value)
   }
 }, { deep: true })
+
+// Invalidate Leaflet map size when toggling back to map view
+watch(mapView, (newView) => {
+  if (newView === 'map' && mapInstance.value) {
+    setTimeout(() => {
+      mapInstance.value?.invalidateSize()
+    }, 100)
+  }
+})
 
 const svgCache = new Map<string, string>()
 const pendingSvgFetches = new Map<string, Promise<string>>()
@@ -232,7 +242,7 @@ function showPopup(pin: Pin) {
 </script>
 
 <template>
-  <div class="c-map-container">
+  <div v-show="mapView === 'map'" class="c-map-container">
 
     <div ref="mapContainer" id="map"></div>
     
