@@ -20,7 +20,6 @@
 	"moderation": {
 		"title": "Resource moderation",
 		"suggested_by": "Suggested by: {email}",
-		"type_new": "New resource",
 		"type_edit": "Suggested edit",
 		"accept": "Accept",
 		"reject": "Reject",

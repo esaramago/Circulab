@@ -1,7 +1,7 @@
 import { z } from 'astro/zod'
 
 export const resourceSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   title: z.string(),
   typology_id: z.string(),
   category_id: z.string(),

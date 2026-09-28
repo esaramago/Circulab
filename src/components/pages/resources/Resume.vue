@@ -120,7 +120,9 @@ async function handleSubmit() {
       throw new Error(m['resources.user_not_authenticated']())
     }
 
-    const pinId = isEdit.value ? editingResourceId.value! : crypto.randomUUID()
+    const isSuggestionEdit = !!editingSuggestionId.value
+    const storageId = editingResourceId.value || editingSuggestionId.value || crypto.randomUUID()
+    const pinId = editingResourceId.value || (isSuggestionEdit ? undefined : storageId)
     const uploadedImages: { url: string; alt: string }[] = []
 
     // 1. Upload files from IndexedDB to Supabase Storage
@@ -129,7 +131,7 @@ async function handleSubmit() {
       const blob = await getImage(img.id)
       if (blob) {
         const extension = blob.type === 'image/webp' ? 'webp' : (img.alt.split('.').pop() || 'jpg')
-        const path = userId ? `${userId}/${pinId}/${img.id}.${extension}` : `${pinId}/${img.id}.${extension}`
+        const path = userId ? `${userId}/${storageId}/${img.id}.${extension}` : `${storageId}/${img.id}.${extension}`
 
         const { error: uploadError } = await supabase.storage
           .from('pin-images')
@@ -157,7 +159,7 @@ async function handleSubmit() {
 
     // 2. Call actions.addResource or actions.editResource
     const payload = {
-      id: pinId,
+      ...(pinId ? { id: pinId } : {}),
       title: resumeData.value?.title || '',
       description: resumeData.value?.description || '',
       coordinates: {
@@ -181,8 +183,6 @@ async function handleSubmit() {
       images: uploadedImages,
     }
 
-    const isSuggestionEdit = !!editingSuggestionId.value
-
     let result
     if (isSuggestionEdit) {
       result = await actions.updateSuggestedResource({
@@ -190,7 +190,10 @@ async function handleSubmit() {
         suggestion_id: editingSuggestionId.value!,
       })
     } else if (isEdit.value) {
-      result = await actions.editResource(payload)
+      result = await actions.editResource({
+        ...payload,
+        id: editingResourceId.value!,
+      })
     } else {
       result = await actions.addResource(payload)
     }
@@ -204,7 +207,7 @@ async function handleSubmit() {
     await clearImages()
 
     if (isSuggestionEdit) {
-      window.location.href = localizeHref('/moderacao')
+      window.location.href = localizeHref('/dashboard/moderacao')
       return
     }
 

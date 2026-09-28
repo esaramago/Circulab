@@ -234,14 +234,9 @@ async function handleReject() {
         />
 
         <div slot="header">
-          <div class="suggestion-meta">
-            <wa-badge :variant="resource.pin_id ? 'warning' : 'brand'">
-              {{ resource.pin_id ? m['moderation.type_edit']() : m['moderation.type_new']() }}
-            </wa-badge>
-            <span class="submitter-email" :title="resource.suggested_by_email || ''">
-              {{ m['moderation.suggested_by']({ email: resource.suggested_by_email || '-' }) }}
-            </span>
-          </div>
+          <span class="submitter-email" :title="resource.suggested_by_email || ''">
+            {{ m['moderation.suggested_by']({ email: resource.suggested_by_email || '-' }) }}
+          </span>
           <h2>{{ resource.title }}</h2>
           <p>{{ resource?.category }} ({{ resource?.typology }})</p>
         </div>
@@ -313,14 +308,6 @@ async function handleReject() {
   padding-block: var(--wa-space-2xl);
   text-align: center;
   color: var(--wa-color-neutral-70);
-}
-
-.suggestion-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--wa-space-s);
-  margin-block-end: var(--wa-space-xs);
 }
 
 .submitter-email {
