@@ -3,7 +3,13 @@ import Grid from '@/components/ui/Grid.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import { actions } from 'astro:actions'
-import { clearAddResourceDraft, getAddResourcePayload, ensureDraftLoaded, $editingResourceId } from '@/stores/addResource'
+import {
+  clearAddResourceDraft,
+  getAddResourcePayload,
+  ensureDraftLoaded,
+  $editingResourceId,
+  $editingSuggestionId,
+} from '@/stores/addResource'
 import { supabase } from '@/utils/supabase'
 import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
@@ -25,7 +31,15 @@ const isSubmitting = ref(false)
 const errorMessage = ref('')
 const suggestionDialogOpen = ref(false)
 const editingResourceId = useStore($editingResourceId)
-const isEdit = computed(() => !!editingResourceId.value)
+const editingSuggestionId = useStore($editingSuggestionId)
+const isEdit = computed(() => !!(editingResourceId.value || editingSuggestionId.value))
+
+const backUrl = computed(() => {
+  if (editingSuggestionId.value) {
+    return `/recursos/editar?suggestion_id=${editingSuggestionId.value}`
+  }
+  return isEdit.value ? `/recursos/editar?id=${editingResourceId.value}` : '/recursos/novo/contactos'
+})
 
 function goToMap() {
   window.location.href = localizeHref('/mapa')
@@ -37,8 +51,11 @@ const characteristics = ref<string | null>(null)
 
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search)
+  const suggestionId = urlParams.get('suggestion_id')
   const id = urlParams.get('id')
-  if (id) {
+  if (suggestionId) {
+    await ensureDraftLoaded(suggestionId, { isSuggestion: true })
+  } else if (id) {
     await ensureDraftLoaded(id)
   }
 
@@ -164,9 +181,19 @@ async function handleSubmit() {
       images: uploadedImages,
     }
 
-    const result = isEdit.value
-      ? await actions.editResource(payload)
-      : await actions.addResource(payload)
+    const isSuggestionEdit = !!editingSuggestionId.value
+
+    let result
+    if (isSuggestionEdit) {
+      result = await actions.updateSuggestedResource({
+        ...payload,
+        suggestion_id: editingSuggestionId.value!,
+      })
+    } else if (isEdit.value) {
+      result = await actions.editResource(payload)
+    } else {
+      result = await actions.addResource(payload)
+    }
 
     if (result.error) {
       throw new Error(result.error.message || m['resources.error_save']())
@@ -175,6 +202,11 @@ async function handleSubmit() {
     // 3. Clear local storage/IndexedDB on success
     clearAddResourceDraft()
     await clearImages()
+
+    if (isSuggestionEdit) {
+      window.location.href = localizeHref('/moderacao')
+      return
+    }
 
     if (result.data?.isSuggestion) {
       suggestionDialogOpen.value = true
@@ -222,7 +254,7 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      :href="localizeHref(isEdit ? `/recursos/editar?id=${editingResourceId}` : '/recursos/novo/contactos')">{{ m['resources.back']() }}</wa-button
+      :href="localizeHref(backUrl)">{{ m['resources.back']() }}</wa-button
     >
     <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">
       {{ isEdit ? m['resources.save']() : m['resources.add']() }}

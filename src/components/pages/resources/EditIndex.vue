@@ -14,12 +14,14 @@ import {
   $descriptionDraft,
   $locationDraft,
   $editingResourceId,
+  $editingSuggestionId,
   ensureDraftLoaded,
 } from '@/stores/addResource'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 
 const editingResourceId = useStore($editingResourceId)
+const editingSuggestionId = useStore($editingSuggestionId)
 
 const activeModal = ref<'description' | 'location' | 'contacts' | null>(null)
 const savedChanges = ref<Set<string>>(new Set())
@@ -32,10 +34,27 @@ const initialLocationBaseline = ref<any>(null)
 
 const isMounted = ref(false)
 
+const continueUrl = computed(() => {
+  if (editingSuggestionId.value) {
+    return `/recursos/editar/resumo?suggestion_id=${editingSuggestionId.value}`
+  }
+  return `/recursos/editar/resumo?id=${editingResourceId.value || ''}`
+})
+
+const backUrl = computed(() => {
+  if (editingSuggestionId.value) {
+    return '/dashboard/moderacao'
+  }
+  return '/mapa'
+})
+
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search)
+  const suggestionId = urlParams.get('suggestion_id')
   const id = urlParams.get('id')
-  if (id) {
+  if (suggestionId) {
+    await ensureDraftLoaded(suggestionId, { isSuggestion: true })
+  } else if (id) {
     await ensureDraftLoaded(id)
   }
   initialDescriptionBaseline.value = JSON.parse(JSON.stringify($descriptionDraft.get()))
@@ -190,10 +209,10 @@ function handleDialogHide(type: string, event: Event) {
 
     <!-- Continue button -->
     <Grid justify="space-between">
-      <wa-button appearance="outlined" :href="localizeHref(`/mapa`)">{{ m['common.back']() }}</wa-button>
+      <wa-button appearance="outlined" :href="localizeHref(backUrl)">{{ m['common.back']() }}</wa-button>
       <wa-button
         variant="brand"
-        :href="localizeHref(`/recursos/editar/resumo?id=${editingResourceId || ''}`)"
+        :href="localizeHref(continueUrl)"
         :disabled="savedChanges.size === 0"
       >
         {{ m['resources.continue']() }}
