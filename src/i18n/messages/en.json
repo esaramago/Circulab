@@ -9,7 +9,7 @@
 		"user": "User",
 		"add_resource": "Add resource",
 		"suggest_resource": "Suggest resource",
-		"dashboard": "All resources",
+		"edit_resources": "Edit resources",
 		"moderation": "Moderation",
 		"backoffice": "Backoffice",
 		"logout": "Log out"
