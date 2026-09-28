@@ -27,9 +27,8 @@ function goto(route: string) {
 
 <template>
   <wa-dropdown>
-    <wa-button variant="neutral" size="s" slot="trigger" with-caret>
+    <wa-button variant="neutral" size="s" slot="trigger">
       <wa-icon name="user" :label="m['nav.user']()"></wa-icon>
-      <span class="is-hidden-mobile">{{ user?.email }}</span>
     </wa-button>
     <wa-dropdown-item @click="goto('/recursos/novo')">
       <wa-icon name="plus"></wa-icon>

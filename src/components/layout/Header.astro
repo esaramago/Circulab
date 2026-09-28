@@ -3,6 +3,7 @@ import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
 import UserInfo from '@/components/layout/UserInfo.vue'
+import { userHasAccess } from '@/utils/userHasAccess'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
@@ -59,6 +60,13 @@ const navItems = [
   </Grid>
   <Grid align="center">
     <a href={langs.find((lang) => lang.locale !== currentLocale)?.href} class="nav-lang">{langs.find((lang) => lang.locale !== currentLocale)?.label}</a>
+    {
+      user && userHasAccess(user, 'moderation') && (
+        <wa-button href="/dashboard/moderacao" size="s" title={ m['nav.moderation']() }>
+          <wa-icon name="clipboard-check" label={m['nav.moderation']()}></wa-icon>
+        </wa-button>
+      )
+    }
     {
       user ? (
         <UserInfo user={user} client:only="vue" />
