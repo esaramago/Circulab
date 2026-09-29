@@ -4,11 +4,29 @@ import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
 import UserInfo from '@/components/layout/UserInfo.vue'
 import { userHasAccess } from '@/utils/userHasAccess'
+import { createClient } from '@/utils/supabase'
 
 const path = deLocalizeHref(Astro.url.pathname + Astro.url.search)
 const currentLocale = Astro.locals.locale
 const currentPath = Astro.url.pathname
 const user = Astro.locals.user
+
+let pendingSuggestionsCount = 0
+if (user && userHasAccess(user, 'moderation')) {
+  try {
+    const supabase = createClient({ request: Astro.request, cookies: Astro.cookies })
+    const { count, error } = await supabase
+      .from('suggested_pins')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'standby')
+
+    if (!error && typeof count === 'number') {
+      pendingSuggestionsCount = count
+    }
+  } catch (error) {
+    console.error('[Header] Error fetching pending suggestions count:', error)
+  }
+}
 
 const langs = [
   {
@@ -62,8 +80,19 @@ const navItems = [
     <a href={langs.find((lang) => lang.locale !== currentLocale)?.href} class="nav-lang">{langs.find((lang) => lang.locale !== currentLocale)?.label}</a>
     {
       user && userHasAccess(user, 'moderation') && (
-        <wa-button pill href="/dashboard/moderacao" size="s" title={ m['nav.moderation']() }>
+        <wa-button
+          pill
+          href={localizeHref('/dashboard/moderacao')}
+          size="s"
+          title={m['nav.moderation']()}
+          id="moderation-nav-button"
+        >
           <wa-icon name="clipboard-check" label={m['nav.moderation']()}></wa-icon>
+          {pendingSuggestionsCount > 0 && (
+            <wa-badge id="moderation-count-badge" slot="end" variant="danger" pill>
+              {pendingSuggestionsCount}
+            </wa-badge>
+          )}
         </wa-button>
       )
     }
@@ -117,6 +146,7 @@ const navItems = [
   import '@awesome.me/webawesome/dist/components/button/button.js'
   import '@awesome.me/webawesome/dist/components/icon/icon.js'
   import '@awesome.me/webawesome/dist/components/drawer/drawer.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
 
   const init = () => {
     const button = document.getElementById('nav-toggle')
@@ -134,10 +164,38 @@ const navItems = [
     })
   }
 
+  // Update badge if moderation count updates dynamically on the client
+  window.addEventListener('moderation-count-updated', ((event: CustomEvent<{ count: number }>) => {
+    const count = event.detail?.count ?? 0
+    const button = document.getElementById('moderation-nav-button')
+    if (!button) return
+
+    let badge = document.getElementById('moderation-count-badge')
+    if (count > 0) {
+      if (!badge) {
+        badge = document.createElement('wa-badge')
+        badge.id = 'moderation-count-badge'
+        badge.slot = 'end'
+        badge.setAttribute('slot', 'end')
+        badge.setAttribute('variant', 'danger')
+        badge.setAttribute('pill', '')
+        button.appendChild(badge)
+      }
+      badge.textContent = String(count)
+    } else if (badge) {
+      badge.remove()
+    }
+  }) as EventListener)
+
   document.addEventListener('astro:page-load', init)
 </script>
 
 <style>
+  #moderation-nav-button::part(base) {
+    width: var(--wa-form-control-height);
+    aspect-ratio: 1;
+  }
+
   header {
     display: flex;
     flex-wrap: wrap;

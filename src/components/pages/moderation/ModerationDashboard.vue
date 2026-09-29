@@ -48,6 +48,13 @@ async function getSuggestions() {
     console.error('[ModerationDashboard] Error fetching suggestions:', error)
   } else {
     suggestions.value = (data ?? []) as SuggestedResource[]
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('moderation-count-updated', {
+          detail: { count: suggestions.value.length },
+        })
+      )
+    }
   }
 }
 
