@@ -21,6 +21,13 @@ const forgotPasswordHref = localizeHref(
 )
 const redirectQueryParam = Astro.url.searchParams.get('redirect')
 const redirectAfterLogin = redirectQueryParam ? getSafeRedirectPath(redirectQueryParam, '') : ''
+const registerBaseHref = localizeHref(
+  '/registar',
+  Astro.locals.locale ? { locale: Astro.locals.locale } : undefined,
+)
+const registerHref = redirectAfterLogin
+  ? `${registerBaseHref}?redirect=${encodeURIComponent(redirectAfterLogin)}`
+  : registerBaseHref
 
 if (Astro.request.method === 'POST') {
 
@@ -90,6 +97,9 @@ if (Astro.request.method === 'POST') {
           <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
           <p>
             <a href={forgotPasswordHref}>{m['auth.forgot_password']()}</a>
+          </p>
+          <p>
+            {m['auth.no_account']()} <a href={registerHref}>{m['auth.register_link']()}</a>
           </p>
         </Grid>
       </form>

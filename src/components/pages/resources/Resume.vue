@@ -17,6 +17,7 @@ import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
 import '@webawesome/dialog/dialog.js'
 import '@webawesome/button/button.js'
+import '@webawesome/input/input.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
@@ -30,6 +31,14 @@ const resumeData = ref<AddResourcePayload | null>(null)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
 const suggestionDialogOpen = ref(false)
+const otpDialogOpen = ref(false)
+const otpEmail = ref('')
+const otpCode = ref('')
+const isOtpSending = ref(false)
+const isOtpVerifying = ref(false)
+const otpCodeSent = ref(false)
+const otpErrorMessage = ref('')
+const otpSuccessMessage = ref('')
 const editingResourceId = useStore($editingResourceId)
 const editingSuggestionId = useStore($editingSuggestionId)
 const isEdit = computed(() => !!(editingResourceId.value || editingSuggestionId.value))
@@ -94,7 +103,91 @@ onMounted(async () => {
   console.log(typology.value)
 })
 
+async function handleSendOtp() {
+  if (isOtpSending.value) return
+  otpErrorMessage.value = ''
+  otpSuccessMessage.value = ''
+
+  if (!otpEmail.value || !otpEmail.value.includes('@')) {
+    otpErrorMessage.value = m['auth.otp_email_required']()
+    return
+  }
+
+  isOtpSending.value = true
+  try {
+    const { data, error } = await actions.sendOtp({ email: otpEmail.value.trim() })
+    if (error) {
+      throw new Error(error.message)
+    }
+    otpCodeSent.value = true
+    otpSuccessMessage.value = data?.message || m['auth.otp_code_sent']({ email: otpEmail.value })
+  } catch (err: any) {
+    otpErrorMessage.value = err.message || m['auth.failed_send_reset']()
+  } finally {
+    isOtpSending.value = false
+  }
+}
+
+async function handleVerifyOtpAndSubmit() {
+  if (isOtpVerifying.value) return
+  otpErrorMessage.value = ''
+
+  if (!otpCode.value || otpCode.value.trim().length < 6) {
+    otpErrorMessage.value = m['auth.otp_code_required']()
+    return
+  }
+
+  isOtpVerifying.value = true
+  try {
+    const { data, error } = await actions.verifyOtp({
+      email: otpEmail.value.trim(),
+      token: otpCode.value.trim(),
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (data?.session) {
+      await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      })
+    }
+
+    otpDialogOpen.value = false
+    await executeSubmit()
+  } catch (err: any) {
+    otpErrorMessage.value = err.message || m['auth.otp_invalid_code']()
+  } finally {
+    isOtpVerifying.value = false
+  }
+}
+
 async function handleSubmit() {
+  if (isSubmitting.value) return
+  errorMessage.value = ''
+
+  if (isEdit.value) {
+    await executeSubmit()
+    return
+  }
+
+  const { data: sessionData } = await actions.getSession()
+  if (!sessionData) {
+    if (!otpEmail.value && resumeData.value?.email) {
+      otpEmail.value = resumeData.value.email
+    }
+    otpErrorMessage.value = ''
+    otpSuccessMessage.value = ''
+    otpDialogOpen.value = true
+    return
+  }
+
+  await executeSubmit()
+}
+
+async function executeSubmit() {
   if (isSubmitting.value) return
   isSubmitting.value = true
   errorMessage.value = ''
@@ -265,6 +358,78 @@ async function handleSubmit() {
   </Grid>
 
   <wa-dialog
+    id="otp-confirm-dialog"
+    :label="m['auth.otp_dialog_title']()"
+    :open="otpDialogOpen ? '' : null"
+    @wa-after-hide="otpDialogOpen = false"
+  >
+    <Grid gap="m" direction="column">
+      <p>{{ m['auth.otp_dialog_desc']() }}</p>
+
+      <wa-callout v-if="otpErrorMessage" variant="danger">
+        {{ otpErrorMessage }}
+      </wa-callout>
+
+      <wa-callout v-if="otpSuccessMessage" variant="success">
+        {{ otpSuccessMessage }}
+      </wa-callout>
+
+      <wa-input
+        type="email"
+        :label="m['auth.email_label']()"
+        :value="otpEmail"
+        @input="otpEmail = ($event.target as HTMLInputElement).value"
+        required
+        :disabled="otpCodeSent || isOtpSending || isOtpVerifying || null"
+      ></wa-input>
+
+      <wa-input
+        v-if="otpCodeSent"
+        type="text"
+        inputmode="numeric"
+        maxlength="6"
+        :label="m['auth.otp_code_label']()"
+        :placeholder="m['auth.otp_code_placeholder']()"
+        :value="otpCode"
+        @input="otpCode = ($event.target as HTMLInputElement).value"
+        required
+        :disabled="isOtpVerifying || null"
+      ></wa-input>
+    </Grid>
+
+    <div slot="footer" class="dialog-footer">
+      <wa-button
+        v-if="!otpCodeSent"
+        variant="brand"
+        :loading="isOtpSending || null"
+        :disabled="isOtpSending || null"
+        @click="handleSendOtp"
+      >
+        {{ m['auth.otp_send_code']() }}
+      </wa-button>
+
+      <Grid gap="s" justify="end" v-else>
+        <wa-button
+          variant="neutral"
+          appearance="plain"
+          :disabled="isOtpSending || isOtpVerifying || null"
+          @click="handleSendOtp"
+        >
+          {{ m['auth.otp_resend_code']() }}
+        </wa-button>
+        <wa-button
+          variant="brand"
+          :loading="isOtpVerifying || isSubmitting || null"
+          :disabled="isOtpVerifying || isSubmitting || null"
+          @click="handleVerifyOtpAndSubmit"
+        >
+          {{ m['auth.otp_confirm_and_submit']() }}
+        </wa-button>
+      </Grid>
+    </div>
+  </wa-dialog>
+
+  <wa-dialog
     id="suggestion-submitted-dialog"
     :label="m['resources.suggestion_submitted_title']()"
     :open="suggestionDialogOpen ? '' : null"
@@ -287,7 +452,8 @@ async function handleSubmit() {
   justify-content: flex-end;
   margin-block-start: var(--wa-space-l);
 }
-#suggestion-submitted-dialog {
+#suggestion-submitted-dialog,
+#otp-confirm-dialog {
   --width: 60rem;
 }
 </style>

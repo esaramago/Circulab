@@ -4,110 +4,19 @@ import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
 import ResourceCards from '@/components/pages/map/ResourceCards.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
+import MapActions from '@/components/pages/map/MapActions.vue'
 import Grid from '@/components/ui/Grid.vue'
-import { localizeHref } from '@/paraglide/runtime.js'
-import { CONFIG } from '@/config'
+import type { MapViewMode } from '@/stores/map'
 
 const defaultTypologyCode = Astro.url.searchParams.get('code')
-const initialView = Astro.url.searchParams.get('view') === 'cards' ? 'cards' : 'map'
+const initialView: MapViewMode = Astro.url.searchParams.get('view') === 'cards' ? 'cards' : 'map'
 ---
-
-<script>
-  import '@awesome.me/webawesome/dist/components/button/button.js'
-  import '@awesome.me/webawesome/dist/components/button-group/button-group.js'
-  import '@awesome.me/webawesome/dist/components/icon/icon.js'
-  import '@awesome.me/webawesome/dist/components/dropdown/dropdown.js'
-  import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js'
-  import { navigate } from 'astro:transitions/client'
-  import { setMapView, type MapViewMode } from '@/stores/map'
-
-  const applyView = (mode: MapViewMode, updateUrl = true) => {
-    setMapView(mode)
-    const btnMap = document.getElementById('btn-view-map')
-    const btnCards = document.getElementById('btn-view-cards')
-    if (mode === 'map') {
-      btnMap?.setAttribute('variant', 'brand')
-      btnCards?.removeAttribute('variant')
-    } else {
-      btnCards?.setAttribute('variant', 'brand')
-      btnMap?.removeAttribute('variant')
-    }
-
-    if (updateUrl) {
-      const url = new URL(window.location.href)
-      if (mode === 'cards') {
-        url.searchParams.set('view', 'cards')
-      } else {
-        url.searchParams.delete('view')
-      }
-      window.history.replaceState(null, '', url.toString())
-    }
-  }
-
-  const setupMapActions = () => {
-    const mapActions = document.getElementById('map-actions')
-    if (!mapActions) return
-
-    const currentUrl = new URL(window.location.href)
-    const currentView = currentUrl.searchParams.get('view') === 'cards' ? 'cards' : 'map'
-    applyView(currentView, false)
-
-    if (mapActions.dataset.initialized) return
-    mapActions.dataset.initialized = 'true'
-
-    const btnMap = document.getElementById('btn-view-map')
-    const btnCards = document.getElementById('btn-view-cards')
-    btnMap?.addEventListener('click', () => applyView('map'))
-    btnCards?.addEventListener('click', () => applyView('cards'))
-
-    const dropdown = document.querySelector('#map-actions wa-dropdown')
-    dropdown?.addEventListener('wa-select', (event: any) => {
-      const href = event.detail?.item?.value
-      if (!href) return
-
-      if (href.startsWith('view:')) {
-        const mode = href.split(':')[1] as MapViewMode
-        applyView(mode)
-        return
-      }
-
-      if (typeof navigate === 'function') {
-        navigate(href)
-      } else {
-        window.location.href = href
-      }
-    })
-  }
-
-  setupMapActions()
-  document.addEventListener('astro:page-load', setupMapActions)
-</script>
 
 <Layout title={m['map.title']()} fullWidth={true}>
   <div class="wrapper">
     <Grid justify="space-between" align="center" class="header">
       <h1>{m['map.title']()}</h1>
-      <div id="map-actions">
-        <Grid justify="end" wrap>
-          {CONFIG.can_suggest &&
-            <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
-              <wa-icon name="plus"></wa-icon>
-              <span class="is-hidden-mobile">{m['map.suggest_resource']()}</span>
-            </wa-button>
-          }
-          <wa-button-group label="Visualização">
-            <wa-button id="btn-view-map" variant={initialView === 'map' ? 'brand' : undefined}>
-              <wa-icon name="map" label="Vista de mapa"></wa-icon>
-            </wa-button>
-            <wa-button id="btn-view-cards" variant={initialView === 'cards' ? 'brand' : undefined}>
-              <wa-icon name="border-all" label="Vista de cartões"></wa-icon>
-            </wa-button>
-            <!-- <wa-button>
-              <wa-icon name="table-list" label="Vista de tabela"></wa-icon>
-            </wa-button> -->
-          </wa-button-group>
-        </Grid>
-      </div>
+      <MapActions client:only="vue" initialView={initialView} />
     </Grid>
     <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
     <div class="content">
@@ -138,10 +47,6 @@ const initialView = Astro.url.searchParams.get('view') === 'cards' ? 'cards' : '
 }
 .header {
   grid-area: header;
-}
-#map-actions {
-  display: flex;
-  justify-content: flex-end;
 }
 .filters {
   grid-area: filters;

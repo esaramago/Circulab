@@ -25,16 +25,19 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     locals.locale = getLocale()
 
     const isLoginRoute = pathname.startsWith('/login')
+    const isRegisterRoute = pathname.startsWith('/registar')
+    const isAuthEntryRoute = isLoginRoute || isRegisterRoute
     const isModerationRoute = pathname.startsWith('/dashboard/moderacao')
-    const isResourceRoute = pathname.startsWith('/recursos')
+    const isResourceRoute = pathname.startsWith('/recursos') && !pathname.startsWith('/recursos/novo')
     const isBackofficeRoute = pathname.startsWith('/backoffice')
-    const isPrivateRoute = isModerationRoute || isResourceRoute || isBackofficeRoute
+    const isProfileRoute = pathname.startsWith('/perfil')
+    const isPrivateRoute = isModerationRoute || isResourceRoute || isBackofficeRoute || isProfileRoute
 
-    // If the user is logged in and tries to access the login page, redirect away
-    if (locals.user && isLoginRoute) {
+    // If the user is logged in and tries to access the login or register page, redirect away
+    if (locals.user && isAuthEntryRoute) {
       const redirectParam = new URL(request.url).searchParams.get('redirect')
       const target = localizeRedirectPath(redirectParam, locals.locale)
-      console.log(`[Middleware] Logged in user on login route. Redirecting to: ${target}`)
+      console.log(`[Middleware] Logged in user on auth route. Redirecting to: ${target}`)
       return redirect(target)
     } else if (isPrivateRoute && !locals.user) {
       const returnPath = pathname + new URL(request.url).search

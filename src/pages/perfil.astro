@@ -1,0 +1,105 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { updatePassword } from '@/actions/auth/updatePassword'
+import Grid from '@/components/ui/Grid.vue'
+import Container from '@/components/ui/Container.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+import { m } from '@/paraglide/messages.js'
+
+const user = Astro.locals.user
+
+if (!user) {
+  return Astro.redirect(localizeHref('/login'))
+}
+
+let errorMessage = ''
+let successMessage = ''
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+
+  try {
+    const { data, error } = await Astro.callAction(updatePassword, formData)
+    if (error) {
+      throw new Error(error.message || m['auth.failed_update_password']())
+    }
+    if (data?.success) {
+      successMessage = m['auth.password_updated']()
+    }
+  } catch (error: unknown) {
+    errorMessage = error instanceof Error ? error.message : m['auth.failed_update_password']()
+  }
+}
+---
+
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
+</script>
+
+<Layout title={m['auth.profile_title']()}>
+  <Container width="s">
+    <Grid gap="xl" direction="column">
+      <div>
+        <h1>{m['auth.profile_title']()}</h1>
+        <p>{m['auth.profile_desc']()}</p>
+      </div>
+
+      <wa-card>
+        <Grid gap="m" direction="column">
+          <h3>{m['nav.user']()}</h3>
+          <Grid gap="s" direction="column">
+            <div>
+              <strong>{m['auth.email_label']()}:</strong> {user.email}
+            </div>
+            <div>
+              <strong>{m['auth.account_role']()}:</strong>
+              <wa-badge variant="brand">{user.role?.name}</wa-badge>
+            </div>
+          </Grid>
+        </Grid>
+      </wa-card>
+
+      <wa-card>
+        <Grid gap="m" direction="column">
+          <div>
+            <h3>{m['auth.set_password_title']()}</h3>
+            <p>{m['auth.set_password_desc']()}</p>
+          </div>
+
+          {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+          {successMessage && <wa-callout variant="success">{successMessage}</wa-callout>}
+
+          <form method="post">
+            <Grid gap="m" direction="column">
+              <wa-input
+                id="password"
+                type="password"
+                name="password"
+                required
+                minlength="8"
+                label={m['auth.new_password_label']()}
+                placeholder={m['auth.new_password_label']()}
+              ></wa-input>
+              <wa-input
+                id="passwordConfirm"
+                type="password"
+                name="passwordConfirm"
+                required
+                minlength="8"
+                label={m['auth.confirm_password_label']()}
+                placeholder={m['auth.confirm_password_label']()}
+              ></wa-input>
+              <wa-button variant="brand" type="submit">
+                {m['auth.update_password_button']()}
+              </wa-button>
+            </Grid>
+          </form>
+        </Grid>
+      </wa-card>
+    </Grid>
+  </Container>
+</Layout>

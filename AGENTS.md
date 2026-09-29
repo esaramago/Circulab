@@ -61,7 +61,6 @@ The `src` folder contains the source code of the project.
 - `src/utils` contains the utility functions
 - `src/middleware.ts` is where we check user authentication and page access.
 
-
 ### Typescript
 - All type definitions should be in `src/types`.
 - Check if types are already available before creating new ones.

@@ -1,0 +1,18 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import RegisterForm from '@/components/pages/auth/RegisterForm.vue'
+import Container from '@/components/ui/Container.vue'
+import { getSafeRedirectPath } from '@/utils/authRedirect'
+import { m } from '@/paraglide/messages.js'
+
+const redirectQueryParam = Astro.url.searchParams.get('redirect')
+const redirectAfterLogin = redirectQueryParam ? getSafeRedirectPath(redirectQueryParam, '') : ''
+---
+
+<Layout title={m['auth.register_title']()}>
+  <Container width="xs">
+    <h1>{m['auth.register_title']()}</h1>
+    <p>{m['auth.register_desc']()}</p>
+    <RegisterForm client:load redirectUrl={redirectAfterLogin} />
+  </Container>
+</Layout>

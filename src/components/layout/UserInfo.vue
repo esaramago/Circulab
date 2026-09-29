@@ -30,6 +30,10 @@ function goto(route: string) {
     <wa-button pill variant="neutral" size="s" slot="trigger">
       <wa-icon name="user" :label="m['nav.user']()"></wa-icon>
     </wa-button>
+    <wa-dropdown-item @click="goto('/perfil')">
+      <wa-icon name="user" :label="m['nav.profile']()"></wa-icon>
+      {{ m['nav.profile']() }}
+    </wa-dropdown-item>
     <wa-dropdown-item @click="goto('/recursos/novo')">
       <wa-icon name="plus"></wa-icon>
       {{ user?.role?.code === 'contributor' ? m['nav.suggest_resource']() : m['nav.add_resource']() }}
