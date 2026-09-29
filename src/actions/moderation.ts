@@ -6,6 +6,7 @@ import { z } from 'astro/zod'
 import type { LocationInsert } from '@/types/database'
 import type { SuggestedResource } from '@/types/domain/resource'
 import { sendModerationEmail } from '@/utils/brevo'
+import { m } from '@/paraglide/messages.js'
 
 function mapErrorCode(code?: string): ActionErrorCode {
   if (code === 'PGRST116') return 'NOT_FOUND'
@@ -16,7 +17,7 @@ function mapErrorCode(code?: string): ActionErrorCode {
 }
 
 export const getSuggestedResources = defineAction({
-  handler: async (_, { request, cookies }) => {
+  handler: async (_, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -86,7 +87,7 @@ export const getSuggestedResources = defineAction({
       if (error) {
         console.error('[Action] getSuggestedResources error:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get suggested resources',
+          message: error.message || m['moderation.failed_get_suggestions']({}, { locale: locals?.locale }),
           code: mapErrorCode(error.code),
         })
       }
@@ -125,7 +126,7 @@ export const getSuggestedResources = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getSuggestedResources catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get suggested resources',
+        message: error.message || m['moderation.failed_get_suggestions']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -136,7 +137,7 @@ export const getSuggestedResource = defineAction({
   input: z.object({
     id: z.string(),
   }),
-  handler: async (input: { id: string }, { request, cookies }) => {
+  handler: async (input: { id: string }, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -246,7 +247,7 @@ export const getSuggestedResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getSuggestedResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get suggested resource',
+        message: error.message || m['moderation.failed_get_suggestion']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -257,7 +258,7 @@ export const updateSuggestedResource = defineAction({
   input: resourceSchema.extend({
     suggestion_id: z.string(),
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -329,7 +330,7 @@ export const updateSuggestedResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] updateSuggestedResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to update suggested resource',
+        message: error.message || m['moderation.failed_update_suggestion']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -340,7 +341,7 @@ export const acceptSuggestedResource = defineAction({
   input: z.object({
     id: z.string(),
   }),
-  handler: async (input: { id: string }, { request, cookies }) => {
+  handler: async (input: { id: string }, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -585,7 +586,7 @@ export const acceptSuggestedResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] acceptSuggestedResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to accept suggested resource',
+        message: error.message || m['moderation.failed_accept_suggestion']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -596,7 +597,7 @@ export const rejectSuggestedResource = defineAction({
   input: z.object({
     id: z.string(),
   }),
-  handler: async (input: { id: string }, { request, cookies }) => {
+  handler: async (input: { id: string }, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -658,17 +659,21 @@ export const rejectSuggestedResource = defineAction({
         }
       }
 
-      // Delete from suggested_pins
-      const { error: deleteError } = await supabase
+      // Mark as rejected in suggested_pins
+      const { error: rejectError } = await supabase
         .from('suggested_pins')
-        .delete()
+        .update({
+          status: 'rejected',
+          updated_by: auth.user.id,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', input.id)
 
-      if (deleteError) {
-        console.error('[Action] rejectSuggestedResource delete error:', deleteError)
+      if (rejectError) {
+        console.error('[Action] rejectSuggestedResource update error:', rejectError)
         throw new ActionError({
-          message: deleteError.message || 'Failed to reject suggested resource',
-          code: mapErrorCode(deleteError.code),
+          message: rejectError.message || 'Failed to reject suggested resource',
+          code: mapErrorCode(rejectError.code),
         })
       }
 
@@ -686,7 +691,7 @@ export const rejectSuggestedResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] rejectSuggestedResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to reject suggested resource',
+        message: error.message || m['moderation.failed_reject_suggestion']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }

@@ -1,8 +1,9 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const logout = defineAction({
-  handler: async (_input, { request, cookies }) => {
+  handler: async (_input, { request, cookies, locals }) => {
 
     try {
       const supabase = createClient({
@@ -16,7 +17,7 @@ export const logout = defineAction({
       }
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to logout',
+        message: error.message || m['auth.failed_logout']({}, { locale: locals?.locale }),
         code: error.code as ActionErrorCode
       })
     }

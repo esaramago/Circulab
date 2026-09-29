@@ -36,7 +36,12 @@
 		"accept_error": "Failed to accept resource.",
 		"rejected_success": "Suggestion rejected successfully.",
 		"reject_error": "Failed to reject suggestion.",
-		"no_suggestions_found": "No pending suggestions for moderation."
+		"no_suggestions_found": "No pending suggestions for moderation.",
+		"failed_get_suggestions": "Failed to get suggested resources",
+		"failed_get_suggestion": "Failed to get suggested resource",
+		"failed_update_suggestion": "Failed to update suggested resource",
+		"failed_accept_suggestion": "Failed to accept suggested resource",
+		"failed_reject_suggestion": "Failed to reject suggested resource"
 	},
 	"home": {
 		"hero_title": "Collaborative map for agroecology and circularity.",
@@ -161,6 +166,11 @@
 		"request_new_reset": "Request a new reset link",
 		"profile_title": "Profile",
 		"profile_desc": "Manage your account and access credentials.",
+		"profile_stats_title": "Statistics",
+		"profile_stats_added": "Added resources",
+		"profile_stats_pending": "Pending resources",
+		"profile_stats_accepted": "Accepted resources",
+		"profile_stats_rejected": "Rejected resources",
 		"account_role": "Role",
 		"set_password_title": "Set password",
 		"set_password_desc": "Set a password so you can sign in with email and password in the future.",
@@ -180,7 +190,11 @@
 		"no_account": "Don't have an account yet?",
 		"already_have_account": "Already have an account?",
 		"register_desc": "Create your account seamlessly. All you need is your email.",
-		"verify_and_register": "Confirm and sign in"
+		"verify_and_register": "Confirm and sign in",
+		"failed_get_user": "Failed to get user",
+		"failed_get_session": "Failed to get session",
+		"failed_logout": "Failed to log out",
+		"failed_send_code": "Failed to send confirmation code"
 	},
 	"resources": {
 		"add_title": "Add resource",
@@ -288,7 +302,15 @@
 		"error_upload_image": "Error uploading image: {error}",
 		"error_save": "Error saving resource.",
 		"error_submit": "An error occurred while submitting the resource.",
-		"required_fields_error": "You must fill in all marked fields to continue"
+		"required_fields_error": "You must fill in all marked fields to continue",
+		"failed_get_pins": "Failed to get pins",
+		"failed_get_pin": "Failed to get pin",
+		"failed_get_resource": "Failed to get resource",
+		"failed_get_resources": "Failed to get resources",
+		"failed_add_resource": "Failed to add resource",
+		"failed_delete_resource": "Failed to delete resource",
+		"failed_edit_resource": "Failed to edit resource",
+		"failed_get_networks": "Failed to get networks"
 	},
 	"days": {
 		"sunday": "Sunday",
@@ -339,13 +361,19 @@
 		"error_upload_icon": "Error uploading icon: {error}",
 		"error_save_category": "An error occurred while saving the category.",
 		"error_delete_category": "An error occurred while deleting the category.",
-		"error_save_typology": "An error occurred while saving the typology."
+		"error_save_typology": "An error occurred while saving the typology.",
+		"failed_add_category": "Failed to add category",
+		"failed_update_category": "Failed to update category",
+		"failed_delete_category": "Failed to delete category",
+		"failed_update_typology": "Failed to update typology"
 	},
 	"common": {
 		"confirm": "Confirm",
 		"confirm_action": "Confirm action",
 		"cancel": "Cancel",
-		"back": "Back"
+		"back": "Back",
+		"internal_server_error": "Internal server error",
+		"failed_brevo_api": "Network error while contacting Brevo API"
 	},
 	"lisboa_repair_project": {
 		"title": "Lisboa Repair Project",

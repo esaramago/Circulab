@@ -1,8 +1,9 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const checkUser = defineAction({
-  handler: async (_input, { request, cookies }) => {
+  handler: async (_input, { request, cookies, locals }) => {
 
     try {
       const supabase = createClient({
@@ -30,7 +31,7 @@ export const checkUser = defineAction({
 
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to get user',
+        message: error.message || m['auth.failed_get_user']({}, { locale: locals?.locale }),
         code: error.code as ActionErrorCode
       })
     }

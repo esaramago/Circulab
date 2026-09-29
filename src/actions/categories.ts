@@ -2,10 +2,11 @@ import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
 import { categorySchema } from '@/schemas/category.server'
 import { z } from 'astro/zod'
+import { m } from '@/paraglide/messages.js'
 
 export const addCategory = defineAction({
   input: z.any(),
-  handler: async (rawInput, { request, cookies }) => {
+  handler: async (rawInput, { request, cookies, locals }) => {
     const result = categorySchema.safeParse(rawInput)
     if (!result.success) {
       console.error('[Actions] addCategory validation failed:', result.error.format())
@@ -52,7 +53,7 @@ export const addCategory = defineAction({
 
       if (error) {
         throw new ActionError({
-          message: error.message || 'Não foi possível adicionar a categoria.',
+          message: error.message || m['backoffice.failed_add_category']({}, { locale: locals?.locale }),
           code: error.code as ActionErrorCode
         })
       }
@@ -62,7 +63,7 @@ export const addCategory = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -71,7 +72,7 @@ export const addCategory = defineAction({
 
 export const updateCategory = defineAction({
   input: z.any(),
-  handler: async (rawInput, { request, cookies }) => {
+  handler: async (rawInput, { request, cookies, locals }) => {
     const result = categorySchema.extend({ id: z.string().min(1) }).safeParse(rawInput)
     if (!result.success) {
       console.error('[Actions] updateCategory validation failed:', result.error.format())
@@ -120,7 +121,7 @@ export const updateCategory = defineAction({
 
       if (error) {
         throw new ActionError({
-          message: error.message || 'Failed to update category',
+          message: error.message || m['backoffice.failed_update_category']({}, { locale: locals?.locale }),
           code: error.code as ActionErrorCode
         })
       }
@@ -130,7 +131,7 @@ export const updateCategory = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -141,7 +142,7 @@ export const deleteCategory = defineAction({
   input: z.object({
     id: z.string().min(1)
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       
@@ -193,7 +194,7 @@ export const deleteCategory = defineAction({
 
       if (error) {
         throw new ActionError({
-          message: error.message || 'Failed to delete category',
+          message: error.message || m['backoffice.failed_delete_category']({}, { locale: locals?.locale }),
           code: error.code as ActionErrorCode
         })
       }
@@ -203,7 +204,7 @@ export const deleteCategory = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -214,7 +215,7 @@ export const getCategories = defineAction({
   input: z.object({
     typology_id: z.string().optional()
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       
@@ -238,7 +239,7 @@ export const getCategories = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -249,7 +250,7 @@ export const getCategoryById = defineAction({
   input: z.object({
     id: z.string().min(1)
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       
@@ -267,7 +268,7 @@ export const getCategoryById = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }

@@ -1,6 +1,7 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { z } from 'astro/zod'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const updatePassword = defineAction({
   accept: 'form',
@@ -8,7 +9,7 @@ export const updatePassword = defineAction({
     password: z.string().min(8, 'Password must be at least 8 characters'),
     passwordConfirm: z.string(),
   }),
-  handler: async ({ password, passwordConfirm }, { request, cookies }) => {
+  handler: async ({ password, passwordConfirm }, { request, cookies, locals }) => {
     if (password !== passwordConfirm) {
       throw new ActionError({
         message: 'Passwords do not match',
@@ -30,7 +31,7 @@ export const updatePassword = defineAction({
       const { error } = await supabase.auth.updateUser({ password })
       if (error) {
         throw new ActionError({
-          message: error.message || 'Failed to update password',
+          message: error.message || m['auth.failed_update_password']({}, { locale: locals?.locale }),
           code: error.code as ActionErrorCode,
         })
       }
@@ -43,7 +44,7 @@ export const updatePassword = defineAction({
       if (error instanceof ActionError) {
         throw error
       }
-      const message = error instanceof Error ? error.message : 'Failed to update password'
+      const message = error instanceof Error ? error.message : m['auth.failed_update_password']({}, { locale: locals?.locale })
       throw new ActionError({
         message,
         code: 'INTERNAL_SERVER_ERROR',

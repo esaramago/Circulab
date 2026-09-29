@@ -36,7 +36,12 @@
 		"accept_error": "Erro ao aceitar o recurso.",
 		"rejected_success": "Sugestão rejeitada com sucesso.",
 		"reject_error": "Erro ao rejeitar a sugestão.",
-		"no_suggestions_found": "Não há sugestões pendentes de moderação."
+		"no_suggestions_found": "Não há sugestões pendentes de moderação.",
+		"failed_get_suggestions": "Falha ao obter recursos sugeridos",
+		"failed_get_suggestion": "Falha ao obter recurso sugerido",
+		"failed_update_suggestion": "Falha ao atualizar recurso sugerido",
+		"failed_accept_suggestion": "Falha ao aceitar recurso sugerido",
+		"failed_reject_suggestion": "Falha ao rejeitar recurso sugerido"
 	},
 	"home": {
 		"hero_title": "Mapa colaborativo para a agroecologia e a circularidade.",
@@ -159,6 +164,11 @@
 		"request_new_reset": "Solicitar novo link de redefinição",
 		"profile_title": "Perfil",
 		"profile_desc": "Faça a gestão da sua conta e credenciais de acesso.",
+		"profile_stats_title": "Estatísticas",
+		"profile_stats_added": "Recursos adicionados",
+		"profile_stats_pending": "Recursos pendentes",
+		"profile_stats_accepted": "Recursos aceites",
+		"profile_stats_rejected": "Recursos rejeitados",
 		"account_role": "Papel",
 		"set_password_title": "Definir palavra-passe",
 		"set_password_desc": "Defina uma palavra-passe para poder aceder com email e palavra-passe no futuro.",
@@ -178,7 +188,11 @@
 		"no_account": "Ainda não tem conta?",
 		"already_have_account": "Já tem conta?",
 		"register_desc": "Crie a sua conta sem complicações. Apenas necessita de introduzir o seu email.",
-		"verify_and_register": "Confirmar e entrar"
+		"verify_and_register": "Confirmar e entrar",
+		"failed_get_user": "Falha ao obter utilizador",
+		"failed_get_session": "Falha ao obter sessão",
+		"failed_logout": "Falha ao terminar sessão",
+		"failed_send_code": "Falha ao enviar código de confirmação"
 	},
 	"resources": {
 		"add_title": "Adicionar recurso",
@@ -286,7 +300,15 @@
 		"error_upload_image": "Erro ao carregar a imagem: {error}",
 		"error_save": "Erro ao guardar o recurso.",
 		"error_submit": "Ocorreu um erro ao submeter o recurso.",
-		"required_fields_error": "Tens de preencher todos os assinalados para continuar"
+		"required_fields_error": "Tens de preencher todos os assinalados para continuar",
+		"failed_get_pins": "Falha ao obter pins",
+		"failed_get_pin": "Falha ao obter pin",
+		"failed_get_resource": "Falha ao obter recurso",
+		"failed_get_resources": "Falha ao obter recursos",
+		"failed_add_resource": "Falha ao adicionar recurso",
+		"failed_delete_resource": "Falha ao eliminar recurso",
+		"failed_edit_resource": "Falha ao editar recurso",
+		"failed_get_networks": "Falha ao obter redes"
 	},
 	"days": {
 		"sunday": "Domingo",
@@ -337,13 +359,19 @@
 		"error_upload_icon": "Erro ao carregar o ícone: {error}",
 		"error_save_category": "Ocorreu um erro ao guardar a categoria.",
 		"error_delete_category": "Ocorreu um erro ao eliminar a categoria.",
-		"error_save_typology": "Ocorreu um erro ao guardar a tipologia."
+		"error_save_typology": "Ocorreu um erro ao guardar a tipologia.",
+		"failed_add_category": "Não foi possível adicionar a categoria",
+		"failed_update_category": "Não foi possível atualizar a categoria",
+		"failed_delete_category": "Não foi possível eliminar a categoria",
+		"failed_update_typology": "Não foi possível atualizar a tipologia"
 	},
 	"common": {
 		"confirm": "Confirmar",
 		"confirm_action": "Confirmar ação",
 		"cancel": "Cancelar",
-		"back": "Voltar"
+		"back": "Voltar",
+		"internal_server_error": "Erro interno do servidor",
+		"failed_brevo_api": "Erro de rede ao contactar a API do Brevo"
 	},
 	"lisboa_repair_project": {
 		"title": "Projeto de Reparação de Lisboa",

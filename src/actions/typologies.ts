@@ -2,10 +2,11 @@ import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
 import { updateTypologySchema } from '@/schemas/typology.server'
 import { z } from 'astro/zod'
+import { m } from '@/paraglide/messages.js'
 
 export const updateTypology = defineAction({
   input: z.any(),
-  handler: async (rawInput, { request, cookies }) => {
+  handler: async (rawInput, { request, cookies, locals }) => {
     const result = updateTypologySchema.safeParse(rawInput)
     if (!result.success) {
       console.error('[Actions] updateTypology validation failed:', result.error.format())
@@ -59,7 +60,7 @@ export const updateTypology = defineAction({
         else if (error.code === '23505') code = 'CONFLICT'
 
         throw new ActionError({
-          message: error.message || 'Failed to update typology',
+          message: error.message || m['backoffice.failed_update_typology']({}, { locale: locals?.locale }),
           code
         })
       }
@@ -69,7 +70,7 @@ export const updateTypology = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -77,7 +78,7 @@ export const updateTypology = defineAction({
 })
 
 export const getTypologies = defineAction({
-  handler: async (_, { request, cookies }) => {
+  handler: async (_, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       
@@ -98,7 +99,7 @@ export const getTypologies = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -109,7 +110,7 @@ export const getTypologyById = defineAction({
   input: z.object({
     id: z.string().min(1)
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       
@@ -127,7 +128,7 @@ export const getTypologyById = defineAction({
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       throw new ActionError({
-        message: error.message || 'Internal server error',
+        message: error.message || m['common.internal_server_error']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }

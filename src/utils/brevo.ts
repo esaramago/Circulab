@@ -1,4 +1,5 @@
 import type { ContactFormInput } from '@/types/domain/contact'
+import { m } from '@/paraglide/messages.js'
 
 interface BrevoEmailResult {
   success: boolean
@@ -119,7 +120,7 @@ export async function sendContactEmail({
     console.error('[Brevo] Network or dispatch error:', error)
     return {
       success: false,
-      error: error.message || 'Network error while contacting Brevo API',
+      error: error.message || m['common.failed_brevo_api'](),
     }
   }
 }
@@ -238,7 +239,7 @@ export async function sendModerationEmail({
     console.error('[Brevo] Moderation email error:', error)
     return {
       success: false,
-      error: error.message || 'Network error while contacting Brevo API',
+      error: error.message || m['common.failed_brevo_api'](),
     }
   }
 }

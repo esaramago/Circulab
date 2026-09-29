@@ -1,6 +1,7 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { z } from 'astro/zod'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const signIn = defineAction({
   accept: 'form',
@@ -22,7 +23,7 @@ export const signIn = defineAction({
 
       if (error) {
         throw new ActionError({
-          message: error.message || 'Failed to sign in',
+          message: error.message || m['auth.failed_sign_in']({}, { locale: context.locals?.locale }),
           code: error.code as ActionErrorCode
         })
       }
@@ -63,7 +64,7 @@ export const signIn = defineAction({
       }
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to sign in',
+        message: error.message || m['auth.failed_sign_in']({}, { locale: context.locals?.locale }),
         code: error.code as ActionErrorCode
       })
     }

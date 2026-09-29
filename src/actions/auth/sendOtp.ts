@@ -22,7 +22,7 @@ export const sendOtp = defineAction({
         throw new ActionError({
           message: isRateLimit
             ? m['auth.reset_rate_limit']({}, { locale: locals.locale })
-            : error.message || 'Failed to send confirmation code',
+            : error.message || m['auth.failed_send_code']({}, { locale: locals.locale }),
           code: isRateLimit ? 'TOO_MANY_REQUESTS' : 'BAD_REQUEST',
         })
       }
@@ -36,7 +36,7 @@ export const sendOtp = defineAction({
         throw error
       }
       throw new ActionError({
-        message: error instanceof Error ? error.message : 'Failed to send confirmation code',
+        message: error instanceof Error ? error.message : m['auth.failed_send_code']({}, { locale: locals.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
