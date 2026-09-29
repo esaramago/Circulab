@@ -166,9 +166,9 @@ async function handleDelete() {
           :show-networks="false"
         />
 
-        <Grid v-if="isCanEdit || CONFIG.can_suggest || isCanDelete" slot="footer" justify="end" gap="s">
+        <Grid v-if="isCanEdit || isCanDelete" slot="footer" justify="end" gap="s">
           <wa-button
-            v-if="isCanEdit || CONFIG.can_suggest"
+            v-if="isCanEdit"
             size="s"
             variant="primary"
             :href="localizeHref(`/recursos/editar?id=${resource.id}`)"

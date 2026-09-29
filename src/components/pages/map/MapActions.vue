@@ -59,7 +59,6 @@ watch(() => props.initialView, (newVal) => {
 <template>
   <Grid justify="end" wrap>
     <wa-button
-      v-if="CONFIG.can_suggest"
       variant="brand"
       :href="localizeHref('/recursos/novo')"
     >

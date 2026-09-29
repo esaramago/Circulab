@@ -70,7 +70,7 @@ watch(() => props.resourceId, async () => {
 
           <ResourceSummary :resource="resource" />
 
-          <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
+          <wa-button v-if="isCanEdit" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
 
         </Grid>
       </template>
