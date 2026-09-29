@@ -755,6 +755,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_moderator_or_admin: { Args: never; Returns: boolean }
       is_registered_user: { Args: never; Returns: boolean }
+      user_has_password: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }

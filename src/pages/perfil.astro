@@ -80,6 +80,9 @@ if (Astro.request.method === 'POST') {
     errorMessage = error instanceof Error ? error.message : m['auth.failed_update_password']()
   }
 }
+
+const { data: hasPasswordData } = await supabase.rpc('user_has_password')
+const hasPassword = Boolean(hasPasswordData || successMessage)
 ---
 
 <script>
@@ -153,8 +156,8 @@ if (Astro.request.method === 'POST') {
       <wa-card>
         <Grid direction="column">
           <div>
-            <h3>{m['auth.set_password_title']()}</h3>
-            <p>{m['auth.set_password_desc']()}</p>
+            <h3>{hasPassword ? m['auth.change_password_title']() : m['auth.set_password_title']()}</h3>
+            <p>{hasPassword ? m['auth.change_password_desc']() : m['auth.set_password_desc']()}</p>
           </div>
 
           {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
@@ -181,7 +184,7 @@ if (Astro.request.method === 'POST') {
                 placeholder={m['auth.confirm_password_label']()}
               ></wa-input>
               <wa-button variant="brand" type="submit">
-                {m['auth.update_password_button']()}
+                {hasPassword ? m['auth.update_password_button']() : m['auth.set_password_button']()}
               </wa-button>
             </Grid>
           </form>
