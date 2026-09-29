@@ -452,9 +452,11 @@ async function executeSubmit() {
   justify-content: flex-end;
   margin-block-start: var(--wa-space-l);
 }
-#suggestion-submitted-dialog,
-#otp-confirm-dialog {
+#suggestion-submitted-dialog {
   --width: 60rem;
+}
+#otp-confirm-dialog {
+  --width: 40rem;
 }
 </style>
 

@@ -79,6 +79,15 @@ onUnmounted(() => {
     </a>
 
     <wa-button
+      :href="localizeHref('/recursos/novo')"
+      pill
+      size="s"
+      :title="user?.role?.code === 'contributor' ? m['nav.suggest_resource']() : m['nav.add_resource']()"
+    >
+      <wa-icon name="plus"></wa-icon>
+    </wa-button>
+
+    <wa-button
       v-if="user && userHasAccess(user, 'moderation')"
       id="moderation-nav-button"
       class="moderation-nav-button"
@@ -94,6 +103,7 @@ onUnmounted(() => {
         slot="end"
         variant="danger"
         pill
+        :title="m['nav.profile']()"
       >
         {{ pendingSuggestionsCount }}
       </wa-badge>
