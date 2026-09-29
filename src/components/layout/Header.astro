@@ -2,7 +2,7 @@
 import { m } from '@/paraglide/messages.js'
 import { localizeHref, deLocalizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
-import UserInfo from '@/components/layout/UserInfo.vue'
+import HeaderActions from '@/components/layout/HeaderActions.vue'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { createClient } from '@/utils/supabase'
 
@@ -76,49 +76,12 @@ const navItems = [
       </ul>
     </nav>
   </Grid>
-  <Grid align="center">
-    <a href={langs.find((lang) => lang.locale !== currentLocale)?.href} class="nav-lang">{langs.find((lang) => lang.locale !== currentLocale)?.label}</a>
-    {
-      user && userHasAccess(user, 'moderation') && (
-        <wa-button
-          pill
-          href={localizeHref('/dashboard/moderacao')}
-          size="s"
-          title={m['nav.moderation']()}
-          id="moderation-nav-button"
-        >
-          <wa-icon name="clipboard-check" label={m['nav.moderation']()}></wa-icon>
-          {pendingSuggestionsCount > 0 && (
-            <wa-badge id="moderation-count-badge" slot="end" variant="danger" pill>
-              {pendingSuggestionsCount}
-            </wa-badge>
-          )}
-        </wa-button>
-      )
-    }
-    {
-      user ? (
-        <UserInfo user={user} client:only="vue" />
-      ) : (
-        <wa-button pill href={localizeHref('/login')} variant="primary" size="s">
-          <wa-icon name="arrow-right-to-bracket"></wa-icon>
-        </wa-button>
-      )
-    }
-
-    <wa-button
-      variant="neutral"
-      class="nav-toggle"
-      id="nav-toggle"
-      aria-controls="header-panel"
-      aria-expanded="false"
-      size="s"
-    >
-      <wa-icon class="nav-toggle__icon nav-toggle__icon--open" name="bars" label={m['nav.open_menu']()}></wa-icon>
-      <wa-icon class="nav-toggle__icon nav-toggle__icon--close" name="xmark" label={m['nav.close_menu']()}></wa-icon>
-    </wa-button>
-  </Grid>
-
+  <HeaderActions
+    client:load
+    user={user}
+    pendingSuggestionsCount={pendingSuggestionsCount}
+    langLink={langs.find((lang) => lang.locale !== currentLocale)}
+  />
 </header>
 
 <wa-drawer id="header-drawer" class="nav-drawer" label={m['nav.menu']()}>
@@ -142,60 +105,7 @@ const navItems = [
   </Grid>
 </wa-drawer>
 
-<script>
-  import '@awesome.me/webawesome/dist/components/button/button.js'
-  import '@awesome.me/webawesome/dist/components/icon/icon.js'
-  import '@awesome.me/webawesome/dist/components/drawer/drawer.js'
-  import '@awesome.me/webawesome/dist/components/badge/badge.js'
-
-  const init = () => {
-    const button = document.getElementById('nav-toggle')
-    const drawer = document.getElementById('header-drawer')
-    if (!button || !drawer) return
-
-    button.addEventListener('click', (event) => {
-      // @ts-ignore
-      const button = event.currentTarget as HTMLElement
-      const isExpanded = button.getAttribute('aria-expanded') === 'true'
-      button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false')
-
-      // @ts-expect-error - drawer is a custom element
-      drawer.open = !isExpanded
-    })
-  }
-
-  // Update badge if moderation count updates dynamically on the client
-  window.addEventListener('moderation-count-updated', ((event: CustomEvent<{ count: number }>) => {
-    const count = event.detail?.count ?? 0
-    const button = document.getElementById('moderation-nav-button')
-    if (!button) return
-
-    let badge = document.getElementById('moderation-count-badge')
-    if (count > 0) {
-      if (!badge) {
-        badge = document.createElement('wa-badge')
-        badge.id = 'moderation-count-badge'
-        badge.slot = 'end'
-        badge.setAttribute('slot', 'end')
-        badge.setAttribute('variant', 'danger')
-        badge.setAttribute('pill', '')
-        button.appendChild(badge)
-      }
-      badge.textContent = String(count)
-    } else if (badge) {
-      badge.remove()
-    }
-  }) as EventListener)
-
-  document.addEventListener('astro:page-load', init)
-</script>
-
 <style>
-  #moderation-nav-button::part(base) {
-    width: var(--wa-form-control-height);
-    aspect-ratio: 1;
-  }
-
   header {
     display: flex;
     flex-wrap: wrap;
@@ -245,20 +155,6 @@ const navItems = [
     color: var(--wa-color-neutral-80);
   }
 
-  .nav-toggle {
-    @media (min-width: 768px) {
-      display: none;
-    }
-  }
-
-  .nav-toggle .nav-toggle__icon--close,
-  .nav-toggle[aria-expanded="true"] .nav-toggle__icon--open {
-    display: none;
-  }
-  .nav-toggle[aria-expanded="true"] .nav-toggle__icon--close {
-    display: inline-flex;
-  }
-
   .nav-list {
     display: flex;
     list-style: none;
@@ -284,9 +180,6 @@ const navItems = [
   }
 
   @media (min-width: 768px) {
-    .nav-toggle {
-      display: none;
-    }
     .nav-lang,
     .nav-list {
       flex-direction: row;
