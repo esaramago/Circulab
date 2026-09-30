@@ -588,4 +588,8 @@ async function saveTypology() {
   gap: var(--wa-space-s);
   margin-block-start: var(--wa-space-l);
 }
+
+#typology-dialog {
+  --width: 60rem;
+}
 </style>
