@@ -633,7 +633,7 @@
 		"auth_signup_subject": "Confirm your Circulab account",
 		"auth_signup_title": "Olá and welcome to Circulab!",
 		"auth_signup_intro": "You've taken the first step toward joining a community-powered platform that maps underutilized urban resources for agroecology and circularity. We're glad to have you on board.",
-		"auth_signup_cta": "To get started, please confirm your email address by clicking the link below:",
+		"auth_signup_cta": "Use the verification code below to complete your registration on Circulab:",
 		"auth_signup_button": "Confirm email",
 		"auth_signup_fallback": "If the button does not work, copy and paste the following link into your browser:",
 		"auth_signup_benefits_title": "Once confirmed, you'll be able to:",
