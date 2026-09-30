@@ -9,6 +9,7 @@ import { resourceSchema } from '@/schemas/resource.server'
 import { z } from 'astro/zod'
 import geojson from '@/utils/geojson'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 
 function mapErrorCode(code?: string): ActionErrorCode {
   if (code === 'PGRST116') return 'NOT_FOUND'
@@ -58,8 +59,8 @@ export const getPins = defineAction({
             latitude: geojson.getLatitude(pin.coordinates),
             longitude: geojson.getLongitude(pin.coordinates),
           },
-          category: pin.categories?.name,
-          typology: pin.categories?.typology?.name,
+          category: i18nDb(pin.categories?.name, context?.locals?.locale),
+          typology: i18nDb(pin.categories?.typology?.name, context?.locals?.locale),
           category_id: pin.category_id,
           typology_id: pin.categories?.typology_id,
           color: (hasCategoryColor && pin.categories?.color) ? pin.categories.color : (pin.categories?.typology?.color ?? null),
@@ -142,7 +143,7 @@ export const getResource = defineAction({
       const locationNetworks = (data.location?.location_networks as any[]) || []
       const networks = locationNetworks.map((ln: any) => ({
         slug: ln.networks?.slug || '',
-        name: ln.networks?.name || '',
+        name: i18nDb(ln.networks?.name, context?.locals?.locale),
         value: ln.value || '',
         icon: ln.networks?.icon || null,
       })).filter((n) => n.slug)
@@ -152,9 +153,9 @@ export const getResource = defineAction({
         title: data.title,
         description: data.description,
         images: data.images,
-        category: data.category?.name || '',
+        category: i18nDb(data.category?.name, context?.locals?.locale),
         category_id: data.category?.id || null,
-        typology: data.category?.typology?.name || '',
+        typology: i18nDb(data.category?.typology?.name, context?.locals?.locale),
         typology_id: data.category?.typology?.id || null,
         characteristics_ids: data.characteristics_ids || [],
         location: data.location?.name || '',
@@ -277,9 +278,9 @@ export const getFullResources = defineAction({
         title: resource.title,
         description: resource.description,
         images: resource.images,
-        category: resource.category?.name || '',
+        category: i18nDb(resource.category?.name, context?.locals?.locale),
         category_id: resource.category?.id || null,
-        typology: resource.category?.typology?.name || '',
+        typology: i18nDb(resource.category?.typology?.name, context?.locals?.locale),
         typology_id: resource.category?.typology?.id || null,
         characteristics_ids: resource.characteristics_ids || [],
         location: resource.location?.name || '',

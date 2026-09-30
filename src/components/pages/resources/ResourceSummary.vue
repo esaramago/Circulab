@@ -4,6 +4,7 @@ import type { ResourceSummaryData } from '@/types/domain/resource'
 import Grid from '@/components/ui/Grid.vue'
 import OpeningHoursTable from '@/components/pages/resources/OpeningHoursTable.vue'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 import '@webawesome/icon/icon.js'
 import '@webawesome/dialog/dialog.js'
 
@@ -96,10 +97,10 @@ const telURL = computed(() => {
       <div v-if="showHeader" class="resource-summary__header">
         <h2 v-if="resource.title">{{ resource.title }}</h2>
         <p v-if="resource.category || resource.typology">
-          <template v-if="resource.category">{{ resource.category }}</template>
-          <template v-if="resource.typology"> ({{ resource.typology }})</template>
+          <template v-if="resource.category">{{ i18nDb(resource.category) }}</template>
+          <template v-if="resource.typology"> ({{ i18nDb(resource.typology) }})</template>
         </p>
-        <p v-if="resource.characteristics">{{ resource.characteristics }}</p>
+        <p v-if="resource.characteristics">{{ i18nDb(resource.characteristics) }}</p>
       </div>
     </slot>
 

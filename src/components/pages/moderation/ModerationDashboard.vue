@@ -16,6 +16,7 @@ import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
 import { localizeHref } from '@/paraglide/runtime.js'
+import { i18nDb } from '@/utils/i18nDb'
 import { clearAddResourceDraft } from '@/stores/addResource'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
 
@@ -212,7 +213,7 @@ async function handleReject() {
       >
         <wa-option value="">{{ m['resources.all_typologies']() }}</wa-option>
         <wa-option v-for="typology in typologies" :key="typology.id" :value="typology.id">
-          {{ typology.name }}
+          {{ i18nDb(typology.name) }}
         </wa-option>
       </wa-select>
       <wa-select
@@ -225,7 +226,7 @@ async function handleReject() {
       >
         <wa-option value="">{{ m['resources.all_categories']() }}</wa-option>
         <wa-option v-for="category in categories" :key="category.id" :value="category.id">
-          {{ category.name }}
+          {{ i18nDb(category.name) }}
         </wa-option>
       </wa-select>
     </Grid>

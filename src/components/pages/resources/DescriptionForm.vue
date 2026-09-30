@@ -14,6 +14,7 @@ import type { TypologyRow } from '@/types/database'
 import { getImage } from '@/utils/imageStore'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 
 const props = withDefaults(
   defineProps<{
@@ -209,10 +210,10 @@ function handleSubmit(event: Event) {
           v-for="typology in typologies"
           :key="typology.id"
           :value="typology.id"
-          :label="typology.name"
+          :label="i18nDb(typology.name)"
         >
-          {{ typology.name }}<br>
-          <span class="u-text-small" v-if="typology.description">{{ typology.description }}</span>
+          {{ i18nDb(typology.name) }}<br>
+          <span class="u-text-small" v-if="typology.description">{{ i18nDb(typology.description) }}</span>
         </wa-option>
       </wa-select>
       <wa-select
@@ -228,10 +229,10 @@ function handleSubmit(event: Event) {
           v-for="category in categories"
           :key="category.id"
           :value="category.id"
-          :label="category.name"
+          :label="i18nDb(category.name)"
         >
-          {{ category.name }}<br>
-          <span class="u-text-small" v-if="category.description">{{ category.description }}</span>
+          {{ i18nDb(category.name) }}<br>
+          <span class="u-text-small" v-if="category.description">{{ i18nDb(category.description) }}</span>
         </wa-option>
       </wa-select>
       <wa-select
@@ -247,9 +248,9 @@ function handleSubmit(event: Event) {
           v-for="characteristic in characteristics"
           :key="characteristic.id"
           :value="characteristic.id"
-          :label="characteristic.name"
+          :label="i18nDb(characteristic.name)"
         >
-          {{ characteristic.name }}
+          {{ i18nDb(characteristic.name) }}
         </wa-option>
       </wa-select>
 

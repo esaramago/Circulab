@@ -11,6 +11,7 @@ import type { CharacteristicRow } from '@/types/database'
 import Grid from '@/components/ui/Grid.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 
 import { CONFIG } from '@/config'
 
@@ -170,13 +171,13 @@ function toggleFilters() {
             @click="handleTypologyClick(item.id)"
             :id="`typology-${item.id}`"
           />
-          <label :for="`typology-${item.id}`" class="typologies__label" :title="item.description || undefined">
+          <label :for="`typology-${item.id}`" class="typologies__label" :title="i18nDb(item.description) || undefined">
             <wa-icon
               v-if="item.icon"
               :src="isUrlIcon(item.icon) ? CONFIG.images_url + 'pin-images/' + item.icon : undefined"
               :name="!isUrlIcon(item.icon) ? item.icon : undefined"
             ></wa-icon>
-            {{ item.name }}
+            {{ i18nDb(item.name) }}
           </label>
         </div>
       </div>
@@ -191,9 +192,9 @@ function toggleFilters() {
       @input="setCategory(($event.target as HTMLSelectElement).value)"
       with-clear
     >
-      <wa-option v-for="item in categories" :key="item.id" :value="item.id" :label="item.name">
-        {{ item.name }}<br>
-        <span class="u-text-small" v-if="item.description">{{ item.description }}</span>
+      <wa-option v-for="item in categories" :key="item.id" :value="item.id" :label="i18nDb(item.name)">
+        {{ i18nDb(item.name) }}<br>
+        <span class="u-text-small" v-if="item.description">{{ i18nDb(item.description) }}</span>
       </wa-option>
     </wa-select>
     <!-- Characteristics are temporarily disabled -->
@@ -206,7 +207,7 @@ function toggleFilters() {
       @input="characteristics?.push(($event.target as HTMLSelectElement).value)"
       with-clear
     >
-      <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
+      <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ i18nDb(item.name) }}</wa-option>
     </wa-select> -->
   </form>
 </template>

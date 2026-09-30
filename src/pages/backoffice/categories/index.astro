@@ -8,6 +8,7 @@ import Back from '@/components/ui/Back.vue'
 import { CONFIG } from '@/config'
 import { m } from '@/paraglide/messages.js'
 import Icon from '@/components/ui/Icon.vue'
+import { i18nDb } from '@/utils/i18nDb'
 
 const user = Astro.locals.user
 
@@ -55,9 +56,9 @@ const typologies = typologiesData || []
                         name={!(t.icon.includes('/') || t.icon.endsWith('.svg') || t.icon.startsWith('http')) ? t.icon : 'circle'}
                       ></Icon>
                     )}
-                    <h3>{t.name}</h3>
+                    <h3>{i18nDb(t.name)}</h3>
                   </Grid>
-                  <p>{t.description}</p>
+                  <p>{i18nDb(t.description)}</p>
                 </Grid>
                 <div slot="footer">
                   <span>{m['backoffice.manage_categories']()}</span>

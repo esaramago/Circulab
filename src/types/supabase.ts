@@ -18,28 +18,28 @@ export type Database = {
         Row: {
           color: string | null
           created_at: string
-          description: string | null
+          description: Json | null
           icon: string | null
           id: string
-          name: string
+          name: Json
           typology_id: string
         }
         Insert: {
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           icon?: string | null
           id?: string
-          name: string
+          name: Json
           typology_id: string
         }
         Update: {
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
           typology_id?: string
         }
         Relationships: [
@@ -56,25 +56,25 @@ export type Database = {
         Row: {
           category_id: string
           created_at: string
-          description: string | null
+          description: Json | null
           id: string
-          name: string
+          name: Json
           slug: string
         }
         Insert: {
           category_id: string
           created_at?: string
-          description?: string | null
+          description?: Json | null
           id?: string
-          name: string
+          name: Json
           slug: string
         }
         Update: {
           category_id?: string
           created_at?: string
-          description?: string | null
+          description?: Json | null
           id?: string
-          name?: string
+          name?: Json
           slug?: string
         }
         Relationships: [
@@ -206,21 +206,21 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
-          name: string
+          name: Json
           slug: string
         }
         Insert: {
           created_at?: string
           icon?: string | null
           id?: string
-          name: string
+          name: Json
           slug: string
         }
         Update: {
           created_at?: string
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
           slug?: string
         }
         Relationships: []
@@ -229,19 +229,19 @@ export type Database = {
         Row: {
           code: string
           created_at: string
-          description: string
+          description: Json
           id: number
         }
         Insert: {
           code: string
           created_at?: string
-          description: string
+          description: Json
           id?: number
         }
         Update: {
           code?: string
           created_at?: string
-          description?: string
+          description?: Json
           id?: number
         }
         Relationships: []
@@ -322,21 +322,21 @@ export type Database = {
       roles: {
         Row: {
           code: string
-          description: string | null
+          description: Json | null
           id: number
-          name: string | null
+          name: Json | null
         }
         Insert: {
           code: string
-          description?: string | null
+          description?: Json | null
           id?: number
-          name?: string | null
+          name?: Json | null
         }
         Update: {
           code?: string
-          description?: string | null
+          description?: Json | null
           id?: number
-          name?: string | null
+          name?: Json | null
         }
         Relationships: []
       }
@@ -479,31 +479,31 @@ export type Database = {
           code: string
           color: string | null
           created_at: string
-          description: string | null
+          description: Json | null
           has_category_color: boolean
           icon: string | null
           id: string
-          name: string
+          name: Json
         }
         Insert: {
           code: string
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           has_category_color?: boolean
           icon?: string | null
           id?: string
-          name: string
+          name: Json
         }
         Update: {
           code?: string
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           has_category_color?: boolean
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
         }
         Relationships: []
       }

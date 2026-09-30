@@ -7,6 +7,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import Grid from '@/components/ui/Grid.vue'
 import Back from '@/components/ui/Back.vue'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 
 const user = Astro.locals.user
 
@@ -46,7 +47,7 @@ const categories = categoriesData || []
 const typologies = typologiesData || []
 ---
 
-<Layout title={`${m['backoffice.manage_categories_title']()} - ${typologyData.name}`}>
+<Layout title={`${m['backoffice.manage_categories_title']()} - ${i18nDb(typologyData.name)}`}>
   <Grid direction="column" gap="l">
     <div class="backoffice-page__nav">
       <Back href={localizeHref('/backoffice/categories')}>{m['backoffice.back_to_typology_select']()}</Back>

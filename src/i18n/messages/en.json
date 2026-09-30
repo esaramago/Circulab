@@ -368,7 +368,8 @@
 		"failed_add_category": "Failed to add category",
 		"failed_update_category": "Failed to update category",
 		"failed_delete_category": "Failed to delete category",
-		"failed_update_typology": "Failed to update typology"
+		"failed_update_typology": "Failed to update typology",
+		"name_required_both_languages": "The name is required in both Portuguese and English."
 	},
 	"common": {
 		"confirm": "Confirm",

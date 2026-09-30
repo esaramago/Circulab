@@ -10,4 +10,7 @@ declare module '@/paraglide/runtime.js' {
     locale: Locales,
     options?: { reload?: boolean },
   ): void
+  export function getLocale(): Locales
+  export const locales: readonly Locales[]
+  export const baseLocale: Locales
 }
