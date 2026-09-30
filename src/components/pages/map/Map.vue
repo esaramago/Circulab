@@ -16,6 +16,7 @@ import '@webawesome/dropdown-item/dropdown-item.js'
 import '@webawesome/icon/icon.js'
 import { actions } from 'astro:actions'
 import isColorDark from '@/utils/isColorDark'
+import { i18nDb } from '@/utils/i18nDb'
 
 const selectedLayerId = useStore($selectedLayerId)
 const filters = useStore($mapFilters)
@@ -33,7 +34,7 @@ const activeTileLayer = shallowRef<TileLayer | null>(null)
 const filteredPins = computed(() => {
   return pins.value.filter((pin: Pin) => {
     // Search filter
-    if (filters.value.search && !pin.title.toLowerCase().includes(filters.value.search.toLowerCase())) {
+    if (filters.value.search && !i18nDb(pin.title).toLowerCase().includes(filters.value.search.toLowerCase())) {
       return false
     }
     // Typology filter
@@ -221,8 +222,8 @@ function createPinMarker(pin: Pin): Marker | null {
   })
 
   const tooltipContent = `
-    ${pin.title}<br>
-    <small>${pin.typology} - ${pin.category}</small>
+    ${i18nDb(pin.title)}<br>
+    <small>${i18nDb(pin.typology)} - ${i18nDb(pin.category)}</small>
   `
   const marker = new Marker([
     pin.coordinates?.latitude,

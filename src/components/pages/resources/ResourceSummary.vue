@@ -76,8 +76,9 @@ const formattedPhone = computed(() => {
 const gMapsURL = computed(() => {
   if (!coordinates.value || !props.resource) return undefined
 
-  if (props.resource?.title) {
-    const encondedName = encodeURIComponent(props.resource.title)
+  const titleStr = i18nDb(props.resource?.title)
+  if (titleStr) {
+    const encondedName = encodeURIComponent(titleStr)
     return `https://maps.google.com/?q=${encondedName}&ll=${coordinates.value.latitude},${coordinates.value.longitude}`
   }
 })
@@ -95,7 +96,7 @@ const telURL = computed(() => {
   <Grid v-if="resource" gap="l" direction="column" class="resource-summary">
     <slot name="header" :resource="resource">
       <div v-if="showHeader" class="resource-summary__header">
-        <h2 v-if="resource.title">{{ resource.title }}</h2>
+        <h2 v-if="resource.title">{{ i18nDb(resource.title) }}</h2>
         <p v-if="resource.category || resource.typology">
           <template v-if="resource.category">{{ i18nDb(resource.category) }}</template>
           <template v-if="resource.typology"> ({{ i18nDb(resource.typology) }})</template>
@@ -182,7 +183,7 @@ const telURL = computed(() => {
     <slot name="description" :description="resource.description">
       <div v-if="showDescription && resource.description" class="resource-summary__description">
         <strong>{{ m['resources.description_label']() }}</strong>
-        <p>{{ resource.description }}</p>
+        <p>{{ i18nDb(resource.description) }}</p>
       </div>
     </slot>
   </Grid>

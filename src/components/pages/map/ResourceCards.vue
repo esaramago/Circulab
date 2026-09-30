@@ -151,12 +151,12 @@ async function handleDelete() {
           v-if="resource?.images?.[0]"
           slot="media"
           :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0].url"
-          :alt="resource?.title"
+          :alt="i18nDb(resource?.title)"
           loading="lazy"
         />
 
         <div slot="header">
-          <h2>{{ resource.title }}</h2>
+          <h2>{{ i18nDb(resource.title) }}</h2>
           <p>{{ i18nDb(resource?.category) }} ({{ i18nDb(resource?.typology) }})</p>
         </div>
 
@@ -203,7 +203,7 @@ async function handleDelete() {
       :loading="deleting"
       @confirm="handleDelete"
     >
-      <p>{{ m['resources.delete_confirm_msg']({ title: resourceToDelete?.title || '' }) }}</p>
+      <p>{{ m['resources.delete_confirm_msg']({ title: i18nDb(resourceToDelete?.title) || '' }) }}</p>
       <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
     </ConfirmationDialog>
   </div>
