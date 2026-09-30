@@ -83,14 +83,37 @@ export const POST: APIRoute = async ({ request }) => {
   const locale: EmailLocale = rawLocale === 'en' ? 'en' : 'pt'
 
   // 4. Build standard verification URL
-  const baseUrl = (site_url || import.meta.env.SITE || 'https://circulab.pt').replace(/\/+$/, '')
+  // /auth/v1/verify is a Supabase Auth endpoint and must use the public Supabase URL.
+  // Internal container hostnames (like http://supabase-kong:8000) are filtered out.
+  const isInternalHost = (urlStr?: string) =>
+    !urlStr ||
+    urlStr.includes('supabase-kong') ||
+    urlStr.includes('localhost') ||
+    urlStr.startsWith('http://127.') ||
+    urlStr.startsWith('http://172.') ||
+    urlStr.startsWith('http://10.')
+
+  const publicSupabaseUrl =
+    import.meta.env.PUBLIC_SUPABASE_URL ||
+    process.env.PUBLIC_SUPABASE_URL ||
+    'https://supabase.circulab.pt'
+
+  const baseUrl = publicSupabaseUrl.replace(/\/+$/, '')
+  const frontendSiteUrl = (import.meta.env.SITE || process.env.SITE || 'https://circulab.pt').replace(/\/+$/, '')
+
+  const isInternalOrBackend = (urlStr?: string) =>
+    !urlStr ||
+    isInternalHost(urlStr) ||
+    urlStr.replace(/\/+$/, '') === baseUrl
+
   function buildVerifyUrl(hash: string, actionType: string): string {
     const url = new URL(`${baseUrl}/auth/v1/verify`)
     url.searchParams.set('token', hash)
     url.searchParams.set('type', actionType)
-    if (redirect_to) {
-      url.searchParams.set('redirect_to', redirect_to)
-    }
+    const effectiveRedirectTo = redirect_to && !isInternalOrBackend(redirect_to)
+      ? redirect_to
+      : frontendSiteUrl
+    url.searchParams.set('redirect_to', effectiveRedirectTo)
     return url.toString()
   }
 
