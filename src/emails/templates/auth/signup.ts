@@ -3,11 +3,13 @@ import { renderBaseLayout, renderButton, escapeHtml } from '../../layouts/baseLa
 import { m } from '@/paraglide/messages.js'
 
 interface SignupEmailOptions {
-  confirmationUrl: string
+  token?: string
+  confirmationUrl?: string
   locale: EmailLocale
 }
 
 export function renderSignupEmail({
+  token,
   confirmationUrl,
   locale,
 }: SignupEmailOptions): RenderedEmail {
@@ -16,12 +18,30 @@ export function renderSignupEmail({
   const intro = m['email.auth_signup_intro']({}, { locale })
   const cta = m['email.auth_signup_cta']({}, { locale })
   const buttonLabel = m['email.auth_signup_button']({}, { locale })
-  const fallbackLabel = m['email.auth_signup_fallback']({}, { locale })
   const benefitsTitle = m['email.auth_signup_benefits_title']({}, { locale })
   const benefit1 = m['email.auth_signup_benefit_1']({}, { locale })
   const benefit2 = m['email.auth_signup_benefit_2']({}, { locale })
   const benefit3 = m['email.auth_signup_benefit_3']({}, { locale })
   const closing = m['email.auth_signup_closing']({}, { locale })
+
+  const codeBox = token
+    ? `
+    <!-- Code Display Box -->
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 20px 0;">
+      <tr>
+        <td align="center" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 28px;">
+          <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 32px; font-weight: 700; letter-spacing: 6px; color: #15803d;">
+            ${escapeHtml(token)}
+          </span>
+        </td>
+      </tr>
+    </table>
+    `
+    : ''
+
+  const ctaButton = confirmationUrl
+    ? renderButton(confirmationUrl, buttonLabel)
+    : ''
 
   const content = `
     <h1 style="font-size: 20px; font-weight: 700; color: #18181b; margin: 0 0 16px 0; letter-spacing: -0.3px;">
@@ -34,16 +54,9 @@ export function renderSignupEmail({
       ${escapeHtml(cta)}
     </p>
 
-    ${renderButton(confirmationUrl, buttonLabel)}
+    ${codeBox}
 
-    <div style="margin-top: 24px; padding: 14px; background-color: #f4f4f5; border-radius: 6px; font-size: 12px; color: #52525b; line-height: 1.5;">
-      <p style="margin: 0 0 6px 0; font-weight: 600;">${escapeHtml(fallbackLabel)}</p>
-      <p style="margin: 0; word-break: break-all;">
-        <a href="${escapeHtml(confirmationUrl)}" target="_blank" style="color: #549C89; text-decoration: underline;">
-          ${escapeHtml(confirmationUrl)}
-        </a>
-      </p>
-    </div>
+    ${ctaButton}
 
     <p style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 600; line-height: 1.5; color: #27272a;">
       ${escapeHtml(benefitsTitle)}
@@ -65,14 +78,30 @@ export function renderSignupEmail({
     </p>
   `
 
+  const previewText = token ? `${title}: ${token}` : title
+
   const html = renderBaseLayout({
     title: subject,
     content,
     locale,
-    previewText: title,
+    previewText,
   })
 
-  const plainText = `${title}\n\n${intro}\n\n${cta}\n\n${confirmationUrl}\n\n${benefitsTitle}\n- 🔍 ${benefit1}\n- 📍 ${benefit2}\n- 🤝 ${benefit3}\n\n${closing}\n\nhttps://circulab.pt`
+  const plainText = [
+    title,
+    intro,
+    cta,
+    token,
+    confirmationUrl ? `${buttonLabel}: ${confirmationUrl}` : '',
+    benefitsTitle,
+    `- 🔍 ${benefit1}`,
+    `- 📍 ${benefit2}`,
+    `- 🤝 ${benefit3}`,
+    closing,
+    'https://circulab.pt',
+  ]
+    .filter(Boolean)
+    .join('\n\n')
 
   return { subject, html, text: plainText }
 }

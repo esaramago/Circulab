@@ -127,7 +127,7 @@ export const POST: APIRoute = async ({ request }) => {
     let sendResult
     switch (email_action_type) {
       case 'signup': {
-        const rendered = renderSignupEmail({ confirmationUrl, locale })
+        const rendered = renderSignupEmail({ token, confirmationUrl, locale })
         sendResult = await sendEmail({
           to: user.email!,
           subject: rendered.subject,
@@ -214,7 +214,7 @@ export const POST: APIRoute = async ({ request }) => {
       default: {
         console.warn(`[Auth Hook] Unhandled email action type: ${email_action_type}`)
         if (confirmationUrl && user.email) {
-          const rendered = renderSignupEmail({ confirmationUrl, locale })
+          const rendered = renderSignupEmail({ token, confirmationUrl, locale })
           sendResult = await sendEmail({
             to: user.email,
             subject: rendered.subject,
