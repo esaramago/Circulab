@@ -2,7 +2,7 @@ import type { EmailLocale, RenderedEmail } from '../../types'
 import { renderBaseLayout, renderButton, escapeHtml } from '../../layouts/baseLayout'
 import { m } from '@/paraglide/messages.js'
 
-const CONTACT_EMAIL = 'info@circulab.pt'
+const CONTACT_EMAIL = import.meta.env.CONTACT_FROM_EMAIL || 'info@circulab.pt'
 
 interface ResetPasswordEmailOptions {
   confirmationUrl: string
