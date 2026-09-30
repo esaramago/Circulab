@@ -26,7 +26,7 @@ const isLoading = ref(false)
 const hasError = ref(false)
 
 const isCanEdit = computed(() => {
-  return user.value ? userHasAccess(user.value, 'dashboard') : false
+  return user.value ? userHasAccess(user.value, 'moderation') : false
 })
 
 onMounted(async () => {
@@ -70,7 +70,7 @@ watch(() => props.resourceId, async () => {
 
           <ResourceSummary :resource="resource" />
 
-          <wa-button v-if="isCanEdit || CONFIG.can_suggest" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
+          <wa-button v-if="isCanEdit" appearance="outlined" :href="localizeHref(`/recursos/editar?id=${resource.id}`)">{{ isCanEdit ? m['map.edit']() : m['map.suggest_edit']() }}</wa-button>
 
         </Grid>
       </template>

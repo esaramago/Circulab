@@ -1,6 +1,7 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { z } from 'astro/zod'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const signIn = defineAction({
   accept: 'form',
@@ -22,7 +23,7 @@ export const signIn = defineAction({
 
       if (error) {
         throw new ActionError({
-          message: error.message || 'Failed to sign in',
+          message: error.message || m['auth.failed_sign_in']({}, { locale: context.locals?.locale }),
           code: error.code as ActionErrorCode
         })
       }
@@ -37,29 +38,33 @@ export const signIn = defineAction({
 
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*')
+        .select(`
+          *,
+          role:roles(*)
+        `)
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (userError || !userData) {
         throw new ActionError({
           message:
             userError?.message ||
-            `No users row found for authenticated id ${userId}`,
+            'User profile not found',
           code: 'NOT_FOUND'
         })
       }
 
       // Set the user in the locals
-      context.locals.user = userData
+      context.locals.user = userData as any
 
       return {
         success: true,
         message: 'Sign in successful',
+        user: userData as any,
       }
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to sign in',
+        message: error.message || m['auth.failed_sign_in']({}, { locale: context.locals?.locale }),
         code: error.code as ActionErrorCode
       })
     }

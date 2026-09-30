@@ -1,7 +1,7 @@
 import { z } from 'astro/zod'
 
 export const resourceSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().optional().nullable(),
   title: z.string(),
   typology_id: z.string(),
   category_id: z.string(),
@@ -23,8 +23,8 @@ export const resourceSchema = z.object({
   address: z.string().optional(),
   postal_code: z.string().optional(),
   email: z.string().email().optional().or(z.literal('')),
-  phone: z.number().optional(),
-  phone_area_code: z.number().optional(),
+  phone: z.union([z.number(), z.string()]).optional(),
+  phone_area_code: z.coerce.number().optional(),
   access: z.string().optional().nullable(),
   accessibility: z.boolean().optional().nullable(),
   has_opening_hours: z.boolean().optional(),

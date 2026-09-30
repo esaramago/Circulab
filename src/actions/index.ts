@@ -3,16 +3,27 @@ import { checkUser } from './auth/checkUser'
 import { logout } from './auth/logout'
 import { resetPassword } from './auth/resetPassword'
 import { updatePassword } from './auth/updatePassword'
+import { sendOtp } from './auth/sendOtp'
+import { verifyOtp } from './auth/verifyOtp'
 import { getSession } from './auth/getSession'
 import { getPins, addResource, getResources, getResource, getFullResources, deleteResource, editResource, getNetworks } from './resources'
 import { addCategory, updateCategory, deleteCategory, getCategories, getCategoryById } from './categories'
 import { updateTypology, getTypologies, getTypologyById } from './typologies'
 import { submitContact } from './contact'
+import {
+  getSuggestedResources,
+  getSuggestedResource,
+  updateSuggestedResource,
+  acceptSuggestedResource,
+  rejectSuggestedResource,
+} from './moderation'
 
 export const server = {
   signIn,
   resetPassword,
   updatePassword,
+  sendOtp,
+  verifyOtp,
   logout,
   checkUser,
   getSession,
@@ -33,5 +44,10 @@ export const server = {
   getTypologies,
   getTypologyById,
   submitContact,
+  getSuggestedResources,
+  getSuggestedResource,
+  updateSuggestedResource,
+  acceptSuggestedResource,
+  rejectSuggestedResource,
 }
 

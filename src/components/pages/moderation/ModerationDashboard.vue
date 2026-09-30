@@ -7,20 +7,19 @@ import '@webawesome/button/button.js'
 import '@webawesome/icon/icon.js'
 import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
-import '@webawesome/dialog/dialog.js'
 import '@webawesome/input/input.js'
 import '@webawesome/select/select.js'
 import '@webawesome/option/option.js'
-import { localizeHref } from '@/paraglide/runtime.js'
-import { clearAddResourceDraft } from '@/stores/addResource'
-import type { FullResource } from '@/types/domain/resource'
+import '@webawesome/badge/badge.js'
+import type { SuggestedResource } from '@/types/domain/resource'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow, CategoryRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
+import { localizeHref } from '@/paraglide/runtime.js'
+import { clearAddResourceDraft } from '@/stores/addResource'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
 
-
-const resources = ref<FullResource[]>([])
+const suggestions = ref<SuggestedResource[]>([])
 const typologies = ref<TypologyRow[]>([])
 const categories = ref<CategoryRow[]>([])
 
@@ -28,36 +27,51 @@ const search = ref('')
 const selectedTypology = ref('')
 const selectedCategory = ref('')
 
+const acceptDialogOpen = ref(false)
+const suggestionToAccept = ref<SuggestedResource | null>(null)
+const accepting = ref(false)
+
+const rejectDialogOpen = ref(false)
+const suggestionToReject = ref<SuggestedResource | null>(null)
+const rejecting = ref(false)
+
+const feedback = ref<{ type: 'success' | 'danger'; message: string } | null>(null)
+
 onMounted(async () => {
-  await getResources()
+  await getSuggestions()
   await getTypologies()
 })
 
-async function getResources() {
-  const { data, error } = await actions.getFullResources()
+async function getSuggestions() {
+  const { data, error } = await actions.getSuggestedResources()
   if (error) {
-    console.error(error)
+    console.error('[ModerationDashboard] Error fetching suggestions:', error)
   } else {
-    resources.value = data as FullResource[]
+    suggestions.value = (data ?? []) as SuggestedResource[]
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('moderation-count-updated', {
+          detail: { count: suggestions.value.length },
+        })
+      )
+    }
   }
 }
 
 async function getTypologies() {
   const { data, error } = await actions.getTypologies()
   if (error) {
-    console.error('[ResourcesDashboard] Error fetching typologies:', error)
+    console.error('[ModerationDashboard] Error fetching typologies:', error)
   } else {
     typologies.value = (data?.typologies ?? []) as TypologyRow[]
   }
 }
 
 async function getCategories(typology_id: string) {
-
   if (!typology_id) return
   const { data, error } = await actions.getCategories({ typology_id })
-
   if (error) {
-    console.error('[ResourcesDashboard] Error fetching categories:', error)
+    console.error('[ModerationDashboard] Error fetching categories:', error)
   } else {
     categories.value = (data.categories ?? []) as CategoryRow[]
   }
@@ -80,8 +94,8 @@ function handleSearchInput(event: Event) {
   search.value = target.value || ''
 }
 
-const filteredResources = computed(() => {
-  return resources.value.filter((resource) => {
+const filteredSuggestions = computed(() => {
+  return suggestions.value.filter((resource) => {
     if (search.value.trim()) {
       const q = search.value.toLowerCase().trim()
       const titleMatch = resource.title?.toLowerCase().includes(q)
@@ -89,7 +103,8 @@ const filteredResources = computed(() => {
       const addressMatch = resource.address?.toLowerCase().includes(q)
       const locationMatch = resource.location?.toLowerCase().includes(q)
       const emailMatch = resource.email?.toLowerCase().includes(q)
-      if (!titleMatch && !descMatch && !addressMatch && !locationMatch && !emailMatch) {
+      const submitterMatch = resource.suggested_by_email?.toLowerCase().includes(q)
+      if (!titleMatch && !descMatch && !addressMatch && !locationMatch && !emailMatch && !submitterMatch) {
         return false
       }
     }
@@ -106,41 +121,69 @@ const filteredResources = computed(() => {
   })
 })
 
-const deleteDialogOpen = ref(false)
-const resourceToDelete = ref<FullResource | null>(null)
-const deleting = ref(false)
-const feedback = ref<{ type: 'success' | 'danger'; message: string } | null>(null)
-
-function confirmDelete(resource: FullResource) {
-  resourceToDelete.value = resource
+function confirmAccept(resource: SuggestedResource) {
+  suggestionToAccept.value = resource
   feedback.value = null
-  deleteDialogOpen.value = true
+  acceptDialogOpen.value = true
 }
 
-async function handleDelete() {
-  if (!resourceToDelete.value) return
-  deleting.value = true
+async function handleAccept() {
+  if (!suggestionToAccept.value) return
+  accepting.value = true
   feedback.value = null
 
   try {
-    const { data, error } = await actions.deleteResource({ id: resourceToDelete.value.id })
+    const { data, error } = await actions.acceptSuggestedResource({ id: suggestionToAccept.value.suggestion_id })
     if (error) throw error
 
     if (data?.success) {
-      feedback.value = { type: 'success', message: m['resources.deleted_success']() }
-      deleteDialogOpen.value = false
-      await getResources()
+      feedback.value = { type: 'success', message: m['moderation.accepted_success']() }
+      acceptDialogOpen.value = false
+      await getSuggestions()
     }
   } catch (err: any) {
-    console.error('[ResourcesDashboard] Error deleting resource:', err)
+    console.error('[ModerationDashboard] Error accepting suggestion:', err)
     feedback.value = {
       type: 'danger',
-      message: err.message || m['resources.delete_error']()
+      message: err.message || m['moderation.accept_error'](),
     }
-    deleteDialogOpen.value = false
+    acceptDialogOpen.value = false
   } finally {
-    deleting.value = false
-    resourceToDelete.value = null
+    accepting.value = false
+    suggestionToAccept.value = null
+  }
+}
+
+function confirmReject(resource: SuggestedResource) {
+  suggestionToReject.value = resource
+  feedback.value = null
+  rejectDialogOpen.value = true
+}
+
+async function handleReject() {
+  if (!suggestionToReject.value) return
+  rejecting.value = true
+  feedback.value = null
+
+  try {
+    const { data, error } = await actions.rejectSuggestedResource({ id: suggestionToReject.value.suggestion_id })
+    if (error) throw error
+
+    if (data?.success) {
+      feedback.value = { type: 'success', message: m['moderation.rejected_success']() }
+      rejectDialogOpen.value = false
+      await getSuggestions()
+    }
+  } catch (err: any) {
+    console.error('[ModerationDashboard] Error rejecting suggestion:', err)
+    feedback.value = {
+      type: 'danger',
+      message: err.message || m['moderation.reject_error'](),
+    }
+    rejectDialogOpen.value = false
+  } finally {
+    rejecting.value = false
+    suggestionToReject.value = null
   }
 }
 </script>
@@ -187,17 +230,24 @@ async function handleDelete() {
       </wa-select>
     </Grid>
 
-    <div v-if="filteredResources.length > 0" class="card-container">
-      <wa-card v-for="resource in filteredResources" :key="resource.id">
-
-
-        <img v-if="resource?.images?.[0]" slot="media" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0].url" :alt="resource?.title" loading="lazy" />
+    <div v-if="filteredSuggestions.length > 0" class="card-container">
+      <wa-card v-for="resource in filteredSuggestions" :key="resource.suggestion_id">
+        <img
+          v-if="resource?.images?.[0]"
+          slot="media"
+          :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0].url"
+          :alt="resource?.title"
+          loading="lazy"
+        />
 
         <div slot="header">
+          <span class="submitter-email" :title="resource.suggested_by_email || ''">
+            {{ m['moderation.suggested_by']({ email: resource.suggested_by_email || '-' }) }}
+          </span>
           <h2>{{ resource.title }}</h2>
           <p>{{ resource?.category }} ({{ resource?.typology }})</p>
         </div>
-        
+
         <ResourceSummary
           :resource="resource"
           :show-header="false"
@@ -205,33 +255,51 @@ async function handleDelete() {
           :show-networks="false"
         />
 
-
         <Grid slot="footer" justify="end" gap="s">
-          <wa-button size="s" variant="primary" :href="localizeHref(`/recursos/editar?id=${resource.id}`)" @click="clearAddResourceDraft">
+          <wa-button
+            size="s"
+            :href="localizeHref(`/recursos/editar?suggestion_id=${resource.suggestion_id}`)"
+            @click="clearAddResourceDraft"
+          >
             <wa-icon name="pen"></wa-icon>
-            {{ m['map.edit']() }}
+            {{ m['moderation.edit']() }}
           </wa-button>
-          <wa-button size="s" variant="danger" @click="confirmDelete(resource)">
-            <wa-icon name="trash"></wa-icon>
-            {{ m['resources.delete']() }}
+          <wa-button size="s" variant="danger" @click="confirmReject(resource)">
+            <wa-icon name="ban"></wa-icon>
+            {{ m['moderation.reject']() }}
+          </wa-button>
+          <wa-button size="s" variant="success" @click="confirmAccept(resource)">
+            <wa-icon name="circle-check"></wa-icon>
+            {{ m['moderation.accept']() }}
           </wa-button>
         </Grid>
       </wa-card>
     </div>
     <div v-else class="empty-state">
-      <p>{{ m['resources.no_resources_found']() }}</p>
+      <p>{{ m['moderation.no_suggestions_found']() }}</p>
     </div>
   </Grid>
 
   <ConfirmationDialog
-    v-model:open="deleteDialogOpen"
-    :title="m['resources.delete_confirm_title']()"
-    :confirm-label="m['resources.delete']()"
-    variant="danger"
-    :loading="deleting"
-    @confirm="handleDelete"
+    v-model:open="acceptDialogOpen"
+    :title="m['moderation.accept_confirm_title']()"
+    :confirm-label="m['moderation.accept']()"
+    variant="brand"
+    :loading="accepting"
+    @confirm="handleAccept"
   >
-    <p>{{ m['resources.delete_confirm_msg']({ title: resourceToDelete?.title || '' }) }}</p>
+    <p>{{ m['moderation.accept_confirm_msg']({ title: suggestionToAccept?.title || '' }) }}</p>
+  </ConfirmationDialog>
+
+  <ConfirmationDialog
+    v-model:open="rejectDialogOpen"
+    :title="m['moderation.reject_confirm_title']()"
+    :confirm-label="m['moderation.reject']()"
+    variant="danger"
+    :loading="rejecting"
+    @confirm="handleReject"
+  >
+    <p>{{ m['moderation.reject_confirm_msg']({ title: suggestionToReject?.title || '' }) }}</p>
     <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
   </ConfirmationDialog>
 </template>
@@ -244,9 +312,18 @@ async function handleDelete() {
 }
 
 .empty-state {
-  padding: var(--wa-space-l);
+  padding-block: var(--wa-space-2xl);
   text-align: center;
   color: var(--wa-color-neutral-70);
+}
+
+.submitter-email {
+  font-size: var(--wa-font-size-xs);
+  color: var(--wa-color-neutral-60);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
 wa-card {

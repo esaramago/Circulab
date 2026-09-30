@@ -19,9 +19,15 @@ const forgotPasswordHref = localizeHref(
   '/auth/forgot-password',
   Astro.locals.locale ? { locale: Astro.locals.locale } : undefined,
 )
-const redirectAfterLogin = getSafeRedirectPath(
-  Astro.url.searchParams.get('redirect')
+const redirectQueryParam = Astro.url.searchParams.get('redirect')
+const redirectAfterLogin = redirectQueryParam ? getSafeRedirectPath(redirectQueryParam, '') : ''
+const registerBaseHref = localizeHref(
+  '/registar',
+  Astro.locals.locale ? { locale: Astro.locals.locale } : undefined,
 )
+const registerHref = redirectAfterLogin
+  ? `${registerBaseHref}?redirect=${encodeURIComponent(redirectAfterLogin)}`
+  : registerBaseHref
 
 if (Astro.request.method === 'POST') {
 
@@ -31,9 +37,8 @@ if (Astro.request.method === 'POST') {
 
     const email = formData.get('email')
     const password = formData.get('password')
-    const redirectTarget = getSafeRedirectPath(
-      (formData.get('redirect') as string) || Astro.url.searchParams.get('redirect')
-    )
+    const redirectInput = (formData.get('redirect') as string) || redirectQueryParam
+    const redirectTarget = redirectInput ? getSafeRedirectPath(redirectInput, '') : ''
     if (!email || !password) {
       throw new Error(m['auth.email_password_required']())
     }
@@ -44,13 +49,7 @@ if (Astro.request.method === 'POST') {
     }
 
     if (loginData?.success) {
-
-      const hasAccessToDashboard = Astro.locals.user?.role_id === 2 || Astro.locals.user?.role_id === 3
-      if (hasAccessToDashboard) {
-        return Astro.redirect(localizeRedirectPath(redirectTarget, Astro.locals.locale))
-      } else {
-        errorMessage = m['auth.no_dashboard_access']()
-      }
+      return Astro.redirect(localizeRedirectPath(redirectTarget || '/mapa', Astro.locals.locale))
     } else {
       errorMessage = loginData?.message || m['auth.failed_sign_in']()
     }
@@ -98,6 +97,9 @@ if (Astro.request.method === 'POST') {
           <wa-button variant="primary" type="submit">{m['auth.login_button']()}</wa-button>
           <p>
             <a href={forgotPasswordHref}>{m['auth.forgot_password']()}</a>
+          </p>
+          <p>
+            {m['auth.no_account']()} <a href={registerHref}>{m['auth.register_link']()}</a>
           </p>
         </Grid>
       </form>

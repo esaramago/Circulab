@@ -8,6 +8,7 @@ import { geographyPointEwkt } from '@/utils/geographyPointEwkt'
 import { resourceSchema } from '@/schemas/resource.server'
 import { z } from 'astro/zod'
 import geojson from '@/utils/geojson'
+import { m } from '@/paraglide/messages.js'
 
 function mapErrorCode(code?: string): ActionErrorCode {
   if (code === 'PGRST116') return 'NOT_FOUND'
@@ -18,7 +19,7 @@ function mapErrorCode(code?: string): ActionErrorCode {
 }
 
 export const getPins = defineAction({
-  handler: async () => {
+  handler: async (_input, context) => {
     try {
       const { data, error } = await supabase.from('pins').select(`
         id,
@@ -41,7 +42,7 @@ export const getPins = defineAction({
       if (error) {
         console.error('[Action] getPins error from Supabase:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get pins',
+          message: error.message || m['resources.failed_get_pins']({}, { locale: context?.locals?.locale }),
           code: mapErrorCode(error.code)
         })
       }
@@ -74,7 +75,7 @@ export const getPins = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getPins catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get pins',
+        message: error.message || m['resources.failed_get_pins']({}, { locale: context?.locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -85,7 +86,7 @@ export const getResource = defineAction({
   input: z.object({
     id: z.string(),
   }),
-  handler: async (input: { id: string }) => {
+  handler: async (input: { id: string }, context) => {
 
 
     debugger
@@ -133,7 +134,7 @@ export const getResource = defineAction({
       if (error) {
         console.error('[Action] getResource error from Supabase:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get pin',
+          message: error.message || m['resources.failed_get_pin']({}, { locale: context?.locals?.locale }),
           code: mapErrorCode(error.code)
         })
       }
@@ -176,7 +177,7 @@ export const getResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get resource',
+        message: error.message || m['resources.failed_get_resource']({}, { locale: context?.locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -184,7 +185,7 @@ export const getResource = defineAction({
 })
 
 export const getResources = defineAction({
-  handler: async () => {
+  handler: async (_input, context) => {
     try {
       const { data, error } = await supabase.from('pins').select(`
         id,
@@ -211,7 +212,7 @@ export const getResources = defineAction({
       if (error) {
         console.error('[Action] getResources error from Supabase:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get pins',
+          message: error.message || m['resources.failed_get_pins']({}, { locale: context?.locals?.locale }),
           code: mapErrorCode(error.code)
         })
       }
@@ -221,7 +222,7 @@ export const getResources = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getResources catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get resources',
+        message: error.message || m['resources.failed_get_resources']({}, { locale: context?.locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -229,7 +230,7 @@ export const getResources = defineAction({
 })
 
 export const getFullResources = defineAction({
-  handler: async () => {
+  handler: async (_input, context) => {
     try {
       const { data, error } = await supabase.from('pins').select(`
         id,
@@ -266,7 +267,7 @@ export const getFullResources = defineAction({
       if (error) {
         console.error('[Action] getFullResources error from Supabase:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get pins',
+          message: error.message || m['resources.failed_get_pins']({}, { locale: context?.locals?.locale }),
           code: mapErrorCode(error.code)
         })
       }
@@ -301,7 +302,7 @@ export const getFullResources = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getFullResources catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get resources',
+        message: error.message || m['resources.failed_get_resources']({}, { locale: context?.locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -310,7 +311,7 @@ export const getFullResources = defineAction({
 
 export const addResource = defineAction({
   input: resourceSchema,
-  handler: async (input: Resource, { request, cookies }) => {
+  handler: async (input: Resource, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -320,6 +321,51 @@ export const addResource = defineAction({
           message: 'Not authenticated',
           code: 'UNAUTHORIZED',
         })
+      }
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('*, roles(*)')
+        .eq('id', auth.user.id)
+        .single()
+
+      const isModeratorOrAdmin = ['admin', 'moderator'].includes(userProfile?.roles?.code || '')
+
+      if (!isModeratorOrAdmin) {
+        const { error: suggestionError } = await supabase.from('suggested_pins').insert({
+          pin_id: null,
+          status: 'standby',
+          title: input.title || '',
+          description: input.description || '',
+          images: input.images || [],
+          coordinates: geographyPointEwkt(
+            Number(input.coordinates?.longitude),
+            Number(input.coordinates?.latitude),
+          ),
+          category_id: input.category_id,
+          characteristics_ids: input.characteristics_ids || [],
+          location_name: input.location_name || '',
+          address: input.address || '',
+          postal_code: input.postal_code || '',
+          email: input.email || '',
+          phone: input.phone != null ? String(input.phone) : null,
+          phone_area_code: input.phone_area_code != null ? Number(input.phone_area_code) : null,
+          access: input.access || null,
+          accessibility: input.accessibility ?? null,
+          has_opening_hours: input.has_opening_hours ?? false,
+          opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
+          networks: input.networks || [],
+          created_by: auth.user.id,
+        })
+
+        if (suggestionError) {
+          console.error('[Action] addResource suggestion error:', suggestionError)
+          throw new ActionError({
+            message: suggestionError.message || 'Failed to submit suggestion',
+            code: mapErrorCode(suggestionError.code),
+          })
+        }
+
+        return { success: true, isSuggestion: true }
       }
 
       const locationInsert: LocationInsert = {
@@ -400,11 +446,13 @@ export const addResource = defineAction({
         })
       }
 
+      return { success: true, isSuggestion: false }
+
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       console.error('[Action] addResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to add resource',
+        message: error.message || m['resources.failed_add_resource']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }
@@ -415,7 +463,7 @@ export const deleteResource = defineAction({
   input: z.object({
     id: z.string(),
   }),
-  handler: async (input: { id: string }, { request, cookies }) => {
+  handler: async (input: { id: string }, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -448,7 +496,7 @@ export const deleteResource = defineAction({
       if (error) {
         console.error('[Action] deleteResource error:', error)
         throw new ActionError({
-          message: error.message || 'Failed to delete resource',
+          message: error.message || m['resources.failed_delete_resource']({}, { locale: locals?.locale }),
           code: mapErrorCode(error.code),
         })
       }
@@ -465,7 +513,7 @@ export const deleteResource = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] deleteResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to delete resource',
+        message: error.message || m['resources.failed_delete_resource']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -476,7 +524,7 @@ export const editResource = defineAction({
   input: resourceSchema.extend({
     id: z.string(),
   }),
-  handler: async (input, { request, cookies }) => {
+  handler: async (input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data: auth, error: authError } = await supabase.auth.getUser()
@@ -494,13 +542,6 @@ export const editResource = defineAction({
         .eq('id', auth.user.id)
         .single()
 
-      if (profileError || !['admin', 'moderator'].includes(userProfile?.roles?.code || '')) {
-        throw new ActionError({
-          message: 'Not authorized',
-          code: 'UNAUTHORIZED',
-        })
-      }
-
       // 1. Get the existing pin to find its location_id
       const { data: existingPin, error: pinFetchError } = await supabase
         .from('pins')
@@ -513,6 +554,46 @@ export const editResource = defineAction({
           message: pinFetchError?.message || 'Resource not found',
           code: 'NOT_FOUND',
         })
+      }
+
+      const isModeratorOrAdmin = ['admin', 'moderator'].includes(userProfile?.roles?.code || '')
+
+      if (!isModeratorOrAdmin) {
+        const { error: suggestionError } = await supabase.from('suggested_pins').insert({
+          pin_id: input.id,
+          status: 'standby',
+          title: input.title || '',
+          description: input.description || '',
+          images: input.images || [],
+          coordinates: geographyPointEwkt(
+            Number(input.coordinates?.longitude),
+            Number(input.coordinates?.latitude),
+          ),
+          category_id: input.category_id,
+          characteristics_ids: input.characteristics_ids || [],
+          location_name: input.location_name || '',
+          address: input.address || '',
+          postal_code: input.postal_code || '',
+          email: input.email || '',
+          phone: input.phone != null ? String(input.phone) : null,
+          phone_area_code: input.phone_area_code != null ? Number(input.phone_area_code) : null,
+          access: input.access || null,
+          accessibility: input.accessibility ?? null,
+          has_opening_hours: input.has_opening_hours ?? false,
+          opening_hours: input.has_opening_hours ? ((input.opening_hours as any) || null) : null,
+          networks: input.networks || [],
+          created_by: auth.user.id,
+        })
+
+        if (suggestionError) {
+          console.error('[Action] editResource suggestion error:', suggestionError)
+          throw new ActionError({
+            message: suggestionError.message || 'Failed to submit edit suggestion',
+            code: mapErrorCode(suggestionError.code),
+          })
+        }
+
+        return { success: true, isSuggestion: true }
       }
 
       // 2. Update the location
@@ -599,12 +680,12 @@ export const editResource = defineAction({
         })
       }
 
-      return { success: true }
+      return { success: true, isSuggestion: false }
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       console.error('[Action] editResource catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to edit resource',
+        message: error.message || m['resources.failed_edit_resource']({}, { locale: locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR',
       })
     }
@@ -612,13 +693,13 @@ export const editResource = defineAction({
 })
 
 export const getNetworks = defineAction({
-  handler: async () => {
+  handler: async (_input, context) => {
     try {
       const { data, error } = await supabase.from('networks').select('id, name, slug, icon')
       if (error) {
         console.error('[Action] getNetworks error:', error)
         throw new ActionError({
-          message: error.message || 'Failed to get networks',
+          message: error.message || m['resources.failed_get_networks']({}, { locale: context?.locals?.locale }),
           code: mapErrorCode(error.code)
         })
       }
@@ -634,7 +715,7 @@ export const getNetworks = defineAction({
       if (error instanceof ActionError) throw error
       console.error('[Action] getNetworks catch error:', error)
       throw new ActionError({
-        message: error.message || 'Failed to get networks',
+        message: error.message || m['resources.failed_get_networks']({}, { locale: context?.locals?.locale }),
         code: 'INTERNAL_SERVER_ERROR'
       })
     }

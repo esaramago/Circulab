@@ -51,3 +51,59 @@ export type ResourceRow = Pick<
   locations: Pick<LocationRow, 'name' | 'address' | 'postal_code' | 'email' | 'phone'>
   categories: { typology_id: string }
 }
+
+export type SuggestedPinRow = {
+  id: string
+  pin_id: string | null
+  status: string
+  title: string
+  description: string | null
+  category_id: string
+  characteristics_ids: string[]
+  images: Json
+  coordinates: unknown
+  location_name: string | null
+  address: string | null
+  postal_code: string | null
+  email: string | null
+  phone: string | null
+  phone_area_code: number | null
+  access: string | null
+  accessibility: boolean | null
+  has_opening_hours: boolean
+  opening_hours: Json | null
+  networks: Json
+  created_by: string
+  created_at: string
+  updated_by: string | null
+  updated_at: string
+}
+
+export type SuggestedPinInsert = {
+  id?: string
+  pin_id?: string | null
+  status?: string
+  title: string
+  description?: string | null
+  category_id: string
+  characteristics_ids?: string[]
+  images?: Json
+  coordinates?: unknown
+  location_name?: string | null
+  address?: string | null
+  postal_code?: string | null
+  email?: string | null
+  phone?: string | null
+  phone_area_code?: number | null
+  access?: string | null
+  accessibility?: boolean | null
+  has_opening_hours?: boolean
+  opening_hours?: Json | null
+  networks?: Json
+  created_by: string
+  created_at?: string
+  updated_by?: string | null
+  updated_at?: string
+}
+
+export type SuggestedPinUpdate = Partial<SuggestedPinInsert>

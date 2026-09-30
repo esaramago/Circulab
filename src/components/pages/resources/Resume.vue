@@ -3,12 +3,21 @@ import Grid from '@/components/ui/Grid.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import { actions } from 'astro:actions'
-import { clearAddResourceDraft, getAddResourcePayload, ensureDraftLoaded, $editingResourceId } from '@/stores/addResource'
+import {
+  clearAddResourceDraft,
+  getAddResourcePayload,
+  ensureDraftLoaded,
+  $editingResourceId,
+  $editingSuggestionId,
+} from '@/stores/addResource'
 import { supabase } from '@/utils/supabase'
 import { getImage, clearImages } from '@/utils/imageStore'
 import type { DescriptionDraft, LocationDraft } from '@/types/add-resource-draft'
 import '@webawesome/callout/callout.js'
 import '@webawesome/card/card.js'
+import '@webawesome/dialog/dialog.js'
+import '@webawesome/button/button.js'
+import '@webawesome/input/input.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
 import Gallery from '@/components/ui/Gallery.vue'
@@ -21,8 +30,29 @@ type AddResourcePayload = DescriptionDraft & LocationDraft
 const resumeData = ref<AddResourcePayload | null>(null)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const suggestionDialogOpen = ref(false)
+const otpDialogOpen = ref(false)
+const otpEmail = ref('')
+const otpCode = ref('')
+const isOtpSending = ref(false)
+const isOtpVerifying = ref(false)
+const otpCodeSent = ref(false)
+const otpErrorMessage = ref('')
+const otpSuccessMessage = ref('')
 const editingResourceId = useStore($editingResourceId)
-const isEdit = computed(() => !!editingResourceId.value)
+const editingSuggestionId = useStore($editingSuggestionId)
+const isEdit = computed(() => !!(editingResourceId.value || editingSuggestionId.value))
+
+const backUrl = computed(() => {
+  if (editingSuggestionId.value) {
+    return `/recursos/editar?suggestion_id=${editingSuggestionId.value}`
+  }
+  return isEdit.value ? `/recursos/editar?id=${editingResourceId.value}` : '/recursos/novo/contactos'
+})
+
+function goToMap() {
+  window.location.href = localizeHref('/mapa')
+}
 
 const category = ref<string | null>(null)
 const typology = ref<string | null>(null)
@@ -30,8 +60,11 @@ const characteristics = ref<string | null>(null)
 
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search)
+  const suggestionId = urlParams.get('suggestion_id')
   const id = urlParams.get('id')
-  if (id) {
+  if (suggestionId) {
+    await ensureDraftLoaded(suggestionId, { isSuggestion: true })
+  } else if (id) {
     await ensureDraftLoaded(id)
   }
 
@@ -70,7 +103,91 @@ onMounted(async () => {
   console.log(typology.value)
 })
 
+async function handleSendOtp() {
+  if (isOtpSending.value) return
+  otpErrorMessage.value = ''
+  otpSuccessMessage.value = ''
+
+  if (!otpEmail.value || !otpEmail.value.includes('@')) {
+    otpErrorMessage.value = m['auth.otp_email_required']()
+    return
+  }
+
+  isOtpSending.value = true
+  try {
+    const { data, error } = await actions.sendOtp({ email: otpEmail.value.trim() })
+    if (error) {
+      throw new Error(error.message)
+    }
+    otpCodeSent.value = true
+    otpSuccessMessage.value = data?.message || m['auth.otp_code_sent']({ email: otpEmail.value })
+  } catch (err: any) {
+    otpErrorMessage.value = err.message || m['auth.failed_send_reset']()
+  } finally {
+    isOtpSending.value = false
+  }
+}
+
+async function handleVerifyOtpAndSubmit() {
+  if (isOtpVerifying.value) return
+  otpErrorMessage.value = ''
+
+  if (!otpCode.value || otpCode.value.trim().length < 6) {
+    otpErrorMessage.value = m['auth.otp_code_required']()
+    return
+  }
+
+  isOtpVerifying.value = true
+  try {
+    const { data, error } = await actions.verifyOtp({
+      email: otpEmail.value.trim(),
+      token: otpCode.value.trim(),
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (data?.session) {
+      await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      })
+    }
+
+    otpDialogOpen.value = false
+    await executeSubmit()
+  } catch (err: any) {
+    otpErrorMessage.value = err.message || m['auth.otp_invalid_code']()
+  } finally {
+    isOtpVerifying.value = false
+  }
+}
+
 async function handleSubmit() {
+  if (isSubmitting.value) return
+  errorMessage.value = ''
+
+  if (isEdit.value) {
+    await executeSubmit()
+    return
+  }
+
+  const { data: sessionData } = await actions.getSession()
+  if (!sessionData) {
+    if (!otpEmail.value && resumeData.value?.email) {
+      otpEmail.value = resumeData.value.email
+    }
+    otpErrorMessage.value = ''
+    otpSuccessMessage.value = ''
+    otpDialogOpen.value = true
+    return
+  }
+
+  await executeSubmit()
+}
+
+async function executeSubmit() {
   if (isSubmitting.value) return
   isSubmitting.value = true
   errorMessage.value = ''
@@ -96,7 +213,9 @@ async function handleSubmit() {
       throw new Error(m['resources.user_not_authenticated']())
     }
 
-    const pinId = isEdit.value ? editingResourceId.value! : crypto.randomUUID()
+    const isSuggestionEdit = !!editingSuggestionId.value
+    const storageId = editingResourceId.value || editingSuggestionId.value || crypto.randomUUID()
+    const pinId = editingResourceId.value || (isSuggestionEdit ? undefined : storageId)
     const uploadedImages: { url: string; alt: string }[] = []
 
     // 1. Upload files from IndexedDB to Supabase Storage
@@ -105,7 +224,7 @@ async function handleSubmit() {
       const blob = await getImage(img.id)
       if (blob) {
         const extension = blob.type === 'image/webp' ? 'webp' : (img.alt.split('.').pop() || 'jpg')
-        const path = userId ? `${userId}/${pinId}/${img.id}.${extension}` : `${pinId}/${img.id}.${extension}`
+        const path = userId ? `${userId}/${storageId}/${img.id}.${extension}` : `${storageId}/${img.id}.${extension}`
 
         const { error: uploadError } = await supabase.storage
           .from('pin-images')
@@ -133,7 +252,7 @@ async function handleSubmit() {
 
     // 2. Call actions.addResource or actions.editResource
     const payload = {
-      id: pinId,
+      ...(pinId ? { id: pinId } : {}),
       title: resumeData.value?.title || '',
       description: resumeData.value?.description || '',
       coordinates: {
@@ -157,18 +276,40 @@ async function handleSubmit() {
       images: uploadedImages,
     }
 
-    const { error } = isEdit.value
-      ? await actions.editResource(payload)
-      : await actions.addResource(payload)
+    let result
+    if (isSuggestionEdit) {
+      result = await actions.updateSuggestedResource({
+        ...payload,
+        suggestion_id: editingSuggestionId.value!,
+      })
+    } else if (isEdit.value) {
+      result = await actions.editResource({
+        ...payload,
+        id: editingResourceId.value!,
+      })
+    } else {
+      result = await actions.addResource(payload)
+    }
 
-    if (error) {
-      throw new Error(error.message || m['resources.error_save']())
+    if (result.error) {
+      throw new Error(result.error.message || m['resources.error_save']())
     }
 
     // 3. Clear local storage/IndexedDB on success
     clearAddResourceDraft()
     await clearImages()
-    window.location.href = localizeHref('/mapa')
+
+    if (isSuggestionEdit) {
+      window.location.href = localizeHref('/dashboard/moderacao')
+      return
+    }
+
+    if (result.data?.isSuggestion) {
+      suggestionDialogOpen.value = true
+      return
+    }
+
+    goToMap()
   } catch (err: any) {
     console.error(err)
     errorMessage.value = err.message || m['resources.error_submit']()
@@ -209,11 +350,113 @@ async function handleSubmit() {
       variant="outlined"
       appearance="outlined"
       :disabled="isSubmitting || null"
-      :href="localizeHref(isEdit ? `/recursos/editar?id=${editingResourceId}` : '/recursos/novo/contactos')">{{ m['resources.back']() }}</wa-button
+      :href="localizeHref(backUrl)">{{ m['resources.back']() }}</wa-button
     >
     <wa-button variant="brand" :loading="isSubmitting || null" :disabled="isSubmitting || null" @click="handleSubmit">
       {{ isEdit ? m['resources.save']() : m['resources.add']() }}
     </wa-button>
   </Grid>
+
+  <wa-dialog
+    id="otp-confirm-dialog"
+    :label="m['auth.otp_dialog_title']()"
+    :open="otpDialogOpen ? '' : null"
+    @wa-after-hide="otpDialogOpen = false"
+  >
+    <Grid gap="m" direction="column">
+      <p>{{ m['auth.otp_dialog_desc']() }}</p>
+
+      <wa-callout v-if="otpErrorMessage" variant="danger">
+        {{ otpErrorMessage }}
+      </wa-callout>
+
+      <wa-callout v-if="otpSuccessMessage" variant="success">
+        {{ otpSuccessMessage }}
+      </wa-callout>
+
+      <wa-input
+        type="email"
+        :label="m['auth.email_label']()"
+        :value="otpEmail"
+        @input="otpEmail = ($event.target as HTMLInputElement).value"
+        required
+        :disabled="otpCodeSent || isOtpSending || isOtpVerifying || null"
+      ></wa-input>
+
+      <wa-input
+        v-if="otpCodeSent"
+        type="text"
+        inputmode="numeric"
+        maxlength="6"
+        :label="m['auth.otp_code_label']()"
+        :placeholder="m['auth.otp_code_placeholder']()"
+        :value="otpCode"
+        @input="otpCode = ($event.target as HTMLInputElement).value"
+        required
+        :disabled="isOtpVerifying || null"
+      ></wa-input>
+    </Grid>
+
+    <div slot="footer" class="dialog-footer">
+      <wa-button
+        v-if="!otpCodeSent"
+        variant="brand"
+        :loading="isOtpSending || null"
+        :disabled="isOtpSending || null"
+        @click="handleSendOtp"
+      >
+        {{ m['auth.otp_send_code']() }}
+      </wa-button>
+
+      <Grid gap="s" justify="end" v-else>
+        <wa-button
+          variant="neutral"
+          appearance="plain"
+          :disabled="isOtpSending || isOtpVerifying || null"
+          @click="handleSendOtp"
+        >
+          {{ m['auth.otp_resend_code']() }}
+        </wa-button>
+        <wa-button
+          variant="brand"
+          :loading="isOtpVerifying || isSubmitting || null"
+          :disabled="isOtpVerifying || isSubmitting || null"
+          @click="handleVerifyOtpAndSubmit"
+        >
+          {{ m['auth.otp_confirm_and_submit']() }}
+        </wa-button>
+      </Grid>
+    </div>
+  </wa-dialog>
+
+  <wa-dialog
+    id="suggestion-submitted-dialog"
+    :label="m['resources.suggestion_submitted_title']()"
+    :open="suggestionDialogOpen ? '' : null"
+    @wa-after-hide="goToMap"
+  >
+    <wa-callout variant="success">
+      {{ m['resources.suggestion_submitted_msg']() }}
+    </wa-callout>
+    <div slot="footer" class="dialog-footer">
+      <wa-button variant="brand" appearance="plain" @click="goToMap">
+        {{ m['resources.suggestion_submitted_action']() }}
+      </wa-button>
+    </div>
+  </wa-dialog>
 </template>
+
+<style scoped>
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--wa-space-l);
+}
+#suggestion-submitted-dialog {
+  --width: 60rem;
+}
+#otp-confirm-dialog {
+  --width: 40rem;
+}
+</style>
 

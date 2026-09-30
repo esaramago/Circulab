@@ -38,8 +38,10 @@ const steps = [
 ]
 
 const currentStep = Astro.props.currentStep || 'validation'
-const title = isEdit ? m['resources.edit_title']() : m['resources.add_title']()
-const description = isEdit ? m['resources.edit_desc']() : m['resources.add_desc']()
+const user = Astro.locals.user
+const isContributor = user?.role?.code === 'contributor'
+const title = isEdit ? m['resources.edit_title']() : (isContributor ? m['resources.suggest_title']() : m['resources.add_title']())
+const description = isEdit ? m['resources.edit_desc']() : (isContributor ? m['resources.suggest_desc']() : m['resources.add_desc']())
 ---
 
 <Layout title={title}>

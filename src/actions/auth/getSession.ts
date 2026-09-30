@@ -1,8 +1,9 @@
 import { defineAction, ActionError, type ActionErrorCode } from 'astro:actions'
 import { createClient } from '@/utils/supabase'
+import { m } from '@/paraglide/messages.js'
 
 export const getSession = defineAction({
-  handler: async (_input, { request, cookies }) => {
+  handler: async (_input, { request, cookies, locals }) => {
     try {
       const supabase = createClient({ request, cookies })
       const { data, error } = await supabase.auth.getSession()
@@ -15,7 +16,7 @@ export const getSession = defineAction({
       }
     } catch (error: any) {
       throw new ActionError({
-        message: error.message || 'Failed to get session',
+        message: error.message || m['auth.failed_get_session']({}, { locale: locals?.locale }),
         code: error.code as ActionErrorCode,
       })
     }

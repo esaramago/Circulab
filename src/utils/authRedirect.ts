@@ -1,25 +1,32 @@
 import { deLocalizeHref, localizeHref } from '@/paraglide/runtime.js'
 
-const DEFAULT_REDIRECT = '/dashboard'
+const DEFAULT_REDIRECT = '/mapa'
 
 /**
  * Returns a safe internal path for post-login redirects.
  * Only dashboard routes are allowed.
  */
-export function getSafeRedirectPath(path: string | null | undefined): string {
+export function getSafeRedirectPath(
+  path: string | null | undefined,
+  defaultRedirect = DEFAULT_REDIRECT
+): string {
   if (!path) {
-    return DEFAULT_REDIRECT
+    return defaultRedirect
   }
 
   const delocalized = deLocalizeHref(path.split('?')[0] ?? path)
 
-  const isAllowed = delocalized.startsWith('/dashboard') || delocalized.startsWith('/backoffice')
+  const isAllowed =
+    delocalized.startsWith('/dashboard/moderacao') ||
+    delocalized.startsWith('/backoffice') ||
+    delocalized.startsWith('/recursos') ||
+    delocalized.startsWith('/mapa')
   if (!isAllowed) {
-    return DEFAULT_REDIRECT
+    return defaultRedirect
   }
 
   if (delocalized.includes('//') || delocalized.includes(':\\')) {
-    return DEFAULT_REDIRECT
+    return defaultRedirect
   }
 
   return delocalized
@@ -37,7 +44,8 @@ export function buildLoginRedirectUrl(
 
 export function localizeRedirectPath(
   path: string | null | undefined,
-  locale?: string
+  locale?: string,
+  defaultRedirect = DEFAULT_REDIRECT
 ): string {
-  return localizeHref(getSafeRedirectPath(path), locale ? { locale } : undefined)
+  return localizeHref(getSafeRedirectPath(path, defaultRedirect), locale ? { locale } : undefined)
 }

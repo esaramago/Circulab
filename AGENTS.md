@@ -45,9 +45,6 @@ Allways use WebAwesome components when possible.
 - Astro components should be used only for pages and layouts.
 
 ## Project structure
-### docs
-The `docs` folder contains the documentation of the project.
-### `src`
 The `src` folder contains the source code of the project.
 - `src/actions`: contains the Astro Actions (server actions)
 - `src/composables`: contains the Vue Composables (like helpers with reactive state)
@@ -63,7 +60,6 @@ The `src` folder contains the source code of the project.
 - `src/types` contains the typescript types
 - `src/utils` contains the utility functions
 - `src/middleware.ts` is where we check user authentication and page access.
-
 
 ### Typescript
 - All type definitions should be in `src/types`.
@@ -99,8 +95,8 @@ The `src` folder contains the source code of the project.
 - Database access is available via the MCP server (`supabase-db`).
 - Access requires an active SSH tunnel to the staging environment. Run `pnpm db:tunnel` to start the tunnel in the background (or check status with `bash scripts/supabase-tunnel.sh status`).
 - The tunnel configuration uses `SUPABASE_SSH_HOST` and `SUPABASE_DB_CONTAINER_IP` from `.env`.
-- Read-only inspection queries (schema, table definitions, SELECTs for diagnosis) are permitted.
-- **CRITICAL**: You must always ask for explicit user permission before executing any database operations that modify data or alter database schemas (e.g. `INSERT`, `UPDATE`, `DELETE`, `ALTER`, `DROP`, or applying database migrations).
+- Create migrations to make changes in the database, instead of change them directly
 
 ### Issues
 Developments tasks should be tracked in the project's [GitHub issues](https://github.com/users/esaramago/projects/5/views/1).
+

@@ -196,7 +196,8 @@ function toggleFilters() {
         <span class="u-text-small" v-if="item.description">{{ item.description }}</span>
       </wa-option>
     </wa-select>
-    <wa-select
+    <!-- Characteristics are temporarily disabled -->
+    <!-- <wa-select
       v-if="category && characteristics?.length"
       :placeholder="m['map.characteristic_placeholder']()"
       :label="m['map.characteristic_label']()"
@@ -206,7 +207,7 @@ function toggleFilters() {
       with-clear
     >
       <wa-option v-for="item in characteristics" :key="item.id" :value="item.id">{{ item.name }}</wa-option>
-    </wa-select>
+    </wa-select> -->
   </form>
 </template>
 

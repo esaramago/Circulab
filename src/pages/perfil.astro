@@ -1,0 +1,221 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { updatePassword } from '@/actions/auth/updatePassword'
+import Grid from '@/components/ui/Grid.vue'
+import Container from '@/components/ui/Container.vue'
+import { localizeHref } from '@/paraglide/runtime.js'
+import { m } from '@/paraglide/messages.js'
+import { userHasAccess } from '@/utils/userHasAccess'
+import { createClient } from '@/utils/supabase'
+
+const user = Astro.locals.user
+
+if (!user) {
+  return Astro.redirect(localizeHref('/login'))
+}
+
+const isModeratorOrAdmin = userHasAccess(user, 'moderation')
+const supabase = createClient({ request: Astro.request, cookies: Astro.cookies })
+
+const addedQuery = supabase
+  .from('pins')
+  .select('*', { count: 'exact', head: true })
+  .eq('created_by', user.id)
+
+let addedCount = 0
+let pendingCount = 0
+let acceptedCount = 0
+let rejectedCount = 0
+
+if (!isModeratorOrAdmin) {
+  const pendingQuery = supabase
+    .from('suggested_pins')
+    .select('*', { count: 'exact', head: true })
+    .eq('created_by', user.id)
+    .eq('status', 'standby')
+
+  const rejectedQuery = supabase
+    .from('suggested_pins')
+    .select('*', { count: 'exact', head: true })
+    .eq('created_by', user.id)
+    .eq('status', 'rejected')
+
+  const [addedRes, pendingRes, rejectedRes] = await Promise.all([addedQuery, pendingQuery, rejectedQuery])
+  addedCount = addedRes.count ?? 0
+  pendingCount = pendingRes.count ?? 0
+  rejectedCount = rejectedRes.count ?? 0
+} else {
+  const acceptedQuery = supabase
+    .from('pins')
+    .select('*', { count: 'exact', head: true })
+    .eq('accepted_by', user.id)
+
+  const rejectedQuery = supabase
+    .from('suggested_pins')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'rejected')
+    .eq('updated_by', user.id)
+
+  const [addedRes, acceptedRes, rejectedRes] = await Promise.all([addedQuery, acceptedQuery, rejectedQuery])
+  addedCount = addedRes.count ?? 0
+  acceptedCount = acceptedRes.count ?? 0
+  rejectedCount = rejectedRes.count ?? 0
+}
+
+let errorMessage = ''
+let successMessage = ''
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+
+  try {
+    const { data, error } = await Astro.callAction(updatePassword, formData)
+    if (error) {
+      throw new Error(error.message || m['auth.failed_update_password']())
+    }
+    if (data?.success) {
+      successMessage = m['auth.password_updated']()
+    }
+  } catch (error: unknown) {
+    errorMessage = error instanceof Error ? error.message : m['auth.failed_update_password']()
+  }
+}
+
+const { data: hasPasswordData } = await supabase.rpc('user_has_password')
+const hasPassword = Boolean(hasPasswordData || successMessage)
+---
+
+<script>
+  import '@awesome.me/webawesome/dist/components/button/button.js'
+  import '@awesome.me/webawesome/dist/components/input/input.js'
+  import '@awesome.me/webawesome/dist/components/card/card.js'
+  import '@awesome.me/webawesome/dist/components/callout/callout.js'
+  import '@awesome.me/webawesome/dist/components/badge/badge.js'
+</script>
+
+<Layout title={m['auth.profile_title']()}>
+  <Container width="xs">
+    <Grid gap="xl" direction="column">
+      <div>
+        <h1>{m['auth.profile_title']()}</h1>
+        <p>{m['auth.profile_desc']()}</p>
+      </div>
+
+      <wa-card>
+        <Grid direction="column">
+          <h3>{m['nav.user']()}</h3>
+          <Grid gap="s" direction="column">
+            <div>
+              <strong>{m['auth.email_label']()}:</strong> {user.email}
+            </div>
+            <div>
+              <strong>{m['auth.account_role']()}:</strong>
+              <wa-badge variant="brand">{user.role?.name}</wa-badge>
+            </div>
+          </Grid>
+        </Grid>
+      </wa-card>
+
+      <wa-card>
+        <Grid direction="column">
+          <h3>{m['auth.profile_stats_title']()}</h3>
+          <Grid wrap break="mobile">
+            <div class="stat-item">
+              <span class="stat-number">{addedCount}</span>
+              <span class="stat-label">{m['auth.profile_stats_added']()}</span>
+            </div>
+            {
+              !isModeratorOrAdmin ? (
+                <>
+                  <div class="stat-item">
+                    <span class="stat-number">{pendingCount}</span>
+                    <span class="stat-label">{m['auth.profile_stats_pending']()}</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">{rejectedCount}</span>
+                    <span class="stat-label">{m['auth.profile_stats_rejected']()}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div class="stat-item">
+                    <span class="stat-number">{acceptedCount}</span>
+                    <span class="stat-label">{m['auth.profile_stats_accepted']()}</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">{rejectedCount}</span>
+                    <span class="stat-label">{m['auth.profile_stats_rejected']()}</span>
+                  </div>
+                </>
+              )
+            }
+          </Grid>
+        </Grid>
+      </wa-card>
+
+      <wa-card>
+        <Grid direction="column">
+          <div>
+            <h3>{hasPassword ? m['auth.change_password_title']() : m['auth.set_password_title']()}</h3>
+            <p>{hasPassword ? m['auth.change_password_desc']() : m['auth.set_password_desc']()}</p>
+          </div>
+
+          {errorMessage && <wa-callout variant="danger">{errorMessage}</wa-callout>}
+          {successMessage && <wa-callout variant="success">{successMessage}</wa-callout>}
+
+          <form method="post">
+            <Grid direction="column">
+              <wa-input
+                id="password"
+                type="password"
+                name="password"
+                required
+                minlength="8"
+                label={m['auth.new_password_label']()}
+                placeholder={m['auth.new_password_label']()}
+              ></wa-input>
+              <wa-input
+                id="passwordConfirm"
+                type="password"
+                name="passwordConfirm"
+                required
+                minlength="8"
+                label={m['auth.confirm_password_label']()}
+                placeholder={m['auth.confirm_password_label']()}
+              ></wa-input>
+              <wa-button variant="brand" type="submit">
+                {hasPassword ? m['auth.update_password_button']() : m['auth.set_password_button']()}
+              </wa-button>
+            </Grid>
+          </form>
+        </Grid>
+      </wa-card>
+    </Grid>
+  </Container>
+</Layout>
+
+<style>
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 120px;
+    padding-block: var(--wa-space-s);
+    padding-inline: var(--wa-space-m);
+    background-color: var(--wa-color-surface-raised, rgba(0, 0, 0, 0.03));
+    border-radius: var(--wa-border-radius-m);
+    border: var(--wa-border-width-s, 1px) solid var(--wa-color-border-subtle, rgba(0, 0, 0, 0.08));
+  }
+
+  .stat-number {
+    font-size: var(--wa-font-size-2xl);
+    font-weight: var(--wa-font-weight-bold);
+    line-height: var(--wa-line-height-dense);
+    color: var(--wa-color-brand-60);
+  }
+
+  .stat-label {
+    font-size: var(--wa-font-size-s);
+    color: var(--wa-color-text-quiet);
+    margin-block-start: var(--wa-space-2xs);
+  }
+</style>

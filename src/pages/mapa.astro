@@ -2,78 +2,27 @@
 import Layout from '@/layouts/Layout.astro'
 import { m } from '@/paraglide/messages.js'
 import Map from '@/components/pages/map/Map.vue'
+import ResourceCards from '@/components/pages/map/ResourceCards.vue'
 import MapFilters from '@/components/pages/map/MapFilters.vue'
+import MapActions from '@/components/pages/map/MapActions.vue'
 import Grid from '@/components/ui/Grid.vue'
-import { localizeHref } from '@/paraglide/runtime.js'
-import { CONFIG } from '@/config'
+import type { MapViewMode } from '@/stores/map'
 
 const defaultTypologyCode = Astro.url.searchParams.get('code')
+const initialView: MapViewMode = Astro.url.searchParams.get('view') === 'cards' ? 'cards' : 'map'
 ---
-
-<script>
-  import '@awesome.me/webawesome/dist/components/button/button.js'
-  import '@awesome.me/webawesome/dist/components/icon/icon.js'
-  import '@awesome.me/webawesome/dist/components/dropdown/dropdown.js'
-  import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js'
-  import { navigate } from 'astro:transitions/client'
-
-  const setupMapActions = () => {
-    const dropdown = document.querySelector('#map-actions wa-dropdown')
-    if (!dropdown || dropdown.dataset.initialized) return
-    dropdown.dataset.initialized = 'true'
-
-    dropdown.addEventListener('wa-select', (event: any) => {
-      const href = event.detail?.item?.value
-      if (href) {
-        if (typeof navigate === 'function') {
-          navigate(href)
-        } else {
-          window.location.href = href
-        }
-      }
-    })
-  }
-
-  setupMapActions()
-  document.addEventListener('astro:page-load', setupMapActions)
-</script>
 
 <Layout title={m['map.title']()} fullWidth={true}>
   <div class="wrapper">
     <Grid justify="space-between" align="center" class="header">
       <h1>{m['map.title']()}</h1>
-      <div id="map-actions">
-        <Grid justify="end" wrap class="is-hidden-mobile">
-          <wa-button href={localizeHref('/contactos')}>
-            <wa-icon name="envelope"></wa-icon>
-            {m['map.send_feedback']()}
-          </wa-button>
-          {CONFIG.can_suggest &&
-            <wa-button variant="brand" href={localizeHref('/recursos/novo')}>
-              <wa-icon name="plus"></wa-icon>
-              {m['map.suggest_resource']()}
-            </wa-button>
-          }
-        </Grid>
-        <wa-dropdown placement="bottom-end" class="is-hidden-desktop">
-          <wa-button slot="trigger" variant="neutral">
-            <wa-icon name="ellipsis-vertical" label={m['backoffice.actions']()}></wa-icon>
-          </wa-button>
-          {CONFIG.can_suggest &&
-            <wa-dropdown-item value={localizeHref('/recursos/novo')}>
-              <wa-icon slot="icon" name="plus"></wa-icon>
-              {m['map.suggest_resource']()}
-            </wa-dropdown-item>
-          }
-          <wa-dropdown-item value={localizeHref('/contactos')}>
-            <wa-icon slot="icon" name="envelope"></wa-icon>
-            {m['map.send_feedback']()}
-          </wa-dropdown-item>
-        </wa-dropdown>
-      </div>
+      <MapActions client:only="vue" initialView={initialView} />
     </Grid>
     <MapFilters class="filters" client:only="vue" defaultTypologyCode={defaultTypologyCode} />
-    <Map class="map" client:only="vue" />
+    <div class="content">
+      <Map class="map" client:only="vue" />
+      <ResourceCards class="cards" client:only="vue" />
+    </div>
   </div>
 </Layout>
 
@@ -81,10 +30,10 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
 .wrapper {
   display: grid;
   grid-template-rows: min-content auto;
-  grid-template-columns: 34rem auto;
+  grid-template-columns: 34rem minmax(0, 1fr);
   grid-template-areas:
     "header header"
-    "filters map";
+    "filters content";
   align-items: start;
   gap: var(--wa-space-l);
   flex: 1;
@@ -93,21 +42,23 @@ const defaultTypologyCode = Astro.url.searchParams.get('code')
     grid-template-columns: 1fr;
     grid-template-areas:
       "header"
-      "map";
+      "content";
   }
 }
 .header {
   grid-area: header;
 }
-#map-actions {
-  display: flex;
-  justify-content: flex-end;
-}
 .filters {
   grid-area: filters;
 }
+.content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  align-self: stretch;
+}
 .map {
-  grid-area: map;
   align-self: stretch;
 }
 </style>
