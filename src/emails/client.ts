@@ -48,7 +48,10 @@ export async function sendEmail({
           email: fromEmail,
         },
         to: recipients,
-        replyTo,
+        replyTo: replyTo || {
+          name: fromName,
+          email: fromEmail,
+        },
         subject,
         textContent: text || '',
         htmlContent: html,

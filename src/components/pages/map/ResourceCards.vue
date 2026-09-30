@@ -10,6 +10,7 @@ import { $mapFilters, $mapView } from '@/stores/map'
 import { clearAddResourceDraft } from '@/stores/addResource'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 import { userHasAccess } from '@/utils/userHasAccess'
 import type { FullResource } from '@/types/domain/resource'
 import type { AppUser } from '@/types/domain/user'
@@ -156,7 +157,7 @@ async function handleDelete() {
 
         <div slot="header">
           <h2>{{ resource.title }}</h2>
-          <p>{{ resource?.category }} ({{ resource?.typology }})</p>
+          <p>{{ i18nDb(resource?.category) }} ({{ i18nDb(resource?.typology) }})</p>
         </div>
 
         <ResourceSummary

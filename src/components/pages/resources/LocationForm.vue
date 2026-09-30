@@ -7,9 +7,12 @@ import '@webawesome/radio/radio.js'
 import '@webawesome/radio-group/radio-group.js'
 import { onMounted, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
-import { Map as LeafletMap, Marker as LeafletMarker, TileLayer } from 'leaflet'
+import { Map as LeafletMap, Marker as LeafletMarker, TileLayer, Icon } from 'leaflet'
 import type { Map as LeafletMapType, Marker as LeafletMarkerType } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import { $locationDraft, $descriptionDraft, $editingResourceId, setStepCompleted, ensureDraftLoaded } from '@/stores/addResource'
 import { localizeHref } from '@/paraglide/runtime.js'
 import type { LocationDraft } from '@/types/add-resource-draft'
@@ -111,7 +114,21 @@ function initMap() {
     maxZoom: 22,
   }).addTo(mapInstance)
 
-  markerInstance = new LeafletMarker([initialLat, initialLng], { draggable: true }).addTo(mapInstance)
+  const defaultIcon = new Icon({
+    iconUrl: typeof markerIcon === 'string' ? markerIcon : (markerIcon as { src: string }).src,
+    iconRetinaUrl: typeof markerIcon2x === 'string' ? markerIcon2x : (markerIcon2x as { src: string }).src,
+    shadowUrl: typeof markerShadow === 'string' ? markerShadow : (markerShadow as { src: string }).src,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41],
+  })
+
+  markerInstance = new LeafletMarker([initialLat, initialLng], {
+    draggable: true,
+    icon: defaultIcon,
+  }).addTo(mapInstance)
   updateMarker(initialLat, initialLng)
 
   markerInstance.on('dragend', () => {

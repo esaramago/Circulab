@@ -9,10 +9,47 @@ export type RoleRow = Tables['roles']['Row']
 export type ContactMessageRow = Tables['contact_messages']['Row']
 export type ContactMessageInsert = Tables['contact_messages']['Insert']
 
-export type CategoryRow = Tables['categories']['Row']
-export type CharacteristicRow = Tables['characteristics']['Row']
-export type TypologyRow = Tables['typologies']['Row']
-export type PinStatusRow = Tables['pin_status']['Row']
+export type I18nText = {
+  pt: string
+  en: string
+  [locale: string]: string | undefined
+}
+
+export type CategoryRow = Omit<Tables['categories']['Row'], 'name' | 'description'> & {
+  name: I18nText
+  description: I18nText | null
+}
+export type CategoryInsert = Omit<Tables['categories']['Insert'], 'name' | 'description'> & {
+  name: I18nText
+  description?: I18nText | null
+}
+
+export type CharacteristicRow = Omit<Tables['characteristics']['Row'], 'name' | 'description'> & {
+  name: I18nText
+  description: I18nText | null
+}
+
+export type TypologyRow = Omit<Tables['typologies']['Row'], 'name' | 'description'> & {
+  name: I18nText
+  description: I18nText | null
+}
+export type TypologyInsert = Omit<Tables['typologies']['Insert'], 'name' | 'description'> & {
+  name: I18nText
+  description?: I18nText | null
+}
+
+export type NetworkRow = Omit<Tables['networks']['Row'], 'name'> & {
+  name: I18nText
+}
+
+export type PinStatusRow = Omit<Tables['pin_status']['Row'], 'description'> & {
+  description: I18nText
+}
+
+export type RoleRow = Omit<Tables['roles']['Row'], 'name' | 'description'> & {
+  name: I18nText | null
+  description: I18nText | null
+}
 
 export const PIN_STATUS = {
   APPROVED: 'approved',

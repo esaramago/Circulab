@@ -43,8 +43,8 @@ export const updateTypology = defineAction({
       const { data, error } = await supabase
         .from('typologies')
         .update({
-          name: input.name,
-          description: input.description || null,
+          name: input.name as any,
+          description: (input.description || null) as any,
           color: input.color || null,
           has_category_color: input.has_category_color ?? true,
           icon: input.icon || null

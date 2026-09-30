@@ -42,8 +42,8 @@ export const addCategory = defineAction({
       const { data, error } = await supabase
         .from('categories')
         .insert({
-          name: input.name,
-          description: input.description || null,
+          name: input.name as any,
+          description: (input.description || null) as any,
           typology_id: input.typology_id,
           icon: input.icon || null,
           color: input.color || null
@@ -109,8 +109,8 @@ export const updateCategory = defineAction({
       const { data, error } = await supabase
         .from('categories')
         .update({
-          name: input.name,
-          description: input.description || null,
+          name: input.name as any,
+          description: (input.description || null) as any,
           typology_id: input.typology_id,
           icon: input.icon || null,
           color: input.color || null

@@ -7,6 +7,7 @@ import type { LocationInsert } from '@/types/database'
 import type { SuggestedResource } from '@/types/domain/resource'
 import { sendModerationEmail } from '@/utils/brevo'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 
 function mapErrorCode(code?: string): ActionErrorCode {
   if (code === 'PGRST116') return 'NOT_FOUND'
@@ -99,9 +100,9 @@ export const getSuggestedResources = defineAction({
         title: row.title,
         description: row.description,
         images: row.images || [],
-        category: row.category?.name || '',
+        category: i18nDb(row.category?.name, locals?.locale) || '',
         category_id: row.category_id,
-        typology: row.category?.typology?.name || '',
+        typology: i18nDb(row.category?.typology?.name, locals?.locale) || '',
         typology_id: row.category?.typology?.id || null,
         characteristics_ids: row.characteristics_ids || [],
         location: row.location_name || '',
@@ -220,9 +221,9 @@ export const getSuggestedResource = defineAction({
         title: row.title,
         description: row.description,
         images: row.images || [],
-        category: row.category?.name || '',
+        category: i18nDb(row.category?.name, locals?.locale) || '',
         category_id: row.category_id,
-        typology: row.category?.typology?.name || '',
+        typology: i18nDb(row.category?.typology?.name, locals?.locale) || '',
         typology_id: row.category?.typology?.id || null,
         characteristics_ids: row.characteristics_ids || [],
         location: row.location_name || '',

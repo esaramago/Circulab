@@ -15,6 +15,7 @@ import '@webawesome/callout/callout.js'
 import Grid from '@/components/ui/Grid.vue'
 import type { CategoryRow, TypologyRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb, toI18nText } from '@/utils/i18nDb'
 
 const props = defineProps<{
   initialCategories: CategoryRow[]
@@ -35,8 +36,10 @@ const dialogError = ref<string | null>(null)
 
 const form = ref({
   id: '',
-  name: '',
-  description: '',
+  name_pt: '',
+  name_en: '',
+  description_pt: '',
+  description_en: '',
   typology_id: '',
   icon: '',
   color: '',
@@ -98,15 +101,17 @@ const selectedTypology = computed(() => {
 
 function getTypologyName(typologyId: string) {
   const typology = props.typologies.find(t => t.id === typologyId)
-  return typology ? typology.name : '-'
+  return typology ? i18nDb(typology.name) : '-'
 }
 
 function openCreateDialog() {
   isEditing.value = false
   form.value = {
     id: '',
-    name: '',
-    description: '',
+    name_pt: '',
+    name_en: '',
+    description_pt: '',
+    description_en: '',
     typology_id: selectedTypologyId.value || (props.typologies.length > 0 ? props.typologies[0].id : ''),
     icon: '',
     color: '',
@@ -120,10 +125,15 @@ function openCreateDialog() {
 
 function openEditDialog(category: CategoryRow) {
   isEditing.value = true
+  const nameObj = toI18nText(category.name)
+  const descObj = toI18nText(category.description)
+
   form.value = {
     id: category.id,
-    name: category.name,
-    description: category.description || '',
+    name_pt: nameObj.pt || '',
+    name_en: nameObj.en || '',
+    description_pt: descObj.pt || '',
+    description_en: descObj.en || '',
     typology_id: category.typology_id,
     icon: category.icon || '',
     color: category.color || '',
@@ -158,7 +168,7 @@ async function saveCategory() {
         .upload(path, file, {
           cacheControl: '3600',
           upsert: true,
-          })
+        })
 
       if (uploadError) {
         throw new Error(m['backoffice.error_upload_icon']({ error: uploadError.message }))
@@ -169,11 +179,29 @@ async function saveCategory() {
     const hasCategoryColor = selectedTypology.value?.has_category_color !== false
     const finalColor = hasCategoryColor ? (form.value.color || null) : null
 
+    if (!form.value.name_pt.trim() || !form.value.name_en.trim()) {
+      dialogError.value = m['backoffice.name_required_both_languages'] ? m['backoffice.name_required_both_languages']() : 'O nome é obrigatório em português e em inglês.'
+      saving.value = false
+      return
+    }
+
+    const namePayload = {
+      pt: form.value.name_pt.trim(),
+      en: form.value.name_en.trim()
+    }
+
+    const descPt = form.value.description_pt.trim()
+    const descEn = form.value.description_en.trim()
+    const descPayload = (descPt || descEn) ? {
+      ...(descPt ? { pt: descPt } : {}),
+      ...(descEn ? { en: descEn } : {})
+    } : null
+
     if (isEditing.value) {
       const { data, error } = await actions.updateCategory({
         id: form.value.id,
-        name: form.value.name,
-        description: form.value.description,
+        name: namePayload,
+        description: descPayload,
         typology_id: form.value.typology_id,
         icon: iconPath,
         color: finalColor,
@@ -194,8 +222,8 @@ async function saveCategory() {
       }
     } else {
       const { data, error } = await actions.addCategory({
-        name: form.value.name,
-        description: form.value.description,
+        name: namePayload,
+        description: descPayload,
         typology_id: form.value.typology_id,
         icon: iconPath,
         color: finalColor,
@@ -285,8 +313,8 @@ async function deleteCategory() {
               <wa-icon v-if="category.icon" class="category-icon-preview" :src="CONFIG.images_url + 'pin-images/' + category.icon"></wa-icon>
               <span v-else class="no-icon">-</span>
             </td>
-            <td><strong>{{ category.name }}</strong></td>
-            <td>{{ category.description || '-' }}</td>
+            <td><strong>{{ i18nDb(category.name) }}</strong></td>
+            <td>{{ i18nDb(category.description) || '-' }}</td>
             <td v-if="selectedTypology?.has_category_color !== false">
               <div v-if="category.color" class="color-preview-cell">
                 <span 
@@ -326,25 +354,48 @@ async function deleteCategory() {
         <wa-callout v-if="dialogError" variant="danger">
           {{ dialogError }}
         </wa-callout>
-        <div class="form-group">
-          <wa-input
-            :label="m['backoffice.name']()"
-            name="name"
-            required
-            :value="form.name"
-            @input="form.name = $event.target.value"
-          ></wa-input>
-        </div>
 
-        <div class="form-group">
-          <wa-textarea
-            :label="m['backoffice.description']()"
-            name="description"
-            :value="form.description"
-            @input="form.description = $event.target.value"
-            rows="4"
-          ></wa-textarea>
-        </div>
+        <Grid fullWidth break="mobile">
+          <div class="form-group">
+            <wa-input
+              :label="`${m['backoffice.name']()} (PT)`"
+              name="name_pt"
+              required
+              :value="form.name_pt"
+              @input="form.name_pt = $event.target.value"
+            ></wa-input>
+          </div>
+          <div class="form-group">
+            <wa-input
+              :label="`${m['backoffice.name']()} (EN)`"
+              required
+              name="name_en"
+              :value="form.name_en"
+              @input="form.name_en = $event.target.value"
+            ></wa-input>
+          </div>
+        </Grid>
+
+        <Grid fullWidth break="mobile">
+          <div class="form-group">
+            <wa-textarea
+              :label="`${m['backoffice.description']()} (PT)`"
+              name="description_pt"
+              :value="form.description_pt"
+              @input="form.description_pt = $event.target.value"
+              rows="3"
+            ></wa-textarea>
+          </div>
+          <div class="form-group">
+            <wa-textarea
+              :label="`${m['backoffice.description']()} (EN)`"
+              name="description_en"
+              :value="form.description_en"
+              @input="form.description_en = $event.target.value"
+              rows="3"
+            ></wa-textarea>
+          </div>
+        </Grid>
 
         <div class="form-group">
           <label class="form-label">{{ m['backoffice.icon']() }} (SVG)</label>
@@ -671,6 +722,6 @@ async function deleteCategory() {
 }
 
 #category-dialog {
-  --width: 40rem;
+  --width: 60rem;
 }
 </style>

@@ -20,6 +20,7 @@ import '@webawesome/button/button.js'
 import '@webawesome/input/input.js'
 import { localizeHref } from '@/paraglide/runtime.js'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb } from '@/utils/i18nDb'
 import Gallery from '@/components/ui/Gallery.vue'
 import GalleryItem from '@/components/ui/GalleryItem.vue'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
@@ -91,12 +92,12 @@ onMounted(async () => {
   }
   if (payload.typology_id) {
     const { data: typologyData } = await actions.getTypologyById({ id: payload.typology_id })
-    typology.value = typologyData?.typology?.name ?? null
+    typology.value = typologyData?.typology ? i18nDb(typologyData.typology.name as any) : null
   }
 
   if (payload.category_id) {
     const { data: categoryData } = await actions.getCategoryById({ id: payload.category_id })
-    category.value = categoryData?.category?.name ?? null
+    category.value = categoryData?.category ? i18nDb(categoryData.category.name as any) : null
   }
 
   console.log(category.value)

@@ -18,28 +18,28 @@ export type Database = {
         Row: {
           color: string | null
           created_at: string
-          description: string | null
+          description: Json | null
           icon: string | null
           id: string
-          name: string
+          name: Json
           typology_id: string
         }
         Insert: {
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           icon?: string | null
           id?: string
-          name: string
+          name: Json
           typology_id: string
         }
         Update: {
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
           typology_id?: string
         }
         Relationships: [
@@ -56,25 +56,25 @@ export type Database = {
         Row: {
           category_id: string
           created_at: string
-          description: string | null
+          description: Json | null
           id: string
-          name: string
+          name: Json
           slug: string
         }
         Insert: {
           category_id: string
           created_at?: string
-          description?: string | null
+          description?: Json | null
           id?: string
-          name: string
+          name: Json
           slug: string
         }
         Update: {
           category_id?: string
           created_at?: string
-          description?: string | null
+          description?: Json | null
           id?: string
-          name?: string
+          name?: Json
           slug?: string
         }
         Relationships: [
@@ -166,7 +166,6 @@ export type Database = {
           phone_area_code: number | null
           postal_code: string | null
           updated_at: string
-          get_geojson: Json | null
         }
         Insert: {
           access?: string | null
@@ -207,21 +206,21 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
-          name: string
+          name: Json
           slug: string
         }
         Insert: {
           created_at?: string
           icon?: string | null
           id?: string
-          name: string
+          name: Json
           slug: string
         }
         Update: {
           created_at?: string
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
           slug?: string
         }
         Relationships: []
@@ -230,19 +229,19 @@ export type Database = {
         Row: {
           code: string
           created_at: string
-          description: string
+          description: Json
           id: number
         }
         Insert: {
           code: string
           created_at?: string
-          description: string
+          description: Json
           id?: number
         }
         Update: {
           code?: string
           created_at?: string
-          description?: string
+          description?: Json
           id?: number
         }
         Relationships: []
@@ -263,7 +262,6 @@ export type Database = {
           title: string
           updated_by: string | null
           updated_date: string
-          get_geojson: Json | null
         }
         Insert: {
           accepted_by?: string | null
@@ -324,21 +322,21 @@ export type Database = {
       roles: {
         Row: {
           code: string
-          description: string | null
+          description: Json | null
           id: number
-          name: string | null
+          name: Json | null
         }
         Insert: {
           code: string
-          description?: string | null
+          description?: Json | null
           id?: number
-          name?: string | null
+          name?: Json | null
         }
         Update: {
           code?: string
-          description?: string | null
+          description?: Json | null
           id?: number
-          name?: string | null
+          name?: Json | null
         }
         Relationships: []
       }
@@ -366,36 +364,146 @@ export type Database = {
         }
         Relationships: []
       }
+      suggested_pins: {
+        Row: {
+          access: string | null
+          accessibility: boolean | null
+          address: string | null
+          category_id: string
+          characteristics_ids: string[] | null
+          coordinates: unknown
+          created_at: string
+          created_by: string
+          description: string | null
+          email: string | null
+          has_opening_hours: boolean | null
+          id: string
+          images: Json | null
+          location_name: string | null
+          networks: Json | null
+          opening_hours: Json | null
+          phone: string | null
+          phone_area_code: number | null
+          pin_id: string | null
+          postal_code: string | null
+          status: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          access?: string | null
+          accessibility?: boolean | null
+          address?: string | null
+          category_id: string
+          characteristics_ids?: string[] | null
+          coordinates?: unknown
+          created_at?: string
+          created_by: string
+          description?: string | null
+          email?: string | null
+          has_opening_hours?: boolean | null
+          id?: string
+          images?: Json | null
+          location_name?: string | null
+          networks?: Json | null
+          opening_hours?: Json | null
+          phone?: string | null
+          phone_area_code?: number | null
+          pin_id?: string | null
+          postal_code?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          access?: string | null
+          accessibility?: boolean | null
+          address?: string | null
+          category_id?: string
+          characteristics_ids?: string[] | null
+          coordinates?: unknown
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          email?: string | null
+          has_opening_hours?: boolean | null
+          id?: string
+          images?: Json | null
+          location_name?: string | null
+          networks?: Json | null
+          opening_hours?: Json | null
+          phone?: string | null
+          phone_area_code?: number | null
+          pin_id?: string | null
+          postal_code?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suggested_pins_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "suggested_pins_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "suggested_pins_pin_id_fkey"
+            columns: ["pin_id"]
+            isOneToOne: false
+            referencedRelation: "pins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "suggested_pins_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       typologies: {
         Row: {
           code: string
           color: string | null
           created_at: string
-          description: string | null
+          description: Json | null
           has_category_color: boolean
           icon: string | null
           id: string
-          name: string
+          name: Json
         }
         Insert: {
           code: string
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           has_category_color?: boolean
           icon?: string | null
           id?: string
-          name: string
+          name: Json
         }
         Update: {
           code?: string
           color?: string | null
           created_at?: string
-          description?: string | null
+          description?: Json | null
           has_category_color?: boolean
           icon?: string | null
           id?: string
-          name?: string
+          name?: Json
         }
         Relationships: []
       }
@@ -740,22 +848,27 @@ export type Database = {
       geomfromewkt: { Args: { "": string }; Returns: unknown }
       get_geojson:
         | {
-            Args: { "": Database["public"]["Tables"]["locations"]["Row"] }
+            Args: { p: Database["public"]["Tables"]["locations"]["Row"] }
             Returns: {
               error: true
-            } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+            } & "Could not choose the best candidate function between: public.get_geojson(p => locations), public.get_geojson(p => pins), public.get_geojson(p => suggested_pins). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
           }
         | {
-            Args: { "": Database["public"]["Tables"]["pins"]["Row"] }
+            Args: { p: Database["public"]["Tables"]["pins"]["Row"] }
             Returns: {
               error: true
-            } & "the function public.get_geojson with parameter or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache"
+            } & "Could not choose the best candidate function between: public.get_geojson(p => locations), public.get_geojson(p => pins), public.get_geojson(p => suggested_pins). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
+          }
+        | {
+            Args: { p: Database["public"]["Tables"]["suggested_pins"]["Row"] }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.get_geojson(p => locations), public.get_geojson(p => pins), public.get_geojson(p => suggested_pins). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
           }
       gettransactionid: { Args: never; Returns: unknown }
       is_admin: { Args: never; Returns: boolean }
       is_moderator_or_admin: { Args: never; Returns: boolean }
       is_registered_user: { Args: never; Returns: boolean }
-      user_has_password: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
@@ -1389,6 +1502,7 @@ export type Database = {
         }
         Returns: string
       }
+      user_has_password: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

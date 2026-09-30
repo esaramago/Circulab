@@ -13,6 +13,7 @@ import '@webawesome/checkbox/checkbox.js'
 import Grid from '@/components/ui/Grid.vue'
 import type { TypologyRow } from '@/types/database'
 import { m } from '@/paraglide/messages.js'
+import { i18nDb, toI18nText } from '@/utils/i18nDb'
 
 const props = defineProps<{
   initialTypologies: TypologyRow[]
@@ -27,8 +28,10 @@ const dialogError = ref<string | null>(null)
 
 const form = ref({
   id: '',
-  name: '',
-  description: '',
+  name_pt: '',
+  name_en: '',
+  description_pt: '',
+  description_en: '',
   color: '',
   has_category_color: true,
   icon: '',
@@ -85,10 +88,15 @@ function onFileChange(event: any) {
 }
 
 function openEditDialog(typology: TypologyRow) {
+  const nameObj = toI18nText(typology.name)
+  const descObj = toI18nText(typology.description)
+
   form.value = {
     id: typology.id,
-    name: typology.name,
-    description: typology.description || '',
+    name_pt: nameObj.pt || '',
+    name_en: nameObj.en || '',
+    description_pt: descObj.pt || '',
+    description_en: descObj.en || '',
     color: typology.color || '#ffffff',
     has_category_color: typology.has_category_color !== false,
     icon: typology.icon || '',
@@ -131,10 +139,28 @@ async function saveTypology() {
       iconPath = path
     }
 
+    if (!form.value.name_pt.trim() || !form.value.name_en.trim()) {
+      dialogError.value = m['backoffice.name_required_both_languages'] ? m['backoffice.name_required_both_languages']() : 'O nome é obrigatório em português e em inglês.'
+      saving.value = false
+      return
+    }
+
+    const namePayload = {
+      pt: form.value.name_pt.trim(),
+      en: form.value.name_en.trim()
+    }
+
+    const descPt = form.value.description_pt.trim()
+    const descEn = form.value.description_en.trim()
+    const descPayload = (descPt || descEn) ? {
+      ...(descPt ? { pt: descPt } : {}),
+      ...(descEn ? { en: descEn } : {})
+    } : null
+
     const { data, error } = await actions.updateTypology({
       id: form.value.id,
-      name: form.value.name,
-      description: form.value.description,
+      name: namePayload,
+      description: descPayload,
       color: form.value.color,
       has_category_color: form.value.has_category_color,
       icon: iconPath,
@@ -199,8 +225,8 @@ async function saveTypology() {
               ></wa-icon>
               <span v-else class="no-icon">-</span>
             </td>
-            <td><strong>{{ typology.name }}</strong></td>
-            <td>{{ typology.description || '-' }}</td>
+            <td><strong>{{ i18nDb(typology.name) }}</strong></td>
+            <td>{{ i18nDb(typology.description) || '-' }}</td>
             <td>
               <div class="color-preview-cell">
                 <span 
@@ -240,25 +266,47 @@ async function saveTypology() {
           {{ dialogError }}
         </wa-callout>
 
-        <div class="form-group">
-          <wa-input
-            :label="m['backoffice.name']()"
-            name="name"
-            required
-            :value="form.name"
-            @input="form.name = $event.target.value"
-          ></wa-input>
-        </div>
+        <Grid fullWidth break="mobile">
+          <div class="form-group">
+            <wa-input
+              :label="`${m['backoffice.name']()} (PT)`"
+              name="name_pt"
+              required
+              :value="form.name_pt"
+              @input="form.name_pt = $event.target.value"
+            ></wa-input>
+          </div>
+          <div class="form-group">
+            <wa-input
+              :label="`${m['backoffice.name']()} (EN)`"
+              name="name_en"
+              required
+              :value="form.name_en"
+              @input="form.name_en = $event.target.value"
+            ></wa-input>
+          </div>
+        </Grid>
 
-        <div class="form-group">
-          <wa-textarea
-            :label="m['backoffice.description']()"
-            name="description"
-            :value="form.description"
-            @input="form.description = $event.target.value"
-            rows="3"
-          ></wa-textarea>
-        </div>
+        <Grid fullWidth break="mobile">
+          <div class="form-group">
+            <wa-textarea
+              :label="`${m['backoffice.description']()} (PT)`"
+              name="description_pt"
+              :value="form.description_pt"
+              @input="form.description_pt = $event.target.value"
+              rows="3"
+            ></wa-textarea>
+          </div>
+          <div class="form-group">
+            <wa-textarea
+              :label="`${m['backoffice.description']()} (EN)`"
+              name="description_en"
+              :value="form.description_en"
+              @input="form.description_en = $event.target.value"
+              rows="3"
+            ></wa-textarea>
+          </div>
+        </Grid>
 
         <div class="form-group">
           <label class="form-label">{{ m['backoffice.icon']() }} (SVG)</label>
@@ -539,5 +587,9 @@ async function saveTypology() {
   justify-content: flex-end;
   gap: var(--wa-space-s);
   margin-block-start: var(--wa-space-l);
+}
+
+#typology-dialog {
+  --width: 60rem;
 }
 </style>

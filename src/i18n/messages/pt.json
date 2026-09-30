@@ -366,7 +366,8 @@
 		"failed_add_category": "Não foi possível adicionar a categoria",
 		"failed_update_category": "Não foi possível atualizar a categoria",
 		"failed_delete_category": "Não foi possível eliminar a categoria",
-		"failed_update_typology": "Não foi possível atualizar a tipologia"
+		"failed_update_typology": "Não foi possível atualizar a tipologia",
+		"name_required_both_languages": "O nome é obrigatório em português e em inglês."
 	},
 	"common": {
 		"confirm": "Confirmar",
