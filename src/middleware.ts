@@ -53,5 +53,14 @@ export const onRequest = defineMiddleware(async ({ request, locals, redirect, ca
     }
 
     return next(delocalizedRequest)
+  }, {
+    effectiveRequestUrl: (req) => {
+      const referer = req.headers.get('referer')
+      if (referer && new URL(req.url).pathname.startsWith('/_actions')) {
+        return referer
+      }
+      return req.url
+    }
   })
 })
+

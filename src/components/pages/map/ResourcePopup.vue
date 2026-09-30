@@ -9,6 +9,7 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import { userHasAccess } from '@/utils/userHasAccess'
 import { m } from '@/paraglide/messages.js'
 import ResourceSummary from '@/components/pages/resources/ResourceSummary.vue'
+import { i18nDb } from '@/utils/i18nDb'
 
 
 const props = defineProps<{
@@ -66,7 +67,7 @@ watch(() => props.resourceId, async () => {
         </wa-button>
         <Grid gap="l" direction="column">
 
-          <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0]?.url" :alt="resource?.title" />
+          <img v-if="resource?.images?.[0]" class="popup__image" :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0]?.url" :alt="i18nDb(resource?.title)" />
 
           <ResourceSummary :resource="resource" />
 

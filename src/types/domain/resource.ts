@@ -45,10 +45,10 @@ export type FullResource = Pick<PinRow, 'id' | 'title' | 'description'> & {
 } & Pick<LocationRow, 'address' | 'postal_code' | 'email' | 'phone' | 'phone_area_code'>
 
 export type ResourceSummaryData = {
-  title?: string | null
-  category?: string | null
-  typology?: string | null
-  characteristics?: string | null
+  title?: I18nText | string | null
+  category?: I18nText | string | null
+  typology?: I18nText | string | null
+  characteristics?: I18nText | string | null
   location?: string | null
   location_name?: string | null
   address?: string | null
@@ -62,7 +62,7 @@ export type ResourceSummaryData = {
   accessibility?: boolean | null
   has_opening_hours?: boolean | null
   opening_hours?: WeekSchedule | null
-  description?: string | null
+  description?: I18nText | string | null
 }
 
 export type SuggestedResource = FullResource & {

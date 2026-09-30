@@ -237,7 +237,7 @@ async function handleReject() {
           v-if="resource?.images?.[0]"
           slot="media"
           :src="CONFIG.images_url + 'pin-images/' + resource?.images?.[0].url"
-          :alt="resource?.title"
+          :alt="i18nDb(resource?.title)"
           loading="lazy"
         />
 
@@ -245,8 +245,8 @@ async function handleReject() {
           <span class="submitter-email" :title="resource.suggested_by_email || ''">
             {{ m['moderation.suggested_by']({ email: resource.suggested_by_email || '-' }) }}
           </span>
-          <h2>{{ resource.title }}</h2>
-          <p>{{ resource?.category }} ({{ resource?.typology }})</p>
+          <h2>{{ i18nDb(resource.title) }}</h2>
+          <p>{{ i18nDb(resource?.category) }} ({{ i18nDb(resource?.typology) }})</p>
         </div>
 
         <ResourceSummary
@@ -289,7 +289,7 @@ async function handleReject() {
     :loading="accepting"
     @confirm="handleAccept"
   >
-    <p>{{ m['moderation.accept_confirm_msg']({ title: suggestionToAccept?.title || '' }) }}</p>
+    <p>{{ m['moderation.accept_confirm_msg']({ title: i18nDb(suggestionToAccept?.title) || '' }) }}</p>
   </ConfirmationDialog>
 
   <ConfirmationDialog
@@ -300,7 +300,7 @@ async function handleReject() {
     :loading="rejecting"
     @confirm="handleReject"
   >
-    <p>{{ m['moderation.reject_confirm_msg']({ title: suggestionToReject?.title || '' }) }}</p>
+    <p>{{ m['moderation.reject_confirm_msg']({ title: i18nDb(suggestionToReject?.title) || '' }) }}</p>
     <p class="u-color-danger"><small>{{ m['resources.cannot_be_undone']() }}</small></p>
   </ConfirmationDialog>
 </template>
