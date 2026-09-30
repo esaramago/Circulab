@@ -22,7 +22,7 @@ function openCookiePreferences(event: Event) {
       <Grid fullWidth break="mobile">
         <Grid direction="column" gap="xs">
           <a :href="localizeHref('/')" class="footer__logo">
-            <img src="/img/circulab-logo.svg" :alt="m.site_title()" height="32" />
+            <img src="/img/logo.svg" :alt="m.site_title()" height="32" />
           </a>
           <p class="u-text-small">{{ m['footer.tagline']() }}</p>
         </Grid>
