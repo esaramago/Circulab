@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useStore } from '@nanostores/vue'
 import Grid from '@/components/ui/Grid.vue'
 import '@webawesome/checkbox/checkbox.js'
@@ -8,9 +8,13 @@ import '@webawesome/callout/callout.js'
 import { $validationDraft, $editingResourceId, clearAddResourceDraft, setStepCompleted } from '@/stores/addResource'
 import type { ValidationDraft } from '@/types/add-resource-draft'
 import { m } from '@/paraglide/messages.js'
+import { localizeHref } from '@/paraglide/runtime.js'
 
 const draft = useStore($validationDraft)
 const errorMessage = ref<string>('')
+
+const editingResourceId = useStore($editingResourceId)
+const isEdit = computed(() => !!editingResourceId.value)
 
 onMounted(() => {
   if ($editingResourceId.get() !== null) {
@@ -39,7 +43,7 @@ function handleChange(event: Event) {
 
 <template>
   <form
-    action="/recursos/novo/descricao"
+    :action="localizeHref(isEdit ? `/recursos/editar/descricao?id=${editingResourceId}` : '/recursos/novo/descricao')"
     method="post"
     data-astro-reload
     @submit="handleSubmit"
