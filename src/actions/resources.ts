@@ -706,12 +706,13 @@ export const getNetworks = defineAction({
       }
       if (!data || data.length === 0) {
         return [
-          { id: '1', name: 'Website', slug: 'website', icon: 'globe' },
-          { id: '2', name: 'Instagram', slug: 'instagram', icon: 'instagram' },
-          { id: '3', name: 'Facebook', slug: 'facebook', icon: 'facebook' }
+          { id: '1', name: i18nDb({ pt: 'Website', en: 'Website' }, context?.locals?.locale), slug: 'website', icon: 'globe' }
         ]
       }
-      return data
+      return data.map(net => ({
+        ...net,
+        name: i18nDb(net.name as any, context?.locals?.locale)
+      }))
     } catch (error: any) {
       if (error instanceof ActionError) throw error
       console.error('[Action] getNetworks catch error:', error)
