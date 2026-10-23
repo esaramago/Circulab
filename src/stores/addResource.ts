@@ -12,6 +12,7 @@ import {
 } from '@/types/add-resource-draft'
 import { actions } from 'astro:actions'
 import { CONFIG } from '@/config'
+import { i18nDb } from '@/utils/i18nDb'
 
 const STORAGE_PREFIX = 'circulab:add'
 
@@ -136,7 +137,7 @@ export async function ensureDraftLoaded(
             const match = netMap.get(n.slug)
             return {
               slug: n.slug,
-              name: n.name || match?.name || n.slug,
+              name: i18nDb(n.name) || i18nDb(match?.name) || n.slug,
               value: n.value,
               icon: n.icon || match?.icon || null,
             }

@@ -13,6 +13,7 @@ import type { LocationDraft } from '@/types/add-resource-draft'
 import phoneAreaCodes from '@/data/countryCodes.json'
 import { m } from '@/paraglide/messages.js'
 import { actions } from 'astro:actions'
+import { i18nDb } from '@/utils/i18nDb'
 import OpeningHours from '@/components/pages/resources/OpeningHours.vue'
 
 const props = withDefaults(
@@ -118,7 +119,7 @@ function handleSaveNetwork() {
   const updatedNets = [...(draft.value.networks || [])]
   const newNet = {
     slug: selectedNet.slug,
-    name: selectedNet.name,
+    name: i18nDb((selectedNet as any).name),
     value: networkUrlValue.value,
     icon: (selectedNet as any).icon || null
   }
@@ -240,7 +241,7 @@ function handleSubmit(event: Event) {
           <tr v-for="(net, index) in draft.networks" :key="index">
             <td>
               <wa-icon v-if="net.icon" :name="net.icon" :family="net.icon === 'globe' ? null : 'brands'"></wa-icon>
-              {{ net.name }}
+              {{ i18nDb(net.name) }}
             </td>
             <td>
               <a :href="net.value" target="_blank" rel="noopener noreferrer">{{ net.value }}</a>
@@ -293,8 +294,13 @@ function handleSubmit(event: Event) {
         :value="selectedNetworkSlug"
         @change="selectedNetworkSlug = ($event.target as any).value"
       >
-        <wa-option v-for="net in availableNetworks" :key="net.slug" :value="net.slug">
-          {{ net.name }}
+        <wa-option
+          v-for="net in availableNetworks"
+          :key="(net as any).slug"
+          :value="(net as any).slug"
+          :label="i18nDb((net as any).name)"
+        >
+          {{ i18nDb((net as any).name) }}
         </wa-option>
       </wa-select>
 
