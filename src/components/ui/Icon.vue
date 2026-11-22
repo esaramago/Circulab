@@ -48,6 +48,8 @@ const colorStyle = computed(() => {
   align-items: center;
   justify-content: center;
   width: min-content;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: var(--wa-space-xs);
   border-radius: var(--wa-border-radius-circle);
   aspect-ratio: 1/1;

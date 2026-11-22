@@ -1,5 +1,5 @@
 <template>
-  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="[gridClass, { 'display-grid': columns }]">
+  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="[{ 'display-grid': columns }]">
     <slot></slot>
   </component>
 </template>
@@ -27,9 +27,27 @@ const gridStyle = computed<CSSProperties>(() => {
   if (props.justify) style['--justify'] = props.justify
   if (props.wrap) style['--wrap'] = props.wrap ? 'wrap' : 'nowrap'
   if (props.direction) style['--direction'] = props.direction
-  if (props.columns) style['--columns'] = props.columns
+  if (props.columns) {
+    style['--columns'] = getGridTemplateColumns(props.columns)
+  }
   return style as CSSProperties
 })
+
+function getGridTemplateColumns(columns: string) {
+  if (!columns) return ''
+
+  let template = ''
+  if (columns.search(' ') > -1) {
+    // passing grid-template-columns
+    template = columns
+  } else {
+    // passing column width (example: 40rem)
+    template = `repeat(auto-fit, minmax(min(${columns}, 100%), 1fr))`
+  }
+
+  return template
+}
+
 </script>
 
 <style scoped>
@@ -39,7 +57,6 @@ const gridStyle = computed<CSSProperties>(() => {
   --justify: initial;
   --wrap: initial;
   --direction: initial;
-  --columns: initial;
   display: flex;
   flex-direction: var(--direction);
   gap: var(--gap);
@@ -48,8 +65,9 @@ const gridStyle = computed<CSSProperties>(() => {
   flex-wrap: var(--wrap);
 }
 .display-grid {
+  --columns: 1fr;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(var(--columns), 100%), 1fr));
+  grid-template-columns: var(--columns);
 }
 </style>
 <style>
