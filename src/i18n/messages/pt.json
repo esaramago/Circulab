@@ -378,7 +378,7 @@
 		"failed_brevo_api": "Erro de rede ao contactar a API do Brevo"
 	},
 	"lisboa_repair_project": {
-		"title": "Projeto de Reparação de Lisboa",
+		"title": "Lisboa Repair Project",
 		"badge": "Projeto em destaque",
 		"subtitle": "A reparação é uma ação climática. E começa por todos nós.",
 		"desc": "Uma iniciativa comunitária para tornar a reparação visível, acessível e coletiva em Lisboa. Mapeamos oficinas de reparação locais, celebramos os artesãos e promovemos a economia circular.",
@@ -386,9 +386,9 @@
 		"challenge_title": "A reparação é uma ação climática",
 		"challenge_p1": "Lisboa tem uma longa tradição de artesanato, frugalidade e circularidade no seu quotidiano. Mas, à medida que a cidade se torna mais globalizada e orientada para o consumo, esta cultura está a desaparecer.",
 		"challenge_p2": "As oficinas de reparação locais — muitas vezes geridas por migrantes, mulheres, artesãos idosos e empresas familiares — estão a fechar. Os residentes têm dificuldade em encontrar as que ainda restam. E sem infraestruturas de reparação acessíveis, a cidade afunda-se cada vez mais num modelo linear e desperdiçador que funciona fora dos limites do planeta.",
-		"challenge_highlight": "O Mapa de Reparação de Lisboa é a nossa resposta a este desafio.",
+		"challenge_highlight": "O Lisboa Repair Project é a nossa resposta a este desafio.",
 		"building_title": "O que estamos a construir",
-		"building_p1": "O Mapa de Reparação de Lisboa é a primeira ferramenta impulsionada pela comunidade para tornar a reparação visível, acessível e coletiva na nossa cidade. É uma plataforma aberta e dinâmica onde os residentes podem encontrar oficinas de reparação locais de confiança e onde os artesãos de reparação podem partilhar as suas histórias e competências.",
+		"building_p1": "O Lisboa Repair Project é a primeira ferramenta impulsionada pela comunidade para tornar a reparação visível, acessível e coletiva na nossa cidade. É uma plataforma aberta e dinâmica onde os residentes podem encontrar oficinas de reparação locais de confiança e onde os artesãos de reparação podem partilhar as suas histórias e competências.",
 		"building_p2": "Mas o mapa é mais do que um diretório. É um ecossistema completo — apoiado por narrativas, retratos e workshops práticos — concebido para impulsionar uma mudança cultural do consumo para a regeneração.",
 		"building_quote": "Reparamos objetos para fortalecer a comunidade, manter o valor a nível local e desenvolver competências para um futuro resiliente. Esta é a camada essencial que faltava para uma economia circular em Lisboa.",
 		"approach_title": "A nossa abordagem",
@@ -419,7 +419,7 @@
     "journey_step2_link1": "Inquérito a utilizadores",
     "journey_step2_link2": "Inquérito a proprietário de loja",
 		"join_title": "Junta-te a nós",
-		"join_desc": "O Mapa de Reparação de Lisboa pertence a todos nós. Quer sejas um residente que queira reparar, um lojista que queira ser incluído no mapa, um fotógrafo ou entrevistador que queira documentar histórias, ou um parceiro que queira colaborar – há um lugar para ti.",
+		"join_desc": "O Lisboa Repair Project pertence a todos nós. Quer sejas um residente que queira reparar, um lojista que queira ser incluído no mapa, um fotógrafo ou entrevistador que queira documentar histórias, ou um parceiro que queira colaborar – há um lugar para ti.",
 		"join_highlight": "Juntos, podemos tornar a reparação visível, valorizada e coletiva.",
 		"visit_instagram": "Instagram",
 		"send_email": "Email"

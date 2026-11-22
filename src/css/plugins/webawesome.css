@@ -26,20 +26,27 @@ wa-radio {
 wa-callout {
   align-items: center;
 }
-wa-card::part(body),
-wa-callout::part(message) {
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-m);
+
+wa-card {
+  --spacing: var(--wa-space-l);
+  &::part(body) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+    flex: 1;
+  }
+}
+wa-callout {
+  padding: var(--wa-space-l);
+  &::part(message) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-m);
+    flex: 1;
+  }
 }
 
 
 wa-dialog:not(:defined) {
   display: none !important;
-}
-
-wa-card {
-  &::part(body) {
-    flex: 1;
-  }
 }

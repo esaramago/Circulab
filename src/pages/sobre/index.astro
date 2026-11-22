@@ -27,7 +27,7 @@ import Icon from '@/components/ui/Icon.vue'
       </wa-badge>
     </Headline>
 
-    <Grid direction="row" fullWidth break="small">
+    <Grid direction="row" columns="30rem">
       <wa-card>
         <Icon name="bullseye" appearance="filled"></Icon>
         <h2>{m['about.mission_title']()}</h2>
@@ -48,10 +48,6 @@ import Icon from '@/components/ui/Icon.vue'
     </Grid>
 
     <wa-card>
-      <wa-badge variant="brand" appearance="filled" pill>
-        <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
-        {m['lisboa_repair_project.badge']()}
-      </wa-badge>
       <h2>{m['lisboa_repair_project.title']()}</h2>
       <p>{m['lisboa_repair_project.subtitle']()}</p>
       <p>{m['lisboa_repair_project.desc']()}</p>
@@ -63,33 +59,7 @@ import Icon from '@/components/ui/Icon.vue'
       </div>
     </wa-card>
 
-    <section>
-      <h2>{m['about.how_title']()}</h2>
-      <Grid direction="row" fullWidth break="small">
-        <wa-card>
-          <div class="step-number">1</div>
-          <Icon name="location-dot" appearance="filled"></Icon>
-          <h3>{m['about.how_step1_title']()}</h3>
-          <p>{m['about.how_step1_desc']()}</p>
-        </wa-card>
-
-        <wa-card>
-          <div class="step-number">2</div>
-          <Icon name="pen-to-square" appearance="filled"></Icon>
-          <h3>{m['about.how_step2_title']()}</h3>
-          <p>{m['about.how_step2_desc']()}</p>
-        </wa-card>
-
-        <wa-card class="step-card">
-          <div class="step-number">3</div>
-          <Icon name="users" appearance="filled"></Icon>
-          <h3>{m['about.how_step3_title']()}</h3>
-          <p>{m['about.how_step3_desc']()}</p>
-        </wa-card>
-      </div>
-    </section>
-
-    <section>
+    <Grid direction="column">
       <h2>{m['about.faq_title']()}</h2>
       <wa-accordion>
         <wa-accordion-item label={m['about.faq_q1']()}>
@@ -102,13 +72,13 @@ import Icon from '@/components/ui/Icon.vue'
           {m['about.faq_a3']()}
         </wa-accordion-item>
       </wa-accordion>
-    </section>
+    </Grid>
 
-    <wa-callout variant="neutral" class="cta-callout">
+    <wa-callout variant="neutral">
       <wa-icon slot="icon" name="network-wired"></wa-icon>
       <h2>{m['about.cta_title']()}</h2>
       <p>{m['about.cta_desc']()}</p>
-      <div class="cta-actions">
+      <Grid>
         <wa-button variant="brand" href={localizeHref('/mapa')}>
           <wa-icon name="map" slot="start"></wa-icon>
           {m['about.explore_map']()}
@@ -117,18 +87,12 @@ import Icon from '@/components/ui/Icon.vue'
           <wa-icon name="envelope" slot="start"></wa-icon>
           {m['about.contact_us']()}
         </wa-button>
-      </div>
+      </Grid>
     </wa-callout>
   </Container>
 </Layout>
 
 <style scoped>
-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--wa-space-s);
-}
-wa-card::part(body),
 wa-callout::part(message) {
   position: relative;
   display: flex;
@@ -136,13 +100,4 @@ wa-callout::part(message) {
   gap: var(--wa-space-m);
 }
 
-.step-number {
-  position: absolute;
-  inset-block-start: var(--wa-space-l);
-  inset-inline-end: var(--wa-space-l);
-  font-size: var(--wa-font-size-2xl);
-  font-weight: var(--wa-font-weight-bold);
-  color: var(--wa-color-brand-40);
-  line-height: 1;
-}
 </style>

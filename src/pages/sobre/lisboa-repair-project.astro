@@ -42,7 +42,7 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <h2>{m['lisboa_repair_project.building_title']()}</h2>
-      <Grid break="small">
+      <Grid>
         <wa-card>
           <p>{m['lisboa_repair_project.building_p1']()}</p>
           <p>{m['lisboa_repair_project.building_p2']()}</p>
@@ -56,7 +56,7 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <h2>{m['lisboa_repair_project.approach_title']()}</h2>
-      <Grid break="small" fullWidth>
+      <Grid columns="40rem">
         <wa-card>
           <Icon name="eye" appearance="filled"></Icon>
           <h3>{m['lisboa_repair_project.approach_visible_title']()}</h3>
@@ -110,7 +110,7 @@ import Icon from '@/components/ui/Icon.vue'
         <h2>{m['lisboa_repair_project.partners_title']()}</h2>
         <p>{m['lisboa_repair_project.partners_subtitle']()}</p>
       </div>
-      <Grid fullWidth break="small">
+      <Grid columns="40rem">
         <wa-card>
           <Grid align="center" gap="s">
             <Icon name="rotate" appearance="filled"></Icon>
@@ -118,7 +118,7 @@ import Icon from '@/components/ui/Icon.vue'
           </Grid>
           <p>{m['lisboa_repair_project.partner_nextturn_desc']()}</p>
           <div slot="footer">
-            <wa-button href="https://www.instagram.com/thenextturn.lisbon/" target="_blank" rel="noopener noreferrer">
+            <wa-button variant="brand" href="https://www.instagram.com/thenextturn.lisbon/" target="_blank" rel="noopener noreferrer">
               <wa-icon name="arrow-up-right-from-square" slot="start"></wa-icon>
               Instagram
             </wa-button>
@@ -132,15 +132,13 @@ import Icon from '@/components/ui/Icon.vue'
           </Grid>
           <p>{m['lisboa_repair_project.partner_arches_desc']()}</p>
           <div slot="footer">
-            <wa-button href="https://archesglobal.co/" target="_blank" rel="noopener noreferrer">
+            <wa-button variant="brand" href="https://archesglobal.co/" target="_blank" rel="noopener noreferrer">
               <wa-icon name="globe" slot="start"></wa-icon>
               {m['lisboa_repair_project.who_website']()}
             </wa-button>
           </div>
         </wa-card>
-      </Grid>
-
-      <Grid fullWidth break="small">
+        
         <wa-card>
           <Grid align="center" gap="s">
             <Icon name="building-columns" appearance="filled"></Icon>
@@ -148,7 +146,7 @@ import Icon from '@/components/ui/Icon.vue'
           </Grid>
           <p>{m['lisboa_repair_project.partner_rizoma_desc']()}</p>
           <div slot="footer">
-            <wa-button href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
+            <wa-button variant="brand" href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
               <wa-icon name="globe" slot="start"></wa-icon>
               {m['lisboa_repair_project.who_website']()}
             </wa-button>
@@ -162,7 +160,7 @@ import Icon from '@/components/ui/Icon.vue'
           </Grid>
           <p>{m['lisboa_repair_project.partner_ecolise_desc']()}</p>
           <div slot="footer">
-            <wa-button href="https://ecolise.eu/how-we-do-it/regenerative-communities-fund/" target="_blank" rel="noopener noreferrer">
+            <wa-button variant="brand" href="https://ecolise.eu/how-we-do-it/regenerative-communities-fund/" target="_blank" rel="noopener noreferrer">
               <wa-icon name="globe" slot="start"></wa-icon>
               {m['lisboa_repair_project.who_website']()}
             </wa-button>
@@ -173,7 +171,7 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <h2>{m['lisboa_repair_project.journey_title']()}</h2>
-      <Grid break="small" fullWidth>
+      <Grid columns="40rem">
         <wa-card>
           <Icon name="seedling" appearance="filled"></Icon>
           <h3>{m['lisboa_repair_project.journey_step1_title']()}</h3>

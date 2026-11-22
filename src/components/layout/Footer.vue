@@ -19,7 +19,7 @@ function openCookiePreferences(event: Event) {
 <template>
   <footer class="footer">
     <Container width="l">
-      <Grid fullWidth break="mobile">
+      <Grid columns="25rem">
         <Grid direction="column" gap="xs">
           <a :href="localizeHref('/')" class="footer__logo">
             <img src="/img/logo.svg" :alt="m.site_title()" height="32" />
