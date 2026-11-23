@@ -18,7 +18,7 @@ wa-radio {
   &:user-invalid::part(base) {
     border-color: var(--wa-color-danger-500, red);
   }
-  &:user-value::part(base) {
+  &:user-valid::part(base) {
     border-color: var(--wa-color-success-500, green);
   }
 }

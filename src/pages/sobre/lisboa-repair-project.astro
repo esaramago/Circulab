@@ -151,7 +151,7 @@ const partners = [
 
     <section>
       <div>
-        <h2>{m['lisboa_repair_project.partners_title']()}</h2>
+        <h2 id="partners">{m['lisboa_repair_project.partners_title']()}</h2>
         <p>{m['lisboa_repair_project.partners_subtitle']()}</p>
       </div>
       <Grid columns="40rem">
@@ -163,14 +163,12 @@ const partners = [
                 <Grid gap="xs" direction="column">
                   <h3>{partner.title}</h3>
                   <p>{partner.description}</p>
+                  <wa-button variant="brand" href={partner.button.url} target="_blank" rel="noopener noreferrer">
+                    <wa-icon name={partner.button.icon} slot="start"></wa-icon>
+                    {partner.button.label}
+                  </wa-button>
                 </Grid>
               </Grid>
-              <div slot="footer">
-                <wa-button variant="brand" href={partner.button.url} target="_blank" rel="noopener noreferrer">
-                  <wa-icon name={partner.button.icon} slot="start"></wa-icon>
-                  {partner.button.label}
-                </wa-button>
-              </div>
             </wa-card>
           ))
         }
