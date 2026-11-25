@@ -266,7 +266,7 @@ async function saveTypology() {
           {{ dialogError }}
         </wa-callout>
 
-        <Grid fullWidth break="mobile">
+        <Grid columns="40rem">
           <div class="form-group">
             <wa-input
               :label="`${m['backoffice.name']()} (PT)`"
@@ -287,7 +287,7 @@ async function saveTypology() {
           </div>
         </Grid>
 
-        <Grid fullWidth break="mobile">
+        <Grid columns="40rem">
           <div class="form-group">
             <wa-textarea
               :label="`${m['backoffice.description']()} (PT)`"

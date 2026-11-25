@@ -355,7 +355,7 @@ async function deleteCategory() {
           {{ dialogError }}
         </wa-callout>
 
-        <Grid fullWidth break="mobile">
+        <Grid columns="40rem">
           <div class="form-group">
             <wa-input
               :label="`${m['backoffice.name']()} (PT)`"
@@ -376,7 +376,7 @@ async function deleteCategory() {
           </div>
         </Grid>
 
-        <Grid fullWidth break="mobile">
+        <Grid columns="40rem">
           <div class="form-group">
             <wa-textarea
               :label="`${m['backoffice.description']()} (PT)`"

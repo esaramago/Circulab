@@ -1,12 +1,12 @@
 <template>
-  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="[gridClass, { 'l-grid--full-width': fullWidth }]">
+  <component :is="props.tag" class="l-grid" :style="gridStyle" :class="[{ 'display-grid': columns }]">
     <slot></slot>
   </component>
 </template>
 
 <script setup lang="ts">
 import { computed, type CSSProperties } from 'vue'
-import type { Spacing, Break } from '@/types/ui/grid'
+import type { Spacing } from '@/types/ui/grid'
 
 const props = withDefaults(defineProps<{
   tag?: keyof HTMLElementTagNameMap
@@ -14,9 +14,8 @@ const props = withDefaults(defineProps<{
   align?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
   gap?: Spacing
-  break?: Break
   wrap?: boolean
-  fullWidth?: boolean
+  columns?: string
 }>(), {
   tag: 'div',
 })
@@ -28,15 +27,27 @@ const gridStyle = computed<CSSProperties>(() => {
   if (props.justify) style['--justify'] = props.justify
   if (props.wrap) style['--wrap'] = props.wrap ? 'wrap' : 'nowrap'
   if (props.direction) style['--direction'] = props.direction
+  if (props.columns) {
+    style['--columns'] = getGridTemplateColumns(props.columns)
+  }
   return style as CSSProperties
 })
 
+function getGridTemplateColumns(columns: string) {
+  if (!columns) return ''
 
-const gridClass = computed(() => {
-  const classes: string[] = []
-  if (props.break) classes.push(`break--${props.break}`)
-  return classes
-})
+  let template = ''
+  if (columns.search(' ') > -1) {
+    // passing grid-template-columns
+    template = columns
+  } else {
+    // passing column width (example: 40rem)
+    template = `repeat(auto-fit, minmax(min(${columns}, 100%), 1fr))`
+  }
+
+  return template
+}
+
 </script>
 
 <style scoped>
@@ -53,21 +64,10 @@ const gridClass = computed(() => {
   justify-content: var(--justify);
   flex-wrap: var(--wrap);
 }
-.l-grid--full-width > * {
-  width: 100%;
-  flex: 1;
-}
-@media (max-width: 767px) {
-  .break--mobile {
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-}
-@media (max-width: 1023px) {
-  .break--small {
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
+.display-grid {
+  --columns: 1fr;
+  display: grid;
+  grid-template-columns: var(--columns);
 }
 </style>
 <style>

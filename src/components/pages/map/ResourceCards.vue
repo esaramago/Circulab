@@ -146,7 +146,7 @@ async function handleDelete() {
     </div>
 
     <div v-else-if="filteredResources.length > 0" class="card-container">
-      <wa-card v-for="resource in filteredResources" :key="resource.id">
+      <wa-card v-for="resource in filteredResources" :key="resource.id" appearance="filled">
         <img
           v-if="resource?.images?.[0]"
           slot="media"

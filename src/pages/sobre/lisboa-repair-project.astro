@@ -7,6 +7,60 @@ import { localizeHref } from '@/paraglide/runtime.js'
 import Headline from '@/components/ui/Headline.vue'
 import Grid from '@/components/ui/Grid.vue'
 import Icon from '@/components/ui/Icon.vue'
+
+
+const partners = [
+  {
+    title: 'ECOLISE',
+    description: m['lisboa_repair_project.partner_ecolise_desc'](),
+    logo: 'ecolise.png',
+    button: {
+      url: 'https://ecolise.eu/how-we-do-it/regenerative-communities-fund/',
+      label: m['lisboa_repair_project.who_website'](),
+      icon: 'globe'
+    }
+  },
+  {
+    title: 'Rizoma',
+    description: m['lisboa_repair_project.partner_rizoma_desc'](),
+    logo: 'rizoma-logo.svg',
+    button: {
+      url: 'https://www.rizomacoop.pt/',
+      label: m['lisboa_repair_project.who_website'](),
+      icon: 'globe'
+    }
+  },
+  {
+    title: 'Arches',
+    description: m['lisboa_repair_project.partner_arches_desc'](),
+    logo: 'arches.png',
+    button: {
+      url: 'https://archesglobal.co/',
+      label: m['lisboa_repair_project.who_website'](),
+      icon: 'globe'
+    }
+  },
+  {
+    title: 'The Next Turn.Lisbon',
+    description: m['lisboa_repair_project.partner_nextturn_desc'](),
+    logo: 'thenextturn.png',
+    button: {
+      url: 'https://www.instagram.com/thenextturn.lisbon/',
+      label: 'Instagram',
+      icon: 'arrow-up-right-from-square'
+    }
+  },
+  {
+    title: 'My Mender',
+    description: m['lisboa_repair_project.partner_mymender_desc'](),
+    logo: 'mymender.png',
+    button: {
+      url: 'https://mymender.co/',
+      label: m['lisboa_repair_project.who_website'](),
+      icon: 'globe'
+    }
+  },
+]
 ---
 
 <script>
@@ -24,7 +78,7 @@ import Icon from '@/components/ui/Icon.vue'
       title={m['lisboa_repair_project.title']()}
       subtitle={m['lisboa_repair_project.subtitle']()}
     >
-      <wa-badge slot="badge" variant="brand" appearance="filled" pill>
+      <wa-badge variant="brand" appearance="filled" pill>
         <wa-icon slot="start" name="screwdriver-wrench"></wa-icon>
         {m['lisboa_repair_project.badge']()}
       </wa-badge>
@@ -42,7 +96,7 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <h2>{m['lisboa_repair_project.building_title']()}</h2>
-      <Grid break="small">
+      <Grid>
         <wa-card>
           <p>{m['lisboa_repair_project.building_p1']()}</p>
           <p>{m['lisboa_repair_project.building_p2']()}</p>
@@ -56,7 +110,7 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <h2>{m['lisboa_repair_project.approach_title']()}</h2>
-      <Grid break="small" fullWidth>
+      <Grid columns="40rem">
         <wa-card>
           <Icon name="eye" appearance="filled"></Icon>
           <h3>{m['lisboa_repair_project.approach_visible_title']()}</h3>
@@ -107,73 +161,33 @@ import Icon from '@/components/ui/Icon.vue'
 
     <section>
       <div>
-        <h2>{m['lisboa_repair_project.partners_title']()}</h2>
+        <h2 id="partners">{m['lisboa_repair_project.partners_title']()}</h2>
         <p>{m['lisboa_repair_project.partners_subtitle']()}</p>
       </div>
-      <Grid fullWidth break="small">
-        <wa-card>
-          <Grid align="center" gap="s">
-            <Icon name="rotate" appearance="filled"></Icon>
-            <h3>The Next Turn.Lisbon</h3>
-          </Grid>
-          <p>{m['lisboa_repair_project.partner_nextturn_desc']()}</p>
-          <div slot="footer">
-            <wa-button href="https://www.instagram.com/thenextturn.lisbon/" target="_blank" rel="noopener noreferrer">
-              <wa-icon name="arrow-up-right-from-square" slot="start"></wa-icon>
-              Instagram
-            </wa-button>
-          </div>
-        </wa-card>
-
-        <wa-card>
-          <Grid align="center" gap="s">
-            <Icon name="gem" appearance="filled"></Icon>
-            <h3>Arches</h3>
-          </Grid>
-          <p>{m['lisboa_repair_project.partner_arches_desc']()}</p>
-          <div slot="footer">
-            <wa-button href="https://archesglobal.co/" target="_blank" rel="noopener noreferrer">
-              <wa-icon name="globe" slot="start"></wa-icon>
-              {m['lisboa_repair_project.who_website']()}
-            </wa-button>
-          </div>
-        </wa-card>
-      </Grid>
-
-      <Grid fullWidth break="small">
-        <wa-card>
-          <Grid align="center" gap="s">
-            <Icon name="building-columns" appearance="filled"></Icon>
-            <h3>Rizoma</h3>
-          </Grid>
-          <p>{m['lisboa_repair_project.partner_rizoma_desc']()}</p>
-          <div slot="footer">
-            <wa-button href="https://www.rizomacoop.pt/" target="_blank" rel="noopener noreferrer">
-              <wa-icon name="globe" slot="start"></wa-icon>
-              {m['lisboa_repair_project.who_website']()}
-            </wa-button>
-          </div>
-        </wa-card>
-
-        <wa-card>
-          <Grid align="center" gap="s">
-            <Icon name="seedling" appearance="filled"></Icon>
-            <h3>ECOLISE</h3>
-          </Grid>
-          <p>{m['lisboa_repair_project.partner_ecolise_desc']()}</p>
-          <div slot="footer">
-            <wa-button href="https://ecolise.eu/how-we-do-it/regenerative-communities-fund/" target="_blank" rel="noopener noreferrer">
-              <wa-icon name="globe" slot="start"></wa-icon>
-              {m['lisboa_repair_project.who_website']()}
-            </wa-button>
-          </div>
-        </wa-card>
+      <Grid columns="40rem">
+        {
+          partners.map(partner => (
+            <wa-card>
+              <Grid gap="l" columns="10rem 1fr">
+                <img src={`/img/partners/${partner.logo}`} alt={partner.title}>
+                <Grid gap="xs" direction="column">
+                  <h3>{partner.title}</h3>
+                  <p>{partner.description}</p>
+                  <wa-button variant="brand" href={partner.button.url} target="_blank" rel="noopener noreferrer">
+                    <wa-icon name={partner.button.icon} slot="start"></wa-icon>
+                    {partner.button.label}
+                  </wa-button>
+                </Grid>
+              </Grid>
+            </wa-card>
+          ))
+        }
       </Grid>
     </section>
 
     <section>
       <h2>{m['lisboa_repair_project.journey_title']()}</h2>
-      <Grid break="small" fullWidth>
+      <Grid columns="40rem">
         <wa-card>
           <Icon name="seedling" appearance="filled"></Icon>
           <h3>{m['lisboa_repair_project.journey_step1_title']()}</h3>
